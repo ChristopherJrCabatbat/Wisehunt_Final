@@ -261,3 +261,7 @@ button {
     border: none;
     padding: 7px;
 }
+
+div.edit-delete a.edit:hover {
+    background-color: transparent;
+}

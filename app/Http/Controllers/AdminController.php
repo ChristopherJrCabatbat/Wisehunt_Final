@@ -293,11 +293,47 @@ class AdminController extends Controller
 
     public function customer()
     {
-        return view("navbar.customer");
+        $nm = Session::get('name');
+        $acc = Session::get('acc');
+
+        // Notification
+        $productsss = Product::all();
+        $lowQuantityNotifications = [];
+
+        foreach ($productsss as $product) {
+            if ($product->quantity <= 20) {
+                $notification = [
+                    'message' => $product->name . "'s quantity is too low!",
+                    'productId' => $product->id, // Assuming 'id' is the product's unique identifier
+                ];
+                $lowQuantityNotifications[] = $notification;
+            }
+        }
+
+        $customers = Customer::paginate(8);
+        return view('navbar.customer', ['customers' => $customers])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications);
     }
 
     public function supplier()
     {
-        return view("navbar.supplier");
+        $nm = Session::get('name');
+
+        // Notification
+        $productsss = Product::all();
+        $lowQuantityNotifications = [];
+
+        foreach ($productsss as $product) {
+            if ($product->quantity <= 20) {
+                $notification = [
+                    'message' => $product->name . "'s quantity is too low!",
+                    'productId' => $product->id, // Assuming 'id' is the product's unique identifier
+                ];
+                $lowQuantityNotifications[] = $notification;
+            }
+        }
+
+        $suppliers = Supplier::paginate(8);
+        return view('navbar.supplier', ['suppliers' => $suppliers])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications);
     }
+
 }

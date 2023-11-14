@@ -183,12 +183,10 @@ td {
     padding: 14px;
 }
 
-div.taas {
+.taas {
     display: flex;
     justify-content: space-evenly;
-    width: 81vw;
-    margin-top: 15px;
-    margin-bottom: 35px;
+    margin-bottom: 20px;
 }
 
 button.deletes {

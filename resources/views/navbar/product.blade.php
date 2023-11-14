@@ -70,7 +70,8 @@
                             (ascending)</option>
                         <option value="capital_asc" {{ request('sort') === 'capital_asc' ? 'selected' : '' }}>
                             Capital (ascending)</option>
-                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit Price
+                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit
+                            Price
                             (ascending)
                         </option>
                     </select>
@@ -131,12 +132,6 @@
                                 <td>{{ $product->description }}</td>
                                 <td>{{ $product->category }}</td>
                                 <td>
-                                    {{-- @if ($product->image_path)
-                                        <img src="{{ asset('images/images' . $product->image) }}"
-                                            alt="{{ $product->name }}" width="100" height="100">
-                                    @else
-                                        No Image
-                                    @endif --}}
                                     <img src="{{ asset($product->photo) }}" alt="{{ $product->name }}" width="auto"
                                         height="50px" style="background-color: transparent">
                                 </td>
@@ -145,16 +140,21 @@
                                 <td>{{ $product->unit_price }}</td>
                                 <td>
                                     <div class="edit-delete">
-                                        <form id="" action="Products/{{ $product->id }}/edit">
+                                        <a href="Products/{{ $product->id }}/edit" class="edit">
+                                            <img class="edit" src="{{ asset('images/edits.png') }}" alt="">
+                                        </a>
+                                        {{-- <form id="" action="Products/{{ $product->id }}/edit">
                                             <button type="submit" id="" class="edit"><img class="edit"
-                                                    src="{{ asset('assets/edits.png') }}" alt=""></button>
-                                        </form>
-                                        <form action="{{ route('admin.productDestroy', $product->id) }}" method="POST"
+                                                    src="{{ asset('images/edits.png') }}" alt=""></button>
+                                        </form> --}}
+
+                                        {{-- <form action="{{ route('admin.productDestroy', $product->id) }}" method="POST" --}}
+                                        <form action="#" method="POST"
                                             onsubmit="return confirmDelete();">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="deletes"><img class="delete"
-                                                    src="{{ asset('assets/delete.png') }}" alt=""></button>
+                                                    src="{{ asset('images/delete.png') }}" alt=""></button>
                                             {{-- <input class="delete" type="submit" name="submit" value="Delete" />  --}}
                                         </form>
                                     </div>

@@ -168,11 +168,3 @@ input:focus+.search {
     gap: 20px;
     margin-top: -12px;
 }
-
-div.taas {
-    display: flex;
-    justify-content: space-evenly;
-    width: 81vw;
-    margin-top: 15px;
-    margin-bottom: 35px;
-}

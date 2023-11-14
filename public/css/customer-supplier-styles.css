@@ -1,0 +1,103 @@
+label {
+    margin-top: 8px;
+}
+
+.taas {
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* height: 100%; */
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-top {
+    margin-top: 15px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 2px solid black;
+    position: relative;
+    bottom: 140px;
+    width: 30%;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    /* gap: 1px; */
+}
+
+input {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 6px;
+}
+
+.close,
+.close-edit {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close,
+.close-edit:hover,
+.close,
+.close-edit:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+input[type="submit"] {
+    background-color: #333;
+    color: white;
+    border: none;
+    width: 30%;
+    height: 30px;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+}
+
+img.delete {
+    width: 16px;
+}
+
+img.edit {
+    width: 20px;
+    margin-top: 9px;
+}
+
+button.deletes {
+    background-color: transparent;
+}
+
+.edit-delete {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+td {
+    padding: 6px;
+}
+
+.add:hover {
+    background-color: #a3a3a3;
+    transition: all 0.3s;
+}

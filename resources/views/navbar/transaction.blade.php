@@ -65,22 +65,22 @@
                     <select name="sort" id="sort">
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
                             Default Sorting --</option>
-                        <option value="customer_name_asc"
-                            {{ request('sort') === 'customer_name_asc' ? 'selected' : '' }}>Customer
+                        <option value="customer_name_asc" {{ request('sort') === 'customer_name_asc' ? 'selected' : '' }}>
+                            Customer
                             (ascending)</option>
-                        <option value="product_name_asc"
-                            {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>Product Name (A-Z)
+                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                            Product Name (A-Z)
                         </option>
                         <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity
                             (ascending)</option>
-                        <option value="unit_price_asc"
-                            {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit Price (ascending)
+                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit
+                            Price (ascending)
                         </option>
-                        <option value="total_price_asc"
-                            {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>Total Price
+                        <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>Total
+                            Price
                             (ascending)</option>
-                        <option value="total_earned_asc"
-                            {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>Total Earned on Item
+                        <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
+                            Total Earned on Item
                             (descending)</option>
                     </select>
                     <button type="submit">Sort</button>
@@ -91,10 +91,10 @@
             <form class="form-search" action="#" method="GET">
                 <div class="searchs">
                     <div class="form-search">
-                        <input type="text" name="search" required class="search-prod"
-                            placeholder="Search product..." value="{{ $searchQuery }}" />
-                        <button class="search" type="submit"><img class="search"
-                                src="{{ asset('images/search.png') }}" alt=""></button>
+                        <input type="text" name="search" required class="search-prod" placeholder="Search product..."
+                            value="{{ $searchQuery }}" />
+                        <button class="search" type="submit"><img class="search" src="{{ asset('images/search.png') }}"
+                                alt=""></button>
                     </div>
                     <a href="{{ route('admin.transaction') }}" class="cancel-search">Cancel search</a>
                 </div>
@@ -151,17 +151,15 @@
                                 <td>
                                     <div class="edit-delete">
                                         <a href="Transactions/{{ $transaction->id }}/edit" class="edit">
-                                            <img class="edit" src="{{ asset('assets/edits.png') }}"
-                                                alt="edit btn"></a>
+                                            <img class="edit" src="{{ asset('images/edits.png') }}" alt="edit btn">
+                                        </a>
 
-                                        <form
-                                            action="{{ route('admin.transactionDestroy', $transaction->id) }}"
-                                            method="POST" onsubmit="return confirmDelete();">
+                                        {{-- <form action="{{ route('admin.transactionDestroy', $transaction->id) }}" --}}
+                                        <form action="#" method="POST" onsubmit="return confirmDelete();">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="deletes"><img class="delete"
-                                                    src="{{ asset('assets/delete.png') }}"
-                                                    alt="delete btn"></button>
+                                                    src="{{ asset('images/delete.png') }}" alt="delete btn"></button>
                                         </form>
 
                                     </div>
