@@ -33,7 +33,7 @@
             </div>
             <div class="top-navbar">
                 <div class="logo-container">
-                    <img class="logo" src="{{ asset('images/logo.jpg') }}" alt="" />
+                    <img class="logo" src="{{ asset('images/logo.jpg') }}" alt="" width="90px" height="auto"/>
                 </div>
                 <div>
                     <div class="top-account">
@@ -42,7 +42,7 @@
                         <span class="red-dot" id="notificationDot"></span>
 
                         {{-- <div class="username">{{ $username }}</div> --}}
-                        <div class="username">Username</div>
+                        <div class="username">username</div>
 
                         <!-- Log out -->
                         <div class="dropdown">
@@ -52,7 +52,7 @@
                             <input type="checkbox" id="logout">
                             <div class="dropdown-menu">
                                 {{-- <a class="dropdown-item" href="javascript:void(0);" onclick="confirmLogout()">Logout</a> --}}
-                                <a class="dropdown-item" href="#"
+                                <a class="dropdown-item" href="/"
                                     onclick="return confirm('Are you sure you want to log out?')">Log out</a>
                             </div>
                         </div>

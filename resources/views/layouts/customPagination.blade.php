@@ -12,9 +12,9 @@
     .pagination span {
         display: inline-block;
         padding: 5px 8px;
-        background-color: #333;
+        background-color: #006181;
         /* Apply the theme color here */
-        color: #fff;
+        color: white;
         border-radius: 3px;
         text-decoration: none;
         margin-right: 5px;
@@ -22,17 +22,17 @@
     }
 
     .pagination a:hover {
-        background-color: #555;
+        background-color: #363535;
         /* Apply the theme color here on hover */
     }
 
     .pagination .active {
-        background-color: #555;
+        background-color: #006181;
         /* Apply the theme color to the active page */
     }
 
     .pagination .disabled {
-        color: #888;
+        color: white;
         /* Apply a different color to disabled elements */
         pointer-events: none;
         /* Make disabled elements unclickable */

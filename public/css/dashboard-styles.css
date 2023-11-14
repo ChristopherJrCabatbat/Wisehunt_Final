@@ -1,8 +1,7 @@
-.content {
+.content-dashboard {
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
-    gap: 12px;
+    gap: 15px;
 }
 
 .taas-content {
@@ -116,9 +115,11 @@
     color: #414141;
     white-space: nowrap;
     font-family: Arial, Helvetica, sans-serif;
+    -webkit-user-select: none;
+    user-select: none; /* Add this line */
 }
 
-.payment-methods {
+.demand {
     display: flex;
     justify-content: center;
     font-family: Arial, Helvetica, sans-serif;
@@ -128,6 +129,7 @@
 }
 
 select {
+    margin-top: 10px;
     padding: 6px;
     width: 15.5%;
 }

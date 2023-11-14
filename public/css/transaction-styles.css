@@ -150,11 +150,11 @@ button[type="button"] {
 }
 
 button.search {
-    right: 209px;
+    right: 184px;
 }
 
 input:focus+.search {
-    right: 210px;
+    right: 185px;
 }
 
 .new-generate {

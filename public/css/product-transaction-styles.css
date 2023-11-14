@@ -144,7 +144,7 @@ button.search {
     background-color: transparent;
     top: 86px;
     padding: 4px 8px;
-    right: 246px;
+    right: 221px;
     border-top-right-radius: 1px;
     border-bottom-right-radius: 1px;
     border-top-left-radius: 0;
@@ -157,7 +157,7 @@ button.search:hover {
 
 input:focus+.search {
     top: 87px;
-    right: 247px;
+    right: 222px;
     padding: 3px 7px;
 }
 

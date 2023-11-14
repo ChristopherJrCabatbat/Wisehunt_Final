@@ -11,7 +11,7 @@
 
 <body>
     <header>
-        <div><img src="{{ asset('images/logo.png') }}" class="logo" alt="logo"></div>
+        <div><img src="{{ asset('images/logo.png') }}" class="logo" alt="logo" width="100" height="100"></div>
         <div class="wisehunt">
             <h2>WISEHUNT COMPANY</h2>
         </div>

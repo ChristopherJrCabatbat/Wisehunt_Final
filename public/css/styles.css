@@ -39,8 +39,6 @@
 .sidebar.active {
     background-color: #a3a3a3;
     border: none;
-    /* border-top: 1px solid #a3a3a3; */
-    /* border-bottom: 1px solid #a3a3a3; */
 }
 
 .side-navbar ul {
@@ -106,8 +104,8 @@
 /* Top Navbar */
 .top-navbar {
     background-color: white;
-    color: black;
-    border-bottom: 2px solid #333;
+    color: #006181;
+    border-bottom: 2px solid #006181;
     max-height: 68px;
     width: 100vw;
     display: flex;
@@ -131,18 +129,23 @@
 
 .content {
     margin-top: 85px;
-    /* margin-left: 19.4%; */
     margin-left: 108px;
+    /* margin-left: 19.4%; */
 }
 
 .content-dashboard {
     margin-top: 85px;
-    /* margin-left: 19.4%; */
     margin-left: 120px;
+    /* margin-left: 19.4%; */
 }
 
 .logo {
+    max-width: 100%;
     width: 90px;
+}
+
+img {
+    max-width: 100%;
 }
 
 .top-account {
@@ -152,23 +155,17 @@
     gap: 12px;
 }
 
-.icon-user {
-    width: 25px;
-    bottom: 3px;
-    position: relative;
-    height: fit-content;
-}
-
 .notif {
     width: 25px;
     height: fit-content;
-    right: 6px;
+    right: -10px;
     bottom: 3px;
     position: relative;
 }
 
 .username {
     font-weight: bold;
+    position: relative;
 }
 
 
