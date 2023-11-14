@@ -1,0 +1,263 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+}
+
+.side-navbar {
+    /* width: 14.7%; */
+    width: 197px;
+    background-color: #006181;
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: fixed;
+    left: 0;
+    align-items: center;
+    padding-top: 30px;
+}
+
+.sidebar {
+    display: block;
+    padding: 10px;
+    color: #000;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.sidebar:hover, button:hover, a:hover {
+    background-color: #363535;
+    cursor: pointer;
+}
+
+.sidebar.active {
+    background-color: #a3a3a3;
+    border: none;
+    /* border-top: 1px solid #a3a3a3; */
+    /* border-bottom: 1px solid #a3a3a3; */
+}
+
+.side-navbar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.side-navbar li a {
+    display: block;
+    padding-top: 18px;
+    padding-bottom: 18px;
+    padding-left: 70px;
+    padding-right: 25px;
+    font-size: 0.9rem;
+    color: white;
+    text-decoration: none;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+
+.dashboard-container {
+    margin-top: 56px;
+}
+
+.icons-taas {
+    width: 20px;
+    left: 29px;
+    top: 103px;
+    position: absolute;
+}
+
+.product-i {
+    width: 25px;
+    left: 27px;
+    top: 155px;
+    position: absolute;
+}
+
+.transaction-i {
+    width: 25px;
+    left: 27px;
+    top: 210px;
+    position: absolute;
+}
+
+.customer-i {
+    width: 25px;
+    left: 27px;
+    top: 265px;
+    position: absolute;
+}
+
+.supplier-i {
+    width: 25px;
+    left: 26px;
+    top: 317px;
+    position: absolute;
+}
+
+
+/* Top Navbar */
+.top-navbar {
+    background-color: white;
+    color: black;
+    border-bottom: 2px solid #333;
+    max-height: 68px;
+    width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.top-navbar .logo {
+    margin-top: 5px;
+    margin-left: 55px;
+}
+
+.top-navbar .notification,
+.top-navbar .account {
+    margin-right: 20px;
+}
+
+.content {
+    margin-top: 85px;
+    /* margin-left: 19.4%; */
+    margin-left: 108px;
+}
+
+.content-dashboard {
+    margin-top: 85px;
+    /* margin-left: 19.4%; */
+    margin-left: 120px;
+}
+
+.logo {
+    width: 90px;
+}
+
+.top-account {
+    margin-right: 25px;
+    margin-top: 8px;
+    display: flex;
+    gap: 12px;
+}
+
+.icon-user {
+    width: 25px;
+    bottom: 3px;
+    position: relative;
+    height: fit-content;
+}
+
+.notif {
+    width: 25px;
+    height: fit-content;
+    right: 6px;
+    bottom: 3px;
+    position: relative;
+}
+
+.username {
+    font-weight: bold;
+}
+
+
+/* Log out */
+.icon-user {
+    width: 25px;
+    bottom: 3px;
+    position: relative;
+    height: fit-content;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    /* top: 22px; */
+    background-color: #f9f9f9;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown input[type="checkbox"] {
+    display: none;
+}
+
+.dropdown input[type="checkbox"]:checked~.dropdown-menu {
+    display: block;
+}
+
+.dropdown-item {
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    color: #333;
+}
+
+.dropdown-item:hover {
+    background-color: #ddd;
+}
+
+/* Notification */
+.notif-account {
+    display: flex;
+    position: relative;
+    left: 4px;
+    gap: 12px;
+}
+
+.red-dot {
+    right: 61px;
+    top: 15%;
+}
+
+
+
+/* Views */
+table {
+    margin-top: 10px;
+    border-collapse: collapse;
+    width: 83.5vw;
+}
+
+table th,
+table td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #006181;
+}
+
+.table-th {
+    font-weight: bold;
+    background-color: #006181;
+    color: white;
+}
+
+select:hover {
+    cursor: pointer;
+}
+
+button {
+    background-color: #006181;
+    color: white;
+    border: none;
+    padding: 7px;
+}

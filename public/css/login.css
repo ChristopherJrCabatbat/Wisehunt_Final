@@ -1,0 +1,197 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@200;300;400;500;600;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 0 10px;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* background: url("https://www.codingnepalweb.com/demos/create-glassmorphism-login-form-html-css/hero-bg.jpg"), #000; */
+    background: url("../images/bg.jpg"), white;
+    background-position: center;
+    background-size: cover;
+}
+
+header {
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    padding: 3vh 5vw; /* Adjusted padding values */
+    height: 100vh;
+    width: 100vw;
+    min-height: 60px; 
+    font-style: italic;
+    position: absolute;
+    top: 0;
+}
+
+.logo {
+    /* width: 9%; */
+    width: 120px;
+    height: auto;
+    position: absolute;
+    left: 3%;
+    top: 0;
+}
+
+.top-left {
+    position: absolute;
+    top: 20%;
+    left: 4%;
+}
+
+.taas-tleft {
+    font-size: 1.1rem;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.baba-tleft {
+    font-size: .8rem;
+    font-weight: 500;
+    margin-left: 5rem;
+}
+
+.horizontal-line {
+    height: 1vh;
+    width: 30vw;
+    margin: 5px 0;
+    margin-left: -99px;
+    background-color: #D9D9D9;
+}
+
+.wrapper {
+    width: 400px;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    /* border: 1px solid rgba(255, 255, 255, 0.5); */
+    border: 1px solid black;
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: black;
+}
+
+.input-field {
+    position: relative;
+    border-bottom: 2px solid #ccc;
+    margin: 15px 0;
+}
+
+.input-field label {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    color: black;
+    font-size: 16px;
+    pointer-events: none;
+    transition: 0.15s ease;
+}
+
+.input-field input {
+    width: 100%;
+    height: 40px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: black;
+}
+
+.input-field input:focus ~ label,
+.input-field input:valid ~ label {
+    font-size: 0.8rem;
+    top: 10px;
+    transform: translateY(-120%);
+}
+
+.forget {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 25px 0 35px 0;
+    color: black;
+}
+
+#remember {
+    accent-color: black;
+}
+
+.forget label {
+    display: flex;
+    align-items: center;
+}
+
+.forget label p {
+    margin-left: 8px;
+}
+
+.wrapper a {
+    color: black;
+    text-decoration: none;
+}
+
+.wrapper a:hover {
+    text-decoration: underline;
+}
+
+button {
+    background: black;
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 16px;
+    border: 2px solid transparent;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    color: black;
+    border-color: black;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.register {
+    text-align: center;
+    margin-top: 30px;
+    color: black;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
+.baba {
+    display: flex;
+    gap: 5px;
+}
