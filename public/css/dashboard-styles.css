@@ -9,6 +9,11 @@
     gap: 12px;
 }
 
+label {
+    margin-left: 4px;
+    margin-top: 8px;
+}
+
 .product {
     width: 35px;
     position: absolute;
@@ -131,7 +136,8 @@
 select {
     margin-top: 10px;
     padding: 6px;
-    width: 15.5%;
+    width: 16.3%;
+    font-size: 1rem;
 }
 
 .th {

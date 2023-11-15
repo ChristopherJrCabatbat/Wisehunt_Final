@@ -6,6 +6,239 @@
     <link rel="stylesheet" href="{{ asset('css/product-transaction-styles.css') }}">
 @endsection
 
+@section('modals')
+
+    <div class="overlay editOverlay"></div>
+
+    {{-- Add Modal --}}
+    <div id="newModal" class="modal">
+        <div class="modal-content">
+            <p class="taas-new">Add New Product</p>
+
+            <hr>
+
+            {{-- <form class="modal-form" action="{{ route('admin.productStore') }}" --}}
+            <form class="modal-form" action="#" enctype="multipart/form-data" method="POST">
+                @csrf
+
+                <div class="row1">
+                    <div class="column">
+                        <label class="modal-top" for="">Product code:</label>
+                        <input required autofocus type="text" name="code" pattern="[0-9]{3,11}" class="row1-input"
+                            id="" value="{{ old('code') }}" />
+                    </div>
+                    <div class="column">
+
+                        <label for="">Product Name:</label>
+                        <select required class="select_product" name="name" id="product_name">
+                            <option value="" disabled selected>-- Select a Product --</option>
+                            {{-- @foreach ($suppliers as $supplier)
+                                <option value="{{ $supplier->product_name }}"
+                                    {{ old('name') === $supplier->product_name ? 'selected' : '' }}>
+                                    {{ $supplier->product_name }}
+                                </option>
+                            @endforeach --}}
+                        </select>
+                        @if ($errors->has('name'))
+                            <div class="text-danger">{{ $errors->first('name') }}</div>
+                        @endif
+                        {{-- @if (session('error'))
+                            <span class="text-danger">
+                                {{ session('error') }}
+                            </span>
+                        @endif --}}
+
+                    </div>
+                    <div class="column">
+                        <label for="">Quantity in Stock:</label>
+                        <input required type="number" name="quantity" id="" value="{{ old('quantity') }}"
+                            class="row1-input" />
+                        @if ($errors->has('quantity'))
+                            <div class="text-danger">{{ $errors->first('quantity') }}</div>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="row2">
+
+                    <div class="column">
+                        <label for="">Capital:</label>
+                        <input required type="number" name="capital" id="" value="{{ old('capital') }}"
+                            class="row2-input" />
+                        @if ($errors->has('capital'))
+                            <div class="text-danger">{{ $errors->first('capital') }}</div>
+                        @endif
+                    </div>
+                    <div class="column">
+                        <label for="">Unit Price:</label>
+                        <input required type="number" name="unit_price" id="" value="{{ old('unit_price') }}"
+                            class="row2-input" />
+                        @if ($errors->has('unit_price'))
+                            <div class="text-danger">{{ $errors->first('unit_price') }}</div>
+                        @endif
+                    </div>
+                    {{-- <div class="column">
+                        <label for="">Total Price:</label>
+                        <input required type="number" name="total_price" id="" class="row2-input" />
+                    </div> --}}
+                    <div class="column">
+                        <label for="">Category:</label>
+                        {{-- <input required type="text" name="" id="" class="row1-input" /> --}}
+                        <select required name="category" id="" class="row1-input select_categ">
+                            <option value="" disabled selected>-- Select Category --</option>
+                            <option value="Paper" {{ old('category') === 'Paper' ? 'selected' : '' }}>Paper
+                            </option>
+                            <option value="Machine" {{ old('category') === 'Machine' ? 'selected' : '' }}>
+                                Machine</option>
+                            <option value="Food Material" {{ old('category') === 'Food Material' ? 'selected' : '' }}>Food
+                                Material
+                            </option>
+                        </select>
+                    </div>
+                    <div class="column">
+                        <label for="">Image:</label>
+                        <input required type="file" name="photo" id="" class="row2-input" />
+                    </div>
+                </div>
+                <div class="row3">
+                    <label for="">Product Description:</label>
+                    <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
+                        class="" value="{{ old('description') }}">{{ old('description') }}</textarea>
+                </div>
+                {{-- <div class="row3">
+                    <div class="column">
+                    <label for="">Description</label>
+                    <textarea name="" id="" cols="30" rows="4"></textarea>
+                    </div>
+                </div> --}}
+                <hr>
+                <div class="buttons">
+                    <input type="submit" class="add-green save"
+                        style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Add" />
+                    {{-- <a href="{{ route('admin.product') }}" class="cancel closeModal">Cancel</a> --}}
+                    <button type="button" class="closeModal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    {{-- Edit Modal --}}
+    @foreach ($products as $product)
+        <div id="editModal{{ $product->id }}" class="modal editModal">
+            <div class="modal-content">
+                <p class="taas-new">Edit Product </p>
+
+                <hr>
+
+                {{-- action="{{ route('admin.productUpdate', $product->id) }}" --}}
+                <form class="modal-form" action="#" enctype="multipart/form-data" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="row1">
+                        <div class="column">
+                            <label class="modal-top" for="">Product code:</label>
+                            <input required type="text" name="code" pattern="[0-9]{3,11}" class="row1-input"
+                                id="" value="{{ old('code', $product->code) }}" />
+                        </div>
+
+                        <div class="column">
+                            <label for="">Product Name:</label>
+                            <select class="select_product" name="name" id="product_name">
+                                {{-- @foreach ($suppliers as $supplier)
+                                        <option value="{{ $supplier->product_name }}"
+                                            {{ old('name', $product->name) === $supplier->product_name ? 'selected' : '' }}>
+                                            {{ $supplier->product_name }}
+                                        </option>
+                                    @endforeach --}}
+                                <option value="Sheesh">Sheesh</option>
+                            </select>
+                            @if ($errors->has('name'))
+                                <div class="text-danger">{{ $errors->first('name') }}</div>
+                            @endif
+                        </div>
+                        <div class="column">
+                            <label for="">Quantity in Stock:</label>
+                            <input required autofocus type="number" name="quantity" id=""
+                                value="{{ old('quantity', $product->quantity) }}" class="row1-input" />
+                            @if ($errors->has('quantity'))
+                                <div class="text-danger">{{ $errors->first('quantity') }}</div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="row2">
+
+                        <div class="column">
+                            <label for="">Capital:</label>
+                            <input required type="number" name="capital" id=""
+                                value="{{ old('capital', $product->capital) }}" class="row2-input" />
+                            @if ($errors->has('capital'))
+                                <div class="text-danger">{{ $errors->first('capital') }}</div>
+                            @endif
+                        </div>
+                        <div class="column">
+                            <label for="">Unit Price:</label>
+                            <input required type="number" name="unit_price" id=""
+                                value="{{ old('unit_price', $product->unit_price) }}" class="row2-input" />
+                            @if ($errors->has('unit_price'))
+                                <div class="text-danger">{{ $errors->first('unit_price') }}</div>
+                            @endif
+                        </div>
+
+                        <div class="column">
+                            <label for="">Category:</label>
+
+                            <select name="category" id="" class="row1-input select_categ">
+                                <option value="Paper"
+                                    {{ old('category', $product->category) === 'Paper' ? 'selected' : '' }}>Paper
+                                </option>
+                                <option value="Machine"
+                                    {{ old('category', $product->category) === 'Machine' ? 'selected' : '' }}>
+                                    Machine</option>
+                                <option value="Food Material"
+                                    {{ old('category', $product->category) === 'Food Material' ? 'selected' : '' }}>
+                                    Food Material</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="row3-edit">
+                        {{-- Image --}}
+                        <div class="column">
+                            <label for="">Current Image:</label>
+                            <img class="img-edit" src="{{ asset($product->photo) }}" alt="" width="50px"
+                                height="auto">
+                        </div>
+                        <div class="column">
+                            <label for="">Change Image:</label>
+                            {{-- <input required type="file" name="image" id="" class="row2-input" /> --}}
+                            <input type="file" name="photo" id="" class="row2-input" />
+                        </div>
+                    </div>
+
+                    <div class="row4">
+                        <label for="">Product Description:</label>
+                        <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
+                            class="" value="{{ old('description') }}">{{ old('description', $product->description) }}</textarea>
+                    </div>
+
+                    <hr>
+                    <div class="buttons">
+                        <input type="submit" class="add-green"
+                            style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Update" />
+                        {{-- <a href="{{ route('admin.product') }}" class="cancel closeEditModal">Cancel</a> --}}
+                        <button type="button" class="closeEditModal">Cancel</button>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endforeach
+
+@endsection
+
 @section('side-navbar')
 
     <ul>
@@ -48,11 +281,7 @@
     <div class="content">
 
         <div class="taas">
-            {{-- <form action="{{ route('admin.createProduct') }}"> --}}
-            <form action="#">
-                <button type="submit">Add New Product</button>
-            </form>
-            {{-- <div class="show-page">Show Per page <input type="text" /></div> --}}
+            <button type="button" id="newButton">Add New Product</button>
             <div class="sort-by">
                 {{-- <form action="{{ route('admin.product') }}" method="GET"> --}}
                 <form action="#" method="GET">
@@ -65,7 +294,8 @@
                             Name (A-Z)</option>
                         <option value="category_asc" {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category
                         </option>
-                        <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Quantity in
+                        <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Quantity
+                            in
                             Stock
                             (ascending)</option>
                         <option value="capital_asc" {{ request('sort') === 'capital_asc' ? 'selected' : '' }}>
@@ -138,24 +368,22 @@
                                 <td>{{ $product->quantity }}</td>
                                 <td>{{ $product->capital }}</td>
                                 <td>{{ $product->unit_price }}</td>
-                                <td>
-                                    <div class="edit-delete">
-                                        <a href="Products/{{ $product->id }}/edit" class="edit">
-                                            <img class="edit" src="{{ asset('images/edits.png') }}" alt="">
-                                        </a>
-                                        {{-- <form id="" action="Products/{{ $product->id }}/edit">
-                                            <button type="submit" id="" class="edit"><img class="edit"
-                                                    src="{{ asset('images/edits.png') }}" alt=""></button>
-                                        </form> --}}
-
-                                        {{-- <form action="{{ route('admin.productDestroy', $product->id) }}" method="POST" --}}
-                                        <form action="#" method="POST"
-                                            onsubmit="return confirmDelete();">
+                                <td class="actions">
+                                    <div class="actions-container">
+                                        {{-- <form> --}}
+                                        <button type="button" class="edit editButton" id="edit"
+                                            data-id="{{ $product->id }}">
+                                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                        </button>
+                                        {{-- </form> --}}
+                                        {{-- <form action="{{ route('productDestroy', $product->id) }}" method="POST"> --}}
+                                        <form action="#" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="deletes"><img class="delete"
-                                                    src="{{ asset('images/delete.png') }}" alt=""></button>
-                                            {{-- <input class="delete" type="submit" name="submit" value="Delete" />  --}}
+                                            <button onclick="return confirm('Are you sure you want to delete this?')"
+                                                type="submit" class="delete" id="delete">
+                                                <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                                            </button>
                                         </form>
                                     </div>
                                 </td>

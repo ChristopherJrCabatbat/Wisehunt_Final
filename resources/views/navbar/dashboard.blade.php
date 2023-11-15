@@ -84,22 +84,17 @@
         </div>
 
         <div class="graph">
-            {{-- <div style="width: 900px; margin: auto;">
-                 Alisin ito </div>
-                 --}}
+
             <div class="bar-graph">
                 <div class="chart-container">
                     <canvas id="chart" width="834" height="400"></canvas>
-                    {{-- <canvas id="chart" width="1115" height="400"></canvas> --}}
                     <div class="chart-label chart-y-label">Earnings</div>
                 </div>
             </div>
-            {{-- <div class="bar-graph">
-                    <canvas id="barChart" width="700" height="400"></canvas>
-                </div> --}}
+
             <div class="pie-graph">
                 <canvas id="pieChart" width="800" height="750"></canvas>
-                <div class="demand">Demand</div>
+                <div class="demand">High in Demand Products</div>
             </div>
         </div>
 
@@ -253,7 +248,6 @@
 
 
 @section('script')
-
 
     <script>
         var labels = {!! json_encode($labels) !!};

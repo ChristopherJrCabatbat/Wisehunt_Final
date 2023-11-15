@@ -1,5 +1,3 @@
-// charts.js
-
 // Bar Chart/Graph
 var ctx = document.getElementById('chart').getContext('2d');
 var userChart = new Chart(ctx, {

@@ -2,6 +2,7 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    font-family: "Times New Roman", Times, serif;
 }
 
 .container {
@@ -31,7 +32,9 @@
     text-decoration: none;
 }
 
-.sidebar:hover, button:hover, a:hover {
+.sidebar:hover,
+button:hover,
+a:hover {
     background-color: #363535;
     cursor: pointer;
 }
@@ -59,7 +62,6 @@
     margin-top: 1px;
     margin-bottom: 1px;
 }
-
 
 .dashboard-container {
     margin-top: 56px;
@@ -100,7 +102,6 @@
     position: absolute;
 }
 
-
 /* Top Navbar */
 .top-navbar {
     background-color: white;
@@ -129,13 +130,13 @@
 
 .content {
     margin-top: 85px;
-    margin-left: 108px;
+    margin-left: 211px;
     /* margin-left: 19.4%; */
 }
 
 .content-dashboard {
     margin-top: 85px;
-    margin-left: 120px;
+    margin-left: 220px;
     /* margin-left: 19.4%; */
 }
 
@@ -158,7 +159,7 @@ img {
 .notif {
     width: 25px;
     height: fit-content;
-    right: -10px;
+    right: 2px;
     bottom: 3px;
     position: relative;
 }
@@ -167,6 +168,7 @@ img {
     font-weight: bold;
     position: relative;
 }
+
 
 
 /* Log out */
@@ -198,32 +200,21 @@ img {
     display: none;
 }
 
-.dropdown input[type="checkbox"]:checked~.dropdown-menu {
+/* Adjust the style for the checked state
+.dropdown input[type="checkbox"]:checked ~ .dropdown-menu,
+.dropdown:hover .dropdown-menu {
     display: block;
-}
+} */
 
 .dropdown-item {
     padding: 12px 16px;
     text-decoration: none;
     display: block;
-    color: #333;
+    color: black;
 }
 
 .dropdown-item:hover {
     background-color: #ddd;
-}
-
-/* Notification */
-.notif-account {
-    display: flex;
-    position: relative;
-    left: 4px;
-    gap: 12px;
-}
-
-.red-dot {
-    right: 61px;
-    top: 15%;
 }
 
 
@@ -259,6 +250,125 @@ button {
     padding: 7px;
 }
 
-div.edit-delete a.edit:hover {
-    background-color: transparent;
+
+/* Notification */
+.notification-panel {
+    display: none;
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    width: 300px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.notification-list {
+    list-style: none;
+    padding: 0;
+}
+
+.notification-panel h3 {
+    margin: 0;
+}
+
+.close-notification {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.notification-list li {
+    padding: 8px 13px;
+    padding-right: 21px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color: #333;
+    transition: background-color 0.3s;
+    position: relative;
+    cursor: pointer;
+}
+
+.notification-list li:hover {
+    background-color: #a3a3a3;
+}
+
+.notification-list li.clicked::before {
+    content: none;
+}
+
+.notif {
+    cursor: pointer;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.notification-list li.clicked .dot {
+    display: none;
+}
+
+.red-dot {
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+    position: absolute;
+    right: 147px;
+    z-index: 10;
+    top: 40%;
+    transform: translateY(-50%);
+    display: none; /* Initially hidden */
+}
+
+
+/* Edit-Delete */
+i {
+    font-size: 14px;
+}
+
+.actions {
+    text-align: center;
+    padding: 8px 6px;
+}
+
+.actions-container {
+    display: flex; 
+    justify-content: center;
+}
+
+form button#edit, form button#delete {
+    min-width: 12px;
+    padding: 7px 8px;
+}
+
+form button#edit {
+    background-color: #006181;
+    border-radius: 0;
+}
+
+form button#edit:hover {
+    background-color: #003b4e;  
+}
+
+form button#delete {
+    background-color: #df3647;
+    border-radius: 0;
+}
+
+form button#delete:hover {
+    background-color: #a11c29;
 }

@@ -8,6 +8,77 @@
     <link rel="stylesheet" href="{{ asset('css/supplier-styles.css') }}">
 @endsection
 
+@section('modals')
+
+    <div class="overlay editOverlay"></div>
+
+    {{-- Add Modal --}}
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+
+            {{-- <form class="modal-form" action="{{ route('admin.suppStore') }}" method="POST"> --}}
+            <form class="modal-form" action="#" method="POST">
+                @csrf
+                <center>
+                    <h2 style="margin: 0%; color:#333;">Add Supplier</h2>
+                </center>
+                <label class="modal-top" for="">Supplier:</label>
+                <input required autofocus type="text" name="supplier" id="autofocus" />
+                <label for="">Contact Person:</label>
+                <input required type="text" name="contact_person" id="" />
+                <label for="">Address:</label>
+                <input required type="text" name="address" id="" />
+                <label for="">Product Name:</label>
+                <input required type="text" name="product_name" id="" />
+                <label for="">Contact Number:</label>
+                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number" name="contact_num"
+                    id="" value="">
+
+                <input class="add" type="submit" value="Add" />
+            </form>
+        </div>
+    </div>
+
+    {{-- Edit Modal --}}
+    @foreach ($suppliers as $supplier)
+        <div id="editModal{{ $supplier->id }}" class="modal">
+            <div class="modal-content">
+                <a class="closeEditModal">&times;</a>
+
+                {{-- <form class="modal-form" action="{{ route('admin.supplierUpdate', $supplier->id) }}" method="POST"> --}}
+                <form class="modal-form" action="#" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <center>
+                        <h2 style="margin: 0%; color:#333;">Edit Supplier</h2>
+                    </center>
+                    <label class="modal-top" for="">Supplier:</label>
+                    <input required type="text" name="supplier" id="" autofocus
+                        value="{{ old('supplier', $supplier->supplier) }}" />
+                    <label for="">Contact Person:</label>
+                    <input required type="text" name="contact_person" id=""
+                        value="{{ old('contact_person', $supplier->contact_person) }}" />
+                    <label for="">Address:</label>
+                    <input required type="text" name="address" id=""
+                        value="{{ old('address', $supplier->address) }}" />
+                    <label for="">Product Name:</label>
+                    <input required type="text" name="product_name" id=""
+                        value="{{ old('product_name', $supplier->product_name) }}" />
+                    <label for="">Contact:</label>
+                    <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
+                        name="contact_num" name="contact_num" id=""
+                        value="{{ old('contact_num', $supplier->contact_num) }}" />
+
+                    <input class="add" type="submit" value="Update" />
+                </form>
+            </div>
+        </div>
+    @endforeach
+
+
+@endsection
+
 @section('side-navbar')
 
     <ul>
@@ -47,37 +118,10 @@
 
 @section('main-content')
 
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-
-            {{-- <form class="modal-form" action="{{ route('admin.suppStore') }}" method="POST"> --}}
-            <form class="modal-form" action="#" method="POST">
-                @csrf
-                <center>
-                    <h2 style="margin: 0%; color:#333;">Add Supplier</h2>
-                </center>
-                <label class="modal-top" for="">Supplier:</label>
-                <input required autofocus type="text" name="supplier" id="supplier" />
-                <label for="">Contact Person:</label>
-                <input required type="text" name="contact_person" id="" />
-                <label for="">Address:</label>
-                <input required type="text" name="address" id="" />
-                <label for="">Product Name:</label>
-                <input required type="text" name="product_name" id="" />
-                <label for="">Contact Number:</label>
-                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number" name="contact_num"
-                    id="" value="">
-
-                <input class="add" type="submit" value="Add" />
-            </form>
-        </div>
-    </div>
-
     <div class="content">
         <div class="taas">
             <form id="addCustomerForm">
-                <button class="add" type="button" id="addCustomerBtn">Add Supplier</button>
+                <button class="add" type="button" id="addBtn">Add Supplier</button>
             </form>
         </div>
         <div class="table">
@@ -118,21 +162,26 @@
                                 <td>{{ $supplier->address }}</td>
                                 <td>{{ $supplier->product_name }}</td>
 
-                                <td>
-                                    <div class="edit-delete">
-                                        <a href="Suppliers/{{ $supplier->id }}/edit" class="edit">
-                                            <img class="edit" src="{{ asset('images/edits.png') }}" alt="edit btn"></a>
-
-                                        {{-- <form action="{{ route('admin.supplierDestroy', $supplier->id) }}" method="POST" --}}
-                                        <form action="#" method="POST" onsubmit="return confirmDelete();">
+                                <td class="actions">
+                                    <div class="actions-container">
+                                        <form>
+                                            <button type="button" class="edit editButton" id="edit"
+                                                data-id="{{ $supplier->id }}">
+                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                            </button>
+                                        </form>
+                                        {{-- <form action="{{ route('productDestroy', $product->id) }}" method="POST"> --}}
+                                        <form action="#" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="deletes"><img class="delete"
-                                                    src="{{ asset('images/delete.png') }}" alt="delete btn"></button>
+                                            <button onclick="return confirm('Are you sure you want to delete this?')"
+                                                type="submit" class="delete" id="delete">
+                                                <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                                            </button>
                                         </form>
                                     </div>
-
                                 </td>
+
                             </tr>
                         @endforeach
                     @endif

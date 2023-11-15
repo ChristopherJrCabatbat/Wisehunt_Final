@@ -281,7 +281,7 @@ class AdminController extends Controller
         //     }
         // }
 
-        $transactions = $query->paginate(6);
+        $transactions = $query->paginate(1);
         $products = Product::all();
 
         $searchQuery = $request->input('search');

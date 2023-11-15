@@ -7,6 +7,44 @@
     <link rel="stylesheet" href="{{ asset('css/customer-supplier-styles.css') }}">
 @endsection
 
+@section('modals')
+
+<div class="overlay editOverlay"></div>
+
+    {{-- Add Modal --}}
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close ">&times;</span>
+
+            {{-- <form class="modal-form" action="{{ route('admin.customerStore') }}" method="POST"> --}}
+            <form class="modal-form" action="#" method="POST">
+                @csrf
+                <center>
+                    <h2 style="margin: 0%; color:#333;">Add Customer</h2>
+                </center>
+                <label class="modal-top" for="">Customer:</label>
+                <input required autofocus type="text" name="name" id="autofocus" />
+                <label for="">Contact Person:</label>
+                <input required type="text" name="contact_person" id="" />
+                <label for="">Address:</label>
+                <input required type="text" name="address" id="" />
+                <label for="">Contact Number:</label>
+                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
+                    name="contact_num" id="" value="">
+                <label for="">Item Sold:</label>
+                <input required type="text" name="item_sold" id="" />
+
+                <input class="add" type="submit" value="Add" />
+            </form>
+
+        </div>
+    </div>
+
+    {{-- Edit Modal --}}
+
+
+@endsection
+
 @section('side-navbar')
 
     <ul>
@@ -46,40 +84,10 @@
 
 @section('main-content')
 
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-
-            {{-- <form class="modal-form" action="{{ route('admin.customerStore') }}" method="POST"> --}}
-            <form class="modal-form" action="#" method="POST">
-                @csrf
-                <center>
-                    <h2 style="margin: 0%; color:#333;">Add Customer</h2>
-                </center>
-                <label class="modal-top" for="">Customer:</label>
-                <input required autofocus type="text" name="name" id="name" />
-                <label for="">Contact Person:</label>
-                <input required type="text" name="contact_person" id="" />
-                <label for="">Address:</label>
-                <input required type="text" name="address" id="" />
-                <label for="">Contact Number:</label>
-                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number" name="contact_num"
-                    id="" value="">
-                <label for="">Item Sold:</label>
-                <input required type="text" name="item_sold" id="" />
-                {{-- <label for="">Quantity:</label>
-                  <input required type="number" name="quantity" id="" /> --}}
-
-                <input class="add" type="submit" value="Add" />
-            </form>
-
-        </div>
-    </div>
-
     <div class="content">
         <div class="taas">
             <form id="addCustomerForm">
-                <button class="add" type="button" id="addCustomerBtn">Add Customer</button>
+                <button class="add" type="button" id="addBtn">Add Customer</button>
             </form>
         </div>
 
@@ -117,17 +125,23 @@
                                 <td>{{ $customer->address }}</td>
                                 <td>{{ $customer->contact_num }}</td>
                                 <td>{{ $customer->item_sold }}</td>
-                                <td>
-                                    <div class="edit-delete">
-                                        <a href="Customers/{{ $customer->id }}/edit" class="edit">
-                                            <img class="edit" src="{{ asset('images/edits.png') }}" alt="edit btn"></a>
-
-                                        {{-- <form action="{{ route('admin.customerDestroy', $customer->id) }}" method="POST" --}}
-                                        <form action="#" method="POST" onsubmit="return confirmDelete();">
+                                <td class="actions">
+                                    <div class="actions-container">
+                                        <form>
+                                            <button type="button" class="edit editButton" id="edit"
+                                                {{-- data-id="{{ $product->id }}" --}}
+                                                >
+                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                            </button>
+                                        </form>
+                                        {{-- <form action="{{ route('productDestroy', $product->id) }}" method="POST"> --}}
+                                        <form action="#" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="deletes"><img class="delete"
-                                                    src="{{ asset('images/delete.png') }}" alt="delete btn"></button>
+                                            <button onclick="return confirm('Are you sure you want to delete this?')" type="submit"
+                                                class="delete" id="delete">
+                                                <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                                            </button>
                                         </form>
                                     </div>
                                 </td>
