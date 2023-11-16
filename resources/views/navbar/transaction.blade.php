@@ -24,7 +24,7 @@
                 </center>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                <select autofocus required name="customer_name" id="customer" onchange="updateContactNumber()"
+                <select autofocus required name="customer_name" id="autofocus" onchange="updateContactNumber()"
                     class="select">
                     <option value="" disabled selected>-- Select a Customer --</option>
                     {{-- @foreach ($customers as $customer)
@@ -77,7 +77,7 @@
                 <a class="close closeEditModal">&times;</a>
 
                 {{-- <form class="modal-form" action="{{ route('admin.transactionUpdate', $transaction->id) }}" method="POST"> --}}
-                <form class="modal-form" action="#" method="POST">
+                <form class="edit-modal-form" action="#" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -86,7 +86,7 @@
                     </center>
 
                     <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                    <select class="select" autofocus name="customer_name" id="customer" onchange="updateContactNumber()">
+                    <select class="select autofocus" autofocus name="customer_name" id="customer" onchange="updateContactNumber()">
                         {{-- @foreach ($customers as $customer)
                             <option value="{{ $customer->name }}" data-contact="{{ $customer->contact_num }}"
                                 {{ old('customer_name', $transaction->customer_name) === $customer->name ? 'selected' : '' }}>

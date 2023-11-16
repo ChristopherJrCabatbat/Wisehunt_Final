@@ -1,3 +1,5 @@
+document.addEventListener("DOMContentLoaded", function() {
+    
 // Select all edit buttons with the class "editButton"
 const editButtons = document.querySelectorAll(".editButton");
 const editOverlays = document.querySelectorAll(".editOverlay");
@@ -8,13 +10,21 @@ const closeEditButtons = document.querySelectorAll(".closeEditModal");
 editModals.forEach(modal => modal.style.display = "none");
 editOverlays.forEach(overlay => overlay.style.display = "none");
 
-// Function to open the Edit Brand modal with the specified brand ID
+let openedModal;
+
 function openEditModal(dataId) {
     // Find the corresponding modal based on brand ID and show it
-    const modal = document.getElementById("editModal" + dataId);
-    modal.style.display = "block";
+    openedModal = document.getElementById("editModal" + dataId);
+    openedModal.style.display = "block";
+    
+    // Autofocus
+    setTimeout(() => {
+        const autofocus = openedModal.querySelector('.autofocus');
+        if (autofocus) {
+            autofocus.focus();
+        }
+    }, 0);
 }
-
 // Attach click event handler for all edit buttons and handle event delegation
 document.addEventListener("click", function (event) {
     // Find the closest ancestor with the class "editButton"
@@ -34,6 +44,11 @@ closeEditButtons.forEach(function (closeEditButton) {
 
 // Close the Edit Order modal
 function closeEditModal() {
+    const form = openedModal.querySelector(".edit-modal-form");
+
+    // Reset the form
+    form.reset();
+
     editModals.forEach(function (modal) {
         modal.style.display = "none";
     });
@@ -49,4 +64,6 @@ document.addEventListener("click", function (event) {
             closeEditModal();
         }
     });
+});
+
 });

@@ -17,36 +17,30 @@
 
             <hr>
 
-            {{-- <form class="modal-form" action="{{ route('admin.productStore') }}" --}}
-            <form class="modal-form" action="#" enctype="multipart/form-data" method="POST">
+            <form class="modal-form" action="{{ route('admin.productStore') }}" enctype="multipart/form-data" method="POST">
                 @csrf
 
                 <div class="row1">
                     <div class="column">
                         <label class="modal-top" for="">Product code:</label>
                         <input required autofocus type="text" name="code" pattern="[0-9]{3,11}" class="row1-input"
-                            id="" value="{{ old('code') }}" />
+                            id="autofocus" value="{{ old('code') }}" />
                     </div>
                     <div class="column">
 
                         <label for="">Product Name:</label>
                         <select required class="select_product" name="name" id="product_name">
                             <option value="" disabled selected>-- Select a Product --</option>
-                            {{-- @foreach ($suppliers as $supplier)
+                            @foreach ($suppliers as $supplier)
                                 <option value="{{ $supplier->product_name }}"
                                     {{ old('name') === $supplier->product_name ? 'selected' : '' }}>
                                     {{ $supplier->product_name }}
                                 </option>
-                            @endforeach --}}
+                            @endforeach
                         </select>
                         @if ($errors->has('name'))
                             <div class="text-danger">{{ $errors->first('name') }}</div>
                         @endif
-                        {{-- @if (session('error'))
-                            <span class="text-danger">
-                                {{ session('error') }}
-                            </span>
-                        @endif --}}
 
                     </div>
                     <div class="column">
@@ -77,13 +71,9 @@
                             <div class="text-danger">{{ $errors->first('unit_price') }}</div>
                         @endif
                     </div>
-                    {{-- <div class="column">
-                        <label for="">Total Price:</label>
-                        <input required type="number" name="total_price" id="" class="row2-input" />
-                    </div> --}}
+                  
                     <div class="column">
                         <label for="">Category:</label>
-                        {{-- <input required type="text" name="" id="" class="row1-input" /> --}}
                         <select required name="category" id="" class="row1-input select_categ">
                             <option value="" disabled selected>-- Select Category --</option>
                             <option value="Paper" {{ old('category') === 'Paper' ? 'selected' : '' }}>Paper
@@ -105,12 +95,7 @@
                     <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
                         class="" value="{{ old('description') }}">{{ old('description') }}</textarea>
                 </div>
-                {{-- <div class="row3">
-                    <div class="column">
-                    <label for="">Description</label>
-                    <textarea name="" id="" cols="30" rows="4"></textarea>
-                    </div>
-                </div> --}}
+               
                 <hr>
                 <div class="buttons">
                     <input type="submit" class="add-green save"
@@ -123,119 +108,102 @@
     </div>
 
 
-    {{-- Edit Modal --}}
+  <!-- Edit Modal -->
     @foreach ($products as $product)
-        <div id="editModal{{ $product->id }}" class="modal editModal">
-            <div class="modal-content">
-                <p class="taas-new">Edit Product </p>
+    <div id="editModal{{ $product->id }}" class="modal editModal">
+        <div class="edit-modal-content">
+            <p class="taas-new">Edit Product </p>
+            <hr>
+            <form class="edit-modal-form" action="{{ route('admin.productUpdate', $product->id) }}" enctype="multipart/form-data" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="row1">
+                    <div class="column">
+                        <label class="modal-top" for="">Product code:</label>
+                        <input required type="text" name="code" pattern="[0-9]{3,11}" class="row1-input" value="{{ old('code', $product->code) }}" />
+                    </div>
+                    <div class="column">
+                        <label for="">Product Name:</label>
+                        <select class="select_product" name="name" class="product_name">
+                            <option value="Sheesh" {{ old('name', $product->name) === 'Sheesh' ? 'selected' : '' }}>Sheesh</option>
+                        </select>
+                        @if ($errors->has('name'))
+                            <div class="text-danger">{{ $errors->first('name') }}</div>
+                        @endif
+                    </div>
+                    <div class="column">
+                        <label for="">Quantity in Stock:</label>
+                        <input required autofocus type="number" name="quantity" class="row1-input autofocus" value="{{ old('quantity', $product->quantity) }}" />
+                        @if ($errors->has('quantity'))
+                            <div class="text-danger">{{ $errors->first('quantity') }}</div>
+                        @endif
+                    </div>
+                </div>
+                <div class="row2">
 
-                <hr>
-
-                {{-- action="{{ route('admin.productUpdate', $product->id) }}" --}}
-                <form class="modal-form" action="#" enctype="multipart/form-data" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="row1">
-                        <div class="column">
-                            <label class="modal-top" for="">Product code:</label>
-                            <input required type="text" name="code" pattern="[0-9]{3,11}" class="row1-input"
-                                id="" value="{{ old('code', $product->code) }}" />
-                        </div>
-
-                        <div class="column">
-                            <label for="">Product Name:</label>
-                            <select class="select_product" name="name" id="product_name">
-                                {{-- @foreach ($suppliers as $supplier)
-                                        <option value="{{ $supplier->product_name }}"
-                                            {{ old('name', $product->name) === $supplier->product_name ? 'selected' : '' }}>
-                                            {{ $supplier->product_name }}
-                                        </option>
-                                    @endforeach --}}
-                                <option value="Sheesh">Sheesh</option>
-                            </select>
-                            @if ($errors->has('name'))
-                                <div class="text-danger">{{ $errors->first('name') }}</div>
-                            @endif
-                        </div>
-                        <div class="column">
-                            <label for="">Quantity in Stock:</label>
-                            <input required autofocus type="number" name="quantity" id=""
-                                value="{{ old('quantity', $product->quantity) }}" class="row1-input" />
-                            @if ($errors->has('quantity'))
-                                <div class="text-danger">{{ $errors->first('quantity') }}</div>
-                            @endif
-                        </div>
+                    <div class="column">
+                        <label for="">Capital:</label>
+                        <input required type="number" name="capital" id=""
+                            value="{{ old('capital', $product->capital) }}" class="row2-input" />
+                        @if ($errors->has('capital'))
+                            <div class="text-danger">{{ $errors->first('capital') }}</div>
+                        @endif
+                    </div>
+                    <div class="column">
+                        <label for="">Unit Price:</label>
+                        <input required type="number" name="unit_price" id=""
+                            value="{{ old('unit_price', $product->unit_price) }}" class="row2-input" />
+                        @if ($errors->has('unit_price'))
+                            <div class="text-danger">{{ $errors->first('unit_price') }}</div>
+                        @endif
                     </div>
 
-                    <div class="row2">
+                    <div class="column">
+                        <label for="">Category:</label>
 
-                        <div class="column">
-                            <label for="">Capital:</label>
-                            <input required type="number" name="capital" id=""
-                                value="{{ old('capital', $product->capital) }}" class="row2-input" />
-                            @if ($errors->has('capital'))
-                                <div class="text-danger">{{ $errors->first('capital') }}</div>
-                            @endif
-                        </div>
-                        <div class="column">
-                            <label for="">Unit Price:</label>
-                            <input required type="number" name="unit_price" id=""
-                                value="{{ old('unit_price', $product->unit_price) }}" class="row2-input" />
-                            @if ($errors->has('unit_price'))
-                                <div class="text-danger">{{ $errors->first('unit_price') }}</div>
-                            @endif
-                        </div>
-
-                        <div class="column">
-                            <label for="">Category:</label>
-
-                            <select name="category" id="" class="row1-input select_categ">
-                                <option value="Paper"
-                                    {{ old('category', $product->category) === 'Paper' ? 'selected' : '' }}>Paper
-                                </option>
-                                <option value="Machine"
-                                    {{ old('category', $product->category) === 'Machine' ? 'selected' : '' }}>
-                                    Machine</option>
-                                <option value="Food Material"
-                                    {{ old('category', $product->category) === 'Food Material' ? 'selected' : '' }}>
-                                    Food Material</option>
-                            </select>
-                        </div>
-
-                    </div>
-                    <div class="row3-edit">
-                        {{-- Image --}}
-                        <div class="column">
-                            <label for="">Current Image:</label>
-                            <img class="img-edit" src="{{ asset($product->photo) }}" alt="" width="50px"
-                                height="auto">
-                        </div>
-                        <div class="column">
-                            <label for="">Change Image:</label>
-                            {{-- <input required type="file" name="image" id="" class="row2-input" /> --}}
-                            <input type="file" name="photo" id="" class="row2-input" />
-                        </div>
+                        <select name="category" id="" class="row1-input select_categ">
+                            <option value="Paper"
+                                {{ old('category', $product->category) === 'Paper' ? 'selected' : '' }}>Paper
+                            </option>
+                            <option value="Machine"
+                                {{ old('category', $product->category) === 'Machine' ? 'selected' : '' }}>
+                                Machine</option>
+                            <option value="Food Material"
+                                {{ old('category', $product->category) === 'Food Material' ? 'selected' : '' }}>
+                                Food Material</option>
+                        </select>
                     </div>
 
-                    <div class="row4">
-                        <label for="">Product Description:</label>
-                        <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
-                            class="" value="{{ old('description') }}">{{ old('description', $product->description) }}</textarea>
+                </div>
+                <div class="row3-edit">
+                    {{-- Image --}}
+                    <div class="column">
+                        <label for="">Current Image:</label>
+                        <img class="img-edit" src="{{ asset($product->photo) }}" alt="" width="50px"
+                            height="auto">
                     </div>
-
-                    <hr>
-                    <div class="buttons">
-                        <input type="submit" class="add-green"
-                            style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Update" />
-                        {{-- <a href="{{ route('admin.product') }}" class="cancel closeEditModal">Cancel</a> --}}
-                        <button type="button" class="closeEditModal">Cancel</button>
-
+                    <div class="column">
+                        <label for="">Change Image:</label>
+                        {{-- <input required type="file" name="image" id="" class="row2-input" /> --}}
+                        <input type="file" name="photo" id="" class="row2-input" />
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <div class="row4">
+                    <label for="">Product Description:</label>
+                    <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
+                        class="" value="{{ old('description') }}">{{ old('description', $product->description) }}</textarea>
+                </div>
+
+                <hr>            <div class="buttons">
+                    <input type="submit" class="add-green" style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Update" />
+                    <button type="button" class="closeEditModal">Cancel</button>
+                </div>
+            </form>
         </div>
+    </div>
     @endforeach
+
 
 @endsection
 
@@ -370,14 +338,12 @@
                                 <td>{{ $product->unit_price }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
-                                        {{-- <form> --}}
                                         <button type="button" class="edit editButton" id="edit"
                                             data-id="{{ $product->id }}">
                                             <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                         </button>
-                                        {{-- </form> --}}
-                                        {{-- <form action="{{ route('productDestroy', $product->id) }}" method="POST"> --}}
-                                        <form action="#" method="POST">
+
+                                        <form action="{{ route('admin.productDestroy', $product->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button onclick="return confirm('Are you sure you want to delete this?')"

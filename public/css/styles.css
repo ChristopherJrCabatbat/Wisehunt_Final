@@ -5,6 +5,10 @@
     font-family: "Times New Roman", Times, serif;
 }
 
+input:not([type="file"]) {
+    font-size: 1rem;
+}
+
 .container {
     display: flex;
 }

@@ -35,10 +35,23 @@ table {
     border: 2px solid #b8b7b7;
     position: relative;
     bottom: 140px;
+    max-width: 783px;
+}
+.edit-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px 20px 10px 20px;
+    border: 2px solid #b8b7b7;
+    position: relative;
+    bottom: 140px;
     max-width: 720px;
 }
 
 .modal-form {
+    display: flex;
+    flex-direction: column;
+}
+.edit-modal-form {
     display: flex;
     flex-direction: column;
 }

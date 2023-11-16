@@ -17,8 +17,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
 
-            {{-- <form class="modal-form" action="{{ route('admin.suppStore') }}" method="POST"> --}}
-            <form class="modal-form" action="#" method="POST">
+            <form class="modal-form" action="{{ route('admin.supplierStore') }}" method="POST">
                 @csrf
                 <center>
                     <h2 style="margin: 0%; color:#333;">Add Supplier</h2>
@@ -42,19 +41,20 @@
 
     {{-- Edit Modal --}}
     @foreach ($suppliers as $supplier)
-        <div id="editModal{{ $supplier->id }}" class="modal">
+        <div id="editModal{{ $supplier->id }}" class="modal editModal">
             <div class="modal-content">
-                <a class="closeEditModal">&times;</a>
+                <span class="close closeEditModal">&times;</span>
 
-                {{-- <form class="modal-form" action="{{ route('admin.supplierUpdate', $supplier->id) }}" method="POST"> --}}
-                <form class="modal-form" action="#" method="POST">
+                {{-- "{{ route('admin.supplierUpdate', $supplier->id) }}"  --}}
+                <form class="edit-modal-form" action="#" method="POST">
                     @csrf
                     @method('PUT')
+
                     <center>
                         <h2 style="margin: 0%; color:#333;">Edit Supplier</h2>
                     </center>
                     <label class="modal-top" for="">Supplier:</label>
-                    <input required type="text" name="supplier" id="" autofocus
+                    <input required type="text" class="autofocus" name="supplier" id="" autofocus
                         value="{{ old('supplier', $supplier->supplier) }}" />
                     <label for="">Contact Person:</label>
                     <input required type="text" name="contact_person" id=""
@@ -164,14 +164,12 @@
 
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form>
                                             <button type="button" class="edit editButton" id="edit"
                                                 data-id="{{ $supplier->id }}">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
-                                        </form>
-                                        {{-- <form action="{{ route('productDestroy', $product->id) }}" method="POST"> --}}
-                                        <form action="#" method="POST">
+
+                                        <form action="{{ route('admin.supplierDestroy', $supplier->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button onclick="return confirm('Are you sure you want to delete this?')"

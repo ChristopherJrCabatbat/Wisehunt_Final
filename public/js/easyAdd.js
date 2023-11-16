@@ -7,6 +7,11 @@ addBtn.addEventListener("click", function () {
 });
 
 closeBtn.addEventListener("click", function () {
+    const form = document.querySelector(".modal-form");
+
+    // Reset the form
+    form.reset();
+    
     myModal.style.display = "none";
 });
 

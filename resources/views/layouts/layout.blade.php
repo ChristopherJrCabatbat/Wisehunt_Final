@@ -47,7 +47,7 @@
                         <span class="red-dot" id="notificationDot"></span>
 
                         {{-- <div class="username">{{ $username }}</div> --}}
-                        <div class="username">username</div>
+                        <div class="username">admin</div>
 
                         <!-- Log out -->
                         <div class="dropdown">
@@ -87,7 +87,7 @@
     <script src="{{ asset('js/add.js') }}"></script>
     <script src="{{ asset('js/edit.js') }}"></script>
     <script src="{{ asset('js/easyAdd.js') }}"></script>
-    <script src="{{ asset('js/easyEdit.js') }}"></script>
+    {{-- <script src="{{ asset('js/easyEdit.js') }}"></script> --}}
 
     <script>
         const lowQuantityNotifications = {!! json_encode($lowQuantityNotifications) !!};

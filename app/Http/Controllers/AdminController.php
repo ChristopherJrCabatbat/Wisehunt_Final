@@ -3,21 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product;
 use Illuminate\Support\Facades\Session;
-use App\Models\Customer;
-use App\Models\User;
-use App\Models\Transaction;
-use App\Models\Supplier;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+
+use App\Models\Product;
+use App\Models\Customer;
+use App\Models\Transaction;
+use App\Models\Supplier;
+use App\Models\User;
 use App\Models\UserAccount;
+
 use App\Notifications\SMSNotification;
+
+use Carbon\Carbon;
+
 
 class AdminController extends Controller
 {
+    // Dashboard Controller
     public function dashboard()
     {
         $nm = Session::get('name');
@@ -37,41 +42,31 @@ class AdminController extends Controller
             }
         }
 
+        // // SMS
+        // $productsss = Products::all();
+        // $lowQuantityNotifications = [];
+
+        // foreach ($productsss as $product) {
+        //     if ($product->quantity <= 20) {
+        //         $notification = [
+        //             'message' => $product->name . "'s quantity is too low!",
+        //             'productId' => $product->id,
+        //         ];
+        //         $lowQuantityNotifications[] = $notification;
+
+        //         // Access user's phone number from the product's user relation
+        //         $phoneNumber = $product->user->phone_number; // Assuming a 'phone_number' field in the User model
+
+        //         // Call sendSMSNotification using $this
+        //         $this->sendSMSNotification($phoneNumber, $product->name);
+        //     }
+        // }
+
+
         $productCount = Product::count();
         $transactionCount = Transaction::count();
-
-        $transactions_qty = DB::table('transactions')
-            ->select('product_name', DB::raw('SUM(qty) as total_qty'))
-            ->groupBy('product_name')
-            ->orderByDesc('total_qty') // Order by the sum of qty in descending order
-            ->limit(5)
-            ->get();
-
-
-        $transactions_qty_low = DB::table('transactions')
-            ->select('product_name', DB::raw('SUM(qty) as total_qty'))
-            ->groupBy('product_name')
-            ->orderBy('total_qty') // Order by the sum of qty in ascending order
-            ->limit(5)
-            ->get();
-
-        $transactions_total_price = DB::table('transactions')
-            ->select('product_name', DB::raw('SUM(total_earned) as total_earning'))
-            ->groupBy('product_name')
-            ->orderByDesc('total_earning') // Order by the sum of total_price in descending order
-            ->limit(5)
-            ->get();
-
-        $transactions_total_price_low = DB::table('transactions')
-            ->select('product_name', DB::raw('SUM(total_earned) as total_earning'))
-            ->groupBy('product_name')
-            ->orderBy('total_earning')
-            ->limit(5)
-            ->get();
-
         $totalSalesQty = Transaction::sum('qty');
         $totalEarnings = Transaction::sum('total_earned');
-
 
         // Bar Chart/Graph
         $currentYear = date('Y');
@@ -139,13 +134,9 @@ class AdminController extends Controller
 
         // $transactions = Transactions::all();       
         return view('navbar.dashboard', [
+            'username' => $nm,
             'productCount' => $productCount,
             'transactionCount' => $transactionCount,
-            'username' => $nm,
-            'transactions_qty' => $transactions_qty,
-            'transactions_qty_low' => $transactions_qty_low,
-            'transactions_total_price' => $transactions_total_price,
-            'transactions_total_price_low' => $transactions_total_price_low,
             'totalSalesQty' => $totalSalesQty,
             'totalEarnings' => $totalEarnings,
             'lowQuantityNotifications' => $lowQuantityNotifications,
@@ -156,13 +147,12 @@ class AdminController extends Controller
         ]);
     }
 
+    // Product Controller
     public function product(Request $request)
     {
-        // dd($request->input('sort'));
         $nm = Session::get('name');
-        $sortOption = $request->input('sort');
-        // dd($sortOption);
 
+        $sortOption = $request->input('sort');
         $query = Product::query();
 
         // Notification
@@ -183,26 +173,6 @@ class AdminController extends Controller
             }
         }
 
-        // $productsss = Products::all();
-        // $lowQuantityNotifications = [];
-
-        // foreach ($productsss as $product) {
-        //     if ($product->quantity <= 20) {
-        //         $notification = [
-        //             'message' => $product->name . "'s quantity is too low!",
-        //             'productId' => $product->id,
-        //         ];
-        //         $lowQuantityNotifications[] = $notification;
-
-        //         // Access user's phone number from the product's user relation
-        //         $phoneNumber = $product->user->phone_number; // Assuming a 'phone_number' field in the User model
-
-        //         // Call sendSMSNotification using $this
-        //         $this->sendSMSNotification($phoneNumber, $product->name);
-        //     }
-        // }
-
-
         if ($sortOption === 'name_asc') {
             $query->orderBy('name', 'asc');
         } elseif ($sortOption === 'category_asc') {
@@ -215,7 +185,8 @@ class AdminController extends Controller
             $query->orderBy('unit_price', 'asc');
         }
 
-        // $products = $query->get();
+        $suppliers = Supplier::all();
+
         $products = $query->paginate(5);
 
         $searchQuery = $request->input('search');
@@ -224,9 +195,91 @@ class AdminController extends Controller
             'username' => $nm,
             'lowQuantityNotifications' => $lowQuantityNotifications,
             'searchQuery' => $searchQuery,
-            'products' => $products,    
+            'products' => $products,
+            'suppliers' => $suppliers,
         ]);
     }
+
+    public function productStore(Request $request)
+    {
+
+        // Your validation logic here
+        $validatedData = $request->validate([
+            'code' => 'required',
+            'name' => 'required|unique:products,name,NULL,id',
+            'description' => 'required',
+            'category' => 'required',
+            'quantity' => 'required|numeric|min:1', // Quantity should be numeric and greater than or equal to 1
+            'capital' => 'required|numeric|min:1', // Capital should be numeric and greater than or equal to 1
+            'unit_price' => 'required|numeric|min:1', // Unit Price should be numeric and greater than or equal to 1
+        ], [
+            'name.unique' => 'You already have :input in your table.',
+        ]);
+
+        $products = new Product;
+        $products->code = $request->input('code');
+        $products->name = $request->input('name');
+        $products->description = $request->input('description');
+        $products->category = $request->input('category');
+        $products->quantity = $request->input('quantity');
+        $products->capital = $request->input('capital');
+        $products->unit_price = $request->input('unit_price');
+
+        if ($request->hasFile('photo')) {
+            $fileName = time() . $request->file('photo')->getClientOriginalName();
+            $path = $request->file('photo')->storeAs('images', $fileName, 'public');
+            $products->photo = '/storage/' . $path;
+        }
+
+        $products->save();
+        return redirect()->route('admin.product')->with('success', 'Product created successfully.');
+    }
+
+    public function productUpdate(Request $request, string $id)
+    {
+        $validatedData = $request->validate([
+            'code' => 'required',
+            'name' => 'required|unique:products,name,' . $id . ',id',
+            'description' => 'required',
+            'category' => 'required',
+            'quantity' => 'required|numeric|min:1',
+            'capital' => 'required|numeric|min:1',
+            'unit_price' => 'required|numeric|min:1',
+        ], [
+            'name.unique' => 'You already have :input in your table.',
+        ]);
+
+        $product = Product::find($id);
+
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product not found');
+        }
+
+        $product->code = $request->code;
+        $product->name = $request->name;
+        $product->description = $request->description;
+        $product->category = $request->category;
+        $product->quantity = $request->quantity;
+        $product->capital = $request->capital;
+        $product->unit_price = $request->unit_price;
+
+        if ($request->hasFile('photo')) {
+            $fileName = time() . $request->file('photo')->getClientOriginalName();
+            $path = $request->file('photo')->storeAs('images', $fileName, 'public');
+            $product->photo = '/storage/' . $path;
+        }
+
+        $product->save();
+        return redirect()->route('admin.product');
+    }
+
+    public function productDestroy(string $id)
+    {
+        $products = Product::findOrFail($id);
+        $products->delete();
+        return back()->withSuccess('Account deleted successfully!');
+    }
+
 
     public function transaction(Request $request)
     {
@@ -265,22 +318,6 @@ class AdminController extends Controller
             }
         }
 
-        // $productsss = Products::all();
-        // $lowQuantityNotifications = [];
-
-        // foreach ($productsss as $product) {
-        //     if ($product->quantity <= 20) {
-        //         $notification = [
-        //             'message' => $product->name . "'s quantity is too low!",
-        //             'productId' => $product->id,
-        //         ];
-        //         $lowQuantityNotifications[] = $notification;
-
-        //         // Send SMS notification
-        //         sendSMSNotification($user->phone_number, $product->name); // Adjust the user and product data as needed
-        //     }
-        // }
-
         $transactions = $query->paginate(1);
         $products = Product::all();
 
@@ -310,7 +347,7 @@ class AdminController extends Controller
             }
         }
 
-        $customers = Customer::paginate(8);
+        $customers = Customer::paginate(6);
         return view('navbar.customer', ['customers' => $customers])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications);
     }
 
@@ -332,8 +369,49 @@ class AdminController extends Controller
             }
         }
 
-        $suppliers = Supplier::paginate(8);
+        $suppliers = Supplier::paginate(6);
         return view('navbar.supplier', ['suppliers' => $suppliers])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications);
+    }
+
+    public function supplierStore(Request $request)
+    {
+
+        $request->validate([
+            "supplier" => "required",
+            "contact_person" => "required|min:1|max:20",
+            "address" => "required",
+            "contact_num" => "required|numeric|digits_between:5,11",
+        ]);
+
+        $suppliers = new Supplier;
+        $suppliers->supplier = $request->input('supplier');
+        $suppliers->contact_person = $request->input('contact_person');
+        $suppliers->address = $request->input('address');
+        $suppliers->product_name = $request->input('product_name');
+        $suppliers->contact_num = $request->input('contact_num');
+        $suppliers->save();
+        // return redirect()->route('admin.supplier');
+        return back();
+    }
+
+    public function supplierUpdate(Request $request, string $id)
+    {
+        $suppliers = Supplier::find($id);
+        $suppliers->supplier = $request->supplier;
+        $suppliers->contact_person = $request->contact_person;
+        $suppliers->address = $request->address;
+        $suppliers->product_name = $request->product_name;
+        $suppliers->contact_num = $request->contact_num;
+        $suppliers->save();
+        // return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
+        return back();
+    }
+
+    public function supplierDestroy(string $id)
+    {
+        $suppliers = Supplier::findOrFail($id);
+        $suppliers->delete();
+        return back();
     }
 
 }
