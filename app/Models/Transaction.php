@@ -18,6 +18,10 @@ class Transaction extends Model
         'amount_tendered',
         'change_due',
         'total_earned',
+
+        // Hindi pa na-migrate
+        'created_at', 
+        'updated_at',
     ];
 
     public function product()

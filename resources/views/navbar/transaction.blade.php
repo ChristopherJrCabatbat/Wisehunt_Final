@@ -16,8 +16,7 @@
         <div class="modal-content">
             <a class="close closeModal">&times;</a>
 
-            {{-- <form class="modal-form" action="{{ route('admin.transactionStore') }}" method="POST"> --}}
-            <form class="modal-form" action="#" method="POST">
+            <form class="modal-form" action="{{ route('admin.transactionStore') }}" method="POST">
                 @csrf
                 <center>
                     <h2 style="margin: 0%; color:#333;">Add Transaction</h2>
@@ -27,12 +26,12 @@
                 <select autofocus required name="customer_name" id="autofocus" onchange="updateContactNumber()"
                     class="select">
                     <option value="" disabled selected>-- Select a Customer --</option>
-                    {{-- @foreach ($customers as $customer)
+                    @foreach ($customers as $customer)
                         <option value="{{ $customer->name }}" data-contact="{{ $customer->contact_num }}"
                             {{ old('customer_name') === $customer->name ? 'selected' : '' }}>
                             {{ $customer->name }}
                         </option>
-                    @endforeach --}}
+                    @endforeach
                 </select>
 
                 <label for="contact_num">Contact Number:</label>
@@ -43,12 +42,11 @@
                 <label for="product_name" class="taas-select">Product Name:</label>
                 <select required name="product_name" id="product_name" class="select" onchange="updateUnitPrice()">
                     <option value="" disabled selected>-- Select a Product --</option>
-                    {{-- @foreach ($products as $product)
-                        <option value="{{ $product->name }}"
-                            {{ old('product_name') === $product->name ? 'selected' : '' }}>
+                    @foreach ($products as $product)
+                        <option value="{{ $product->name }}" {{ old('product_name') === $product->name ? 'selected' : '' }}>
                             {{ $product->name }}
                         </option>
-                    @endforeach --}}
+                    @endforeach
                 </select>
 
                 <div class="text-danger">{{ $errors->first('error') }}</div> <!-- Display the error message here -->
@@ -76,8 +74,8 @@
             <div class="modal-content">
                 <a class="close closeEditModal">&times;</a>
 
-                {{-- <form class="modal-form" action="{{ route('admin.transactionUpdate', $transaction->id) }}" method="POST"> --}}
-                <form class="edit-modal-form" action="#" method="POST">
+                <form class="edit-modal-form" action="{{ route('admin.transactionUpdate', $transaction->id) }}"
+                    method="POST">
                     @csrf
                     @method('PUT')
 
@@ -86,13 +84,14 @@
                     </center>
 
                     <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                    <select class="select autofocus" autofocus name="customer_name" id="customer" onchange="updateContactNumber()">
-                        {{-- @foreach ($customers as $customer)
+                    <select class="select autofocus" autofocus name="customer_name" id="customer"
+                        onchange="updateContactNumber()">
+                        @foreach ($customers as $customer)
                             <option value="{{ $customer->name }}" data-contact="{{ $customer->contact_num }}"
                                 {{ old('customer_name', $transaction->customer_name) === $customer->name ? 'selected' : '' }}>
                                 {{ $customer->name }}
                             </option>
-                        @endforeach --}}
+                        @endforeach
                     </select>
 
                     <label for="contact_num">Contact Number:</label>
@@ -103,12 +102,12 @@
 
                     <label for="product_name" class="taas-select">Product Name:</label>
                     <select class="select" name="product_name" id="product_name" onchange="updateUnitPrice()">
-                        {{-- @foreach ($products as $product)
+                        @foreach ($products as $product)
                             <option value="{{ $product->name }}"
                                 {{ old('product_name', $transaction->product_name) === $product->name ? 'selected' : '' }}>
                                 {{ $product->name }}
                             </option>
-                        @endforeach --}}
+                        @endforeach
                     </select>
                     <div class="text-danger">{{ $errors->first('error') }}</div>
 
@@ -136,9 +135,7 @@
         <div class="modal-content-report">
             <span class="close">&times;</span>
 
-            {{-- <form class="modal-form" action="{{ route('admin.generateReport') }}" method="POST" --}}
-            <form class="modal-form" action="#" method="POST"
-                target="_blank">
+            <form class="modal-form" action="{{ route('admin.generateReport') }}" method="POST" target="_blank">
                 @csrf
                 <label class="modal-top" for="">Generate Report</label>
                 <hr>
@@ -271,9 +268,9 @@
                 @endphp
 
                 <tr>
-                    <th>No.</th>
+                    <th>ID</th>
                     <th>Customer</th>
-                    <th>Contact No.</th>
+                    <th>Contact Number</th>
                     <th>Product Name</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
@@ -303,7 +300,7 @@
                                 <td>{{ $transaction->amount_tendered }}</td>
                                 <td>{{ $transaction->change_due }}</td>
                                 <td>{{ $transaction->total_earned }}</td>
-                                <td>{{ $transaction->created_at->format('M. d, Y') }}</td>
+                                <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
                                         <form>
@@ -344,4 +341,34 @@
 
 @section('script')
     <script src="{{ asset('js/generateReport.js') }}"></script>
+
+    <script>
+        // Auto Contact Number
+        function updateContactNumber() {
+            var customerSelect = document.getElementById('customer');
+            var contactNumberInput = document.getElementById('contact_num');
+
+            var selectedOption = customerSelect.options[customerSelect.selectedIndex];
+            var contactNumber = selectedOption.getAttribute('data-contact');
+
+            contactNumberInput.value = contactNumber;
+        }
+
+        // Auto Unit Price
+        function updateUnitPrice() {
+            var productName = document.getElementById('product_name').value;
+            var unitPriceField = document.getElementById('unit_price');
+
+            // Find the product with the selected name in the products list
+            var selectedProduct = @json($products);
+
+            for (var i = 0; i < selectedProduct.length; i++) {
+                if (selectedProduct[i].name === productName) {
+                    unitPriceField.value = selectedProduct[i].unit_price;
+                    break;
+                }
+            }
+        }
+    </script>
+
 @endsection

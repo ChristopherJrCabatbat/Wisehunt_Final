@@ -21,6 +21,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 autofocus.focus();
             }
         }, 0);
+
+        // Include CSRF token in the form
+        const form = document.querySelector(".modal-form");
+        const csrfField = document.createElement("input");
+        csrfField.type = "hidden";
+        csrfField.name = "_token";
+        csrfField.value = window.csrfToken;
+        form.appendChild(csrfField);
     }
 
     // Attach click event handlers for the New button
@@ -42,8 +50,16 @@ document.addEventListener("DOMContentLoaded", function () {
     function closeModal() {
         const form = document.querySelector(".modal-form");
 
-        // Reset the form
-        form.reset();
+        // Loop through each form element and reset its value
+        form.querySelectorAll("input:not([type='submit']), select, textarea").forEach((element) => {
+            element.value = "";
+        });
+
+        // Clear validation messages
+        const validationMessages = document.querySelectorAll(".text-danger");
+        validationMessages.forEach((message) => {
+            message.innerHTML = "";
+        });
 
         newModal.style.display = "none";
         overlay.style.display = "none"; // Hide the overlay

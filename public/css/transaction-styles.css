@@ -10,7 +10,6 @@ td {
     position: relative;
     bottom: 140px;
     width: 30%;
-    height: 74vh;
 }
 
 .reportModal {
@@ -174,5 +173,6 @@ label {
 .text-danger {
     color: red;
     font-size: 14px;
-    margin-top: 5px;
+    margin-top: 10px;
+    margin-bottom: -8px;
 }

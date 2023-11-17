@@ -25,26 +25,17 @@
             {{-- <div class="baba-tleft">Enter your username and password to use the system.</div> --}}
         </div>
         <div class="wrapper">
-            {{-- <form action="{{ route('logins') }}" method="GET"> --}}
             <form action="{{ route('loginStore') }}" method="POST">
                 @csrf
                 <h2>Login</h2>
                 <div class="input-field">
-                    <input type="text" name="username" required>
+                    <input type="text" name="username" value="{{ old('username') }}" required>
                     <label>Enter your username</label>
                 </div>
                 <div class="input-field">
                     <input type="password" name="password" required>
                     <label>Enter your password</label>
                 </div>
-
-                {{-- <div class="forget">
-                <label for="remember">
-                    <input type="checkbox" id="remember">
-                    <p>Remember me</p>
-                </label>
-                <a href="#">Forgot password?</a>
-            </div> --}}
 
                 <button type="submit">Log In</button>
                 <div class="register">

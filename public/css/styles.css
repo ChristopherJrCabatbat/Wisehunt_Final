@@ -5,7 +5,7 @@
     font-family: "Times New Roman", Times, serif;
 }
 
-input:not([type="file"]) {
+input:not([type="file"]), textarea {
     font-size: 1rem;
 }
 
@@ -161,24 +161,25 @@ img {
 }
 
 .notif {
-    width: 25px;
+    width: 36px;
     height: fit-content;
-    right: 2px;
-    bottom: 3px;
     position: relative;
+    margin-right: 2px;
 }
 
 .username {
     font-weight: bold;
     position: relative;
+    display: flex;
+    align-items: center;
+    margin: 0 5px;
 }
 
 
 
 /* Log out */
 .icon-user {
-    width: 25px;
-    bottom: 3px;
+    width: 35px;
     position: relative;
     height: fit-content;
     cursor: pointer;
@@ -267,7 +268,6 @@ button {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     padding: 10px;
-    cursor: pointer;
 }
 
 .notification-list {
@@ -326,17 +326,28 @@ button {
 }
 
 .red-dot {
-    width: 10px;
-    height: 10px;
+    width: 15px;
+    height: 15px;
     background-color: red;
     border-radius: 50%;
     position: absolute;
-    right: 147px;
+    right: 144px;
     z-index: 10;
     top: 40%;
     transform: translateY(-50%);
     display: none; /* Initially hidden */
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    align-content: center;
+    user-select: none;
 }
+
+button, input[type="submit"], a{
+    transition: all 0.3s;
+}
+
+
 
 
 /* Edit-Delete */

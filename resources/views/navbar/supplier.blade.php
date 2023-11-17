@@ -45,8 +45,7 @@
             <div class="modal-content">
                 <span class="close closeEditModal">&times;</span>
 
-                {{-- "{{ route('admin.supplierUpdate', $supplier->id) }}"  --}}
-                <form class="edit-modal-form" action="#" method="POST">
+                <form class="edit-modal-form" action="{{ route('admin.supplierUpdate', $supplier->id) }}" method="POST">
                     @csrf
                     @method('PUT')
 

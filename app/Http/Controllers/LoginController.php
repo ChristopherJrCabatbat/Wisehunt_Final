@@ -2,34 +2,78 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Login;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
+
     public function login()
     {
+        Session::forget('user');
         return view('login');
     }
 
     public function loginStore(Request $request)
     {
+        // Session::forget('user');
+
         $username = $request->input('username');
         $password = $request->input('password');
+        $user = Login::where("username", $username)->first();
 
-        return redirect()->route('admin.dashboard'); // or any other redirect or response
+        if ($user) {
+            $db_password = $user->password;
+            // $decrypted = Crypt::decryptString($db_password);
+
+            // if ($password === $decrypted) {
+            if ($password === $db_password) {
+                Session::put('user', $user);
+
+                // Set a session variable to indicate a successful login
+                Session::put('login_success', true);
+                return redirect()->route('admin.dashboard');
+                // return redirect("/Client")->with("message", "Login successful!");
+            } else {
+                // return view('login');
+                return redirect()->route('login');
+                // return redirect('LoginForm')->with("message", "Wrong password! Please try again.");
+            }
+        } else {
+            // return view('login');
+            return redirect()->route('login');
+            // return redirect('LoginForm')->with("message", " Account not found! Please try again.");  
+        }
     }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('login');
+        // return redirect('/LoginForm');
+    }
+
+    // public function loginStore(Request $request)
+    // {
+    //     $username = $request->input('username');
+    //     $password = $request->input('password');
+
+    //     return redirect()->route('admin.dashboard'); // or any other redirect or response
+    // }
 
     // public function index(Request $request)
     // {
-    //       $fullName = $request->input('fullName');
+    //     $fullName = $request->input('fullName');
     //     if (isset($fullName)) {
 
     //         $fullName = $request->input('fullName');
-
     //         $passwordinput = $request->input('password');
 
     //         $fulnam = Login::where("username", $fullName)->value("username");
-
     //         $exists = Login::where('username', $fullName)->exists();
 
     //         if ($exists) {
@@ -61,19 +105,22 @@ class LoginController extends Controller
     //             } else {
 
     //                 return back()->with('messagepass', 'Wrong Password')->withInput();
-
-
-
     //             }
     //         } else {
 
 
     //             return back()->with('messageid', 'Id does not exist')->withInput();
-
     //         }
     //     } else {
 
     //         return view('loginNew')->with('alert', 'Id does not exist');
     //     }
     // }
+
+    // public function loginForm()
+    // {
+    //     Session::forget('user');
+    //     return view('login');
+    // }
+
 }

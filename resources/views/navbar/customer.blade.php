@@ -16,13 +16,12 @@
         <div class="modal-content">
             <span class="close ">&times;</span>
 
-            {{-- <form class="modal-form" action="{{ route('admin.customerStore') }}" method="POST"> --}}
-            <form class="modal-form" action="#" method="POST">
+            <form class="modal-form" action="{{ route('admin.customerStore') }}" method="POST">
                 @csrf
                 <center>
                     <h2 style="margin: 0%; color:#333;">Add Customer</h2>
                 </center>
-                <label class="modal-top" for="">Company  Name:</label>
+                <label class="modal-top" for="">Company Name:</label>
                 <input required autofocus type="text" name="name" id="autofocus" />
                 <label for="">Contact Person:</label>
                 <input required type="text" name="contact_person" id="" />
@@ -42,47 +41,46 @@
 
     {{-- Edit Modal --}}
     @foreach ($customers as $customer)
-    <div id="editModal{{ $customer->id }}" class="modal editModal">
-        <div class="modal-content">
-            <span class="close closeEditModal">&times;</span>
+        <div id="editModal{{ $customer->id }}" class="modal editModal">
+            <div class="modal-content">
+                <span class="close closeEditModal">&times;</span>
 
-            {{-- <form class="modal-form" action="{{ route('admin.customerUpdate', $customer->id) }}" method="POST"> --}}
-            <form class="edit-modal-form" action="#" method="POST">
-                @csrf
-                @method('PUT')
-                <center>
-                    <h2 style="margin: 0%; color:#333;">Edit Customer</h2>
-                </center>
+                <form class="edit-modal-form" action="{{ route('admin.customerUpdate', $customer->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <center>
+                        <h2 style="margin: 0%; color:#333;">Edit Customer</h2>
+                    </center>
 
-                <label class="modal-top" for="">Company Name:</label>
-                <input required type="text" class="autofocus" name="name" id="" autofocus
-                    value="{{ old('name', $customer->name) }}">
-                <label for="">Contact Person:</label>
-                <input required type="text" name="contact_person" id=""
-                    value="{{ old('contact_person', $customer->contact_person) }}">
-                {{-- <label for="">Middlle Name:</label>
-                <input required type="text" name="mname" id="" value="{{ old('mname', $customer->mname) }}">
-                <label for="">Last Name:</label>
-                <input required type="text" name="lname" id="" value="{{ old('lname', $customer->lname) }}"> --}}
-                <label for="">Address:</label>
-                <input required type="text" name="address" id=""
-                    value="{{ old('address', $customer->address) }}">
-                <label for="">Contact Number:</label>
-                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
-                    name="contact_num" name="contact_num" id=""
-                    value="{{ old('contact_num', $customer->contact_num) }}">
-                <label for="">Item Sold:</label>
-                <input required type="text" name="item_sold" id=""
-                    value="{{ old('item_sold', $customer->item_sold) }}">
-                {{-- <label for="">Quantity:</label>
-                <input required type="number" name="quantity" id="" value="{{ old('quantity', $customer->quantity) }}"> --}}
+                    <label class="modal-top" for="">Company Name:</label>
+                    <input required type="text" class="autofocus" name="name" id="" autofocus
+                        value="{{ old('name', $customer->name) }}">
+                    <label for="">Contact Person:</label>
+                    <input required type="text" name="contact_person" id=""
+                        value="{{ old('contact_person', $customer->contact_person) }}">
+                    {{-- <label for="">Middlle Name:</label>
+                    <input required type="text" name="mname" id="" value="{{ old('mname', $customer->mname) }}">
+                    <label for="">Last Name:</label>
+                    <input required type="text" name="lname" id="" value="{{ old('lname', $customer->lname) }}"> --}}
+                    <label for="">Address:</label>
+                    <input required type="text" name="address" id=""
+                        value="{{ old('address', $customer->address) }}">
+                    <label for="">Contact Number:</label>
+                    <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
+                        name="contact_num" name="contact_num" id=""
+                        value="{{ old('contact_num', $customer->contact_num) }}">
+                    <label for="">Item Sold:</label>
+                    <input required type="text" name="item_sold" id=""
+                        value="{{ old('item_sold', $customer->item_sold) }}">
+                    {{-- <label for="">Quantity:</label>
+                    <input required type="number" name="quantity" id="" value="{{ old('quantity', $customer->quantity) }}"> --}}
 
-                <input class="add" type="submit" value="Update">
-            </form>
+                    <input class="add" type="submit" value="Update">
+                </form>
 
+            </div>
         </div>
-    </div>
-@endforeach
+    @endforeach
 
 @endsection
 
@@ -174,8 +172,7 @@
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>
-                                        {{-- <form action="{{ route('productDestroy', $product->id) }}" method="POST"> --}}
-                                        <form action="#" method="POST">
+                                        <form action="{{ route('admin.customerDestroy', $customer->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button onclick="return confirm('Are you sure you want to delete this?')"

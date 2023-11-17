@@ -20,6 +20,13 @@ return new class extends Migration
             $table->string('item_sold');
             $table->timestamps();
         });
+
+        Schema::create('customer_transactions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('customer_id')->constrained(); // Foreign key to link with customers table
+            $table->integer('transaction_amount');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -27,6 +34,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('customer_transactions');
         Schema::dropIfExists('customers');
     }
 };

@@ -1,16 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\Session;
 
 Route::get('/', [LoginController::class, 'login'])->name('login');
 Route::post('/loginStore', [LoginController::class, 'loginStore'])->name('loginStore');
+// Route::get('/loginForm', [LoginController::class, 'loginForm'])->name('loginForm');
 
 Route::group([
-    'prefix' => 'admin', 'as' => 'admin.'
-    // , 'middleware' => 'Admin'
+    'prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'
 ], function () {
 
     // Dashborad
@@ -20,6 +20,7 @@ Route::group([
     // Product Routes
     Route::get('/product', [AdminController::class, 'product'])->name('product');
     Route::post('/productStore', [AdminController::class, 'productStore'])->name('productStore');
+    // Route::post('/validateProductStore', [AdminController::class, 'validateProductStore'])->name('validateProductStore');
     Route::put('/productUpdate/{id}', [AdminController::class, 'productUpdate'])->name('productUpdate');
     Route::delete('/productDestroy/{id}', [AdminController::class, 'productDestroy'])->name('productDestroy');
 
@@ -40,11 +41,12 @@ Route::group([
     Route::post('/supplierStore', [AdminController::class, 'supplierStore'])->name('supplierStore');
     Route::put('/supplierUpdate/{id}', [AdminController::class, 'supplierUpdate'])->name('supplierUpdate');
     Route::delete('/supplierDestroy/{id}', [AdminController::class, 'supplierDestroy'])->name('supplierDestroy');
-
 });
 
-Route::get('/logout', function () {
-    Session::forget('account');
-    Session::forget('name');
-    return redirect()->route('login');
-})->name('logout');
+// Route::get('/logout', function () {
+//     Session::forget('account');
+//     Session::forget('name');
+//     return redirect()->route('login');
+// })->name('logout');
+
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');

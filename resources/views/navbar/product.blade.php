@@ -8,6 +8,18 @@
 
 @section('modals')
 
+    {{-- @if ($errors->any())
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // Open the modal if there are validation errors
+                const newModal = document.getElementById("newModal");
+                const overlay = document.querySelector(".overlay");
+                newModal.style.display = "block";
+                overlay.style.display = "block";
+            });
+        </script>
+    @endif --}}
+
     <div class="overlay editOverlay"></div>
 
     {{-- Add Modal --}}
@@ -18,6 +30,7 @@
             <hr>
 
             <form class="modal-form" action="{{ route('admin.productStore') }}" enctype="multipart/form-data" method="POST">
+                {{-- <form class="modal-form" action="{{ route('admin.productStore') }}" enctype="multipart/form-data" method="POST" data-validation-url="{{ route('admin.validateProductStore') }}"> --}}
                 @csrf
 
                 <div class="row1">
@@ -71,7 +84,7 @@
                             <div class="text-danger">{{ $errors->first('unit_price') }}</div>
                         @endif
                     </div>
-                  
+
                     <div class="column">
                         <label for="">Category:</label>
                         <select required name="category" id="" class="row1-input select_categ">
@@ -87,7 +100,7 @@
                     </div>
                     <div class="column">
                         <label for="">Image:</label>
-                        <input required type="file" name="photo" id="" class="row2-input" />
+                        <input type="file" name="photo" id="" class="row2-input" />
                     </div>
                 </div>
                 <div class="row3">
@@ -95,113 +108,122 @@
                     <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
                         class="" value="{{ old('description') }}">{{ old('description') }}</textarea>
                 </div>
-               
+
                 <hr>
                 <div class="buttons">
-                    <input type="submit" class="add-green save"
+                    <input type="submit" id="saveButton" class="add-green save"
                         style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Add" />
                     {{-- <a href="{{ route('admin.product') }}" class="cancel closeModal">Cancel</a> --}}
                     <button type="button" class="closeModal">Cancel</button>
                 </div>
             </form>
+
         </div>
     </div>
 
 
-  <!-- Edit Modal -->
+    <!-- Edit Modal -->
     @foreach ($products as $product)
-    <div id="editModal{{ $product->id }}" class="modal editModal">
-        <div class="edit-modal-content">
-            <p class="taas-new">Edit Product </p>
-            <hr>
-            <form class="edit-modal-form" action="{{ route('admin.productUpdate', $product->id) }}" enctype="multipart/form-data" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="row1">
-                    <div class="column">
-                        <label class="modal-top" for="">Product code:</label>
-                        <input required type="text" name="code" pattern="[0-9]{3,11}" class="row1-input" value="{{ old('code', $product->code) }}" />
+        <div id="editModal{{ $product->id }}" class="modal editModal">
+            <div class="edit-modal-content">
+                <p class="taas-new">Edit Product </p>
+                <hr>
+                <form class="edit-modal-form" action="{{ route('admin.productUpdate', $product->id) }}"
+                    enctype="multipart/form-data" method="POST">
+                    @csrf
+                    @method('PUT')
+                    
+                    <div class="row1">
+                        <div class="column">
+                            <label class="modal-top" for="">Product code:</label>
+                            <input required type="text" name="code" pattern="[0-9]{3,11}" class="row1-input"
+                                value="{{ $product->code }}" />
+                        </div>
+                        <div class="column">
+                            <label for="">Product Name:</label>
+                            <select class="select_product" name="name" class="product_name">
+                                @foreach ($suppliers as $supplier)
+                                    <option value="{{ $supplier->product_name }}"
+                                        {{ $product->name === $supplier->product_name ? 'selected' : '' }}>
+                                        {{ $supplier->product_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @if ($errors->has('name'))
+                                <div class="text-danger">{{ $errors->first('name') }}</div>
+                            @endif
+                        </div>
+                        <div class="column">
+                            <label for="">Quantity in Stock:</label>
+                            <input required autofocus type="number" name="quantity" class="row1-input autofocus"
+                                value="{{ $product->quantity }}" />
+                            @if ($errors->has('quantity'))
+                                <div class="text-danger">{{ $errors->first('quantity') }}</div>
+                            @endif
+                        </div>
                     </div>
-                    <div class="column">
-                        <label for="">Product Name:</label>
-                        <select class="select_product" name="name" class="product_name">
-                            <option value="Sheesh" {{ old('name', $product->name) === 'Sheesh' ? 'selected' : '' }}>Sheesh</option>
-                        </select>
-                        @if ($errors->has('name'))
-                            <div class="text-danger">{{ $errors->first('name') }}</div>
-                        @endif
+                    <div class="row2">
+                        <div class="column">
+                            <label for="">Capital:</label>
+                            <input required type="number" name="capital" id=""
+                                value="{{ $product->capital }}" class="row2-input" />
+                            @if ($errors->has('capital'))
+                                <div class="text-danger">{{ $errors->first('capital') }}</div>
+                            @endif
+                        </div>
+                        <div class="column">
+                            <label for="">Unit Price:</label>
+                            <input required type="number" name="unit_price" id=""
+                                value="{{ $product->unit_price }}" class="row2-input" />
+                            @if ($errors->has('unit_price'))
+                                <div class="text-danger">{{ $errors->first('unit_price') }}</div>
+                            @endif
+                        </div>
+                        <div class="column">
+                            <label for="">Category:</label>
+                            <select name="category" id="" class="row1-input select_categ">
+                                <option value="Paper"
+                                    {{ $product->category === 'Paper' ? 'selected' : '' }}>Paper
+                                </option>
+                                <option value="Machine"
+                                    {{ $product->category === 'Machine' ? 'selected' : '' }}>
+                                    Machine</option>
+                                <option value="Food Material"
+                                    {{ $product->category === 'Food Material' ? 'selected' : '' }}>
+                                    Food Material</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="column">
-                        <label for="">Quantity in Stock:</label>
-                        <input required autofocus type="number" name="quantity" class="row1-input autofocus" value="{{ old('quantity', $product->quantity) }}" />
-                        @if ($errors->has('quantity'))
-                            <div class="text-danger">{{ $errors->first('quantity') }}</div>
-                        @endif
+                    
+                    <div class="row3-edit">
+                        {{-- Image --}}
+                        <div class="column">
+                            <label for="">Current Image:</label>
+                            <img class="img-edit" src="{{ asset($product->photo) }}" alt="" width="50px"
+                                height="auto">
+                        </div>
+                        <div class="column">
+                            <label for="">Change Image:</label>
+                            {{-- <input required type="file" name="image" id="" class="row2-input" /> --}}
+                            <input type="file" name="photo" id="" class="row2-input" />
+                        </div>
                     </div>
-                </div>
-                <div class="row2">
 
-                    <div class="column">
-                        <label for="">Capital:</label>
-                        <input required type="number" name="capital" id=""
-                            value="{{ old('capital', $product->capital) }}" class="row2-input" />
-                        @if ($errors->has('capital'))
-                            <div class="text-danger">{{ $errors->first('capital') }}</div>
-                        @endif
-                    </div>
-                    <div class="column">
-                        <label for="">Unit Price:</label>
-                        <input required type="number" name="unit_price" id=""
-                            value="{{ old('unit_price', $product->unit_price) }}" class="row2-input" />
-                        @if ($errors->has('unit_price'))
-                            <div class="text-danger">{{ $errors->first('unit_price') }}</div>
-                        @endif
+                    <div class="row4">
+                        <label for="">Product Description:</label>
+                        <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
+                            class="" value="">{{ $product->description }}</textarea>
                     </div>
 
-                    <div class="column">
-                        <label for="">Category:</label>
-
-                        <select name="category" id="" class="row1-input select_categ">
-                            <option value="Paper"
-                                {{ old('category', $product->category) === 'Paper' ? 'selected' : '' }}>Paper
-                            </option>
-                            <option value="Machine"
-                                {{ old('category', $product->category) === 'Machine' ? 'selected' : '' }}>
-                                Machine</option>
-                            <option value="Food Material"
-                                {{ old('category', $product->category) === 'Food Material' ? 'selected' : '' }}>
-                                Food Material</option>
-                        </select>
+                    <hr>
+                    <div class="buttons">
+                        <input type="submit" class="add-green"
+                            style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Update" />
+                        <button type="button" class="closeEditModal">Cancel</button>
                     </div>
-
-                </div>
-                <div class="row3-edit">
-                    {{-- Image --}}
-                    <div class="column">
-                        <label for="">Current Image:</label>
-                        <img class="img-edit" src="{{ asset($product->photo) }}" alt="" width="50px"
-                            height="auto">
-                    </div>
-                    <div class="column">
-                        <label for="">Change Image:</label>
-                        {{-- <input required type="file" name="image" id="" class="row2-input" /> --}}
-                        <input type="file" name="photo" id="" class="row2-input" />
-                    </div>
-                </div>
-
-                <div class="row4">
-                    <label for="">Product Description:</label>
-                    <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
-                        class="" value="{{ old('description') }}">{{ old('description', $product->description) }}</textarea>
-                </div>
-
-                <hr>            <div class="buttons">
-                    <input type="submit" class="add-green" style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Update" />
-                    <button type="button" class="closeEditModal">Cancel</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
     @endforeach
 
 
@@ -310,7 +332,7 @@
                     <th>Product Description</th>
                     <th>Category</th>
                     <th>Image</th>
-                    <th>QTY in Stock</th>
+                    <th>Quantity in Stock</th>
                     <th>Capital</th>
                     <th>Unit Price</th>
                     <th>Actions</th>
@@ -362,6 +384,9 @@
                 {{ $products->appends(['sort' => request('sort')])->links('layouts.customPagination') }}</div>
         </div>
     </div>
+
+    <input type="hidden" id="showNotification" value="{{ count($lowQuantityNotifications) > 0 ? 'true' : 'false' }}">
+
 
 @endsection
 

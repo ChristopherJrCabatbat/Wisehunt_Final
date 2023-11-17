@@ -24,7 +24,46 @@ function openEditModal(dataId) {
             autofocus.focus();
         }
     }, 0);
+
+     // Include CSRF token in the form
+     const form = openedModal.querySelector(".edit-modal-form");
+     const csrfField = document.createElement("input");
+     csrfField.type = "hidden";
+     csrfField.name = "_token";
+     csrfField.value = window.csrfToken;
+     form.appendChild(csrfField);
 }
+
+// function openEditModal(dataId) {
+//     // Find the corresponding modal based on brand ID and show it
+//     openedModal = document.getElementById("editModal" + dataId);
+
+//     // Empty the input fields in the edit modal
+//     const form = openedModal.querySelector(".edit-modal-form");
+//     form.querySelectorAll("input:not([type='submit']), select, textarea").forEach((element) => {
+//         element.value = "";
+//     });
+
+//     // Autofocus
+//     setTimeout(() => {
+//         const autofocus = openedModal.querySelector('.autofocus');
+//         if (autofocus) {
+//             autofocus.focus();
+//         }
+//     }, 0);
+
+//     // Include CSRF token in the form
+//     const csrfField = document.createElement("input");
+//     csrfField.type = "hidden";
+//     csrfField.name = "_token";
+//     csrfField.value = window.csrfToken;
+//     form.appendChild(csrfField);
+
+//     // Show the edit modal
+//     openedModal.style.display = "block";
+// }
+
+
 // Attach click event handler for all edit buttons and handle event delegation
 document.addEventListener("click", function (event) {
     // Find the closest ancestor with the class "editButton"
@@ -45,6 +84,17 @@ closeEditButtons.forEach(function (closeEditButton) {
 // Close the Edit Order modal
 function closeEditModal() {
     const form = openedModal.querySelector(".edit-modal-form");
+
+    // Loop through each form element and reset its value
+    form.querySelectorAll("input:not([type='submit']), select, textarea").forEach((element) => {
+        element.value = "";
+    });
+
+    // Clear validation messages
+    const validationMessages = openedModal.querySelectorAll(".text-danger");
+    validationMessages.forEach((message) => {
+        message.innerHTML = "";
+    });
 
     // Reset the form
     form.reset();

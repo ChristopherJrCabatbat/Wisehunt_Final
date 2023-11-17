@@ -6,6 +6,7 @@ use Closure;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class Admin
 {
@@ -16,12 +17,26 @@ class Admin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $accnt = Session::get('account');
-        $nm = Session::get('name');
+        // $account = Session::get('account');
+        // $nm = Session::get('name');
 
-        if ($nm == '') {
+        // if ($nm == '') {
+        //     return redirect()->route('login');
+        // }
+
+        // $user = Session::get('user');
+        // if($user == ""){
+        //     return redirect()->route("login");
+        //     // return redirect("/LoginForm");
+        // }
+
+        Log::info('Middleware Executed', ['session' => Session::all()]);
+
+        if (!Session::has('user')) {
+            Log::info('Redirecting...', ['session' => Session::all()]);
             return redirect()->route('login');
         }
+
         return $next($request);
     }
 }

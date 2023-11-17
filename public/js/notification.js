@@ -7,6 +7,11 @@ function toggleNotificationPanel() {
 
     if (notificationPanelVisible) {
         notificationPanel.style.display = 'block'; // Show the notification panel
+
+        // // Set a timeout to automatically close the notification panel after 5 seconds
+        // setTimeout(() => {
+        //     closeNotification();
+        // }, 5000);
     } else {
         notificationPanel.style.display = 'none'; // Hide the notification panel
     }
@@ -30,7 +35,7 @@ ${product.message}
 <span class="dot"></span>
 `;
 
-    listItem.addEventListener('click', function() {
+    listItem.addEventListener('click', function () {
         navigateToProductView(product.productId);
     });
 
@@ -55,8 +60,8 @@ function addLowQuantityNotifications() {
     notificationList.innerHTML = '';
 
     if (lowQuantityNotifications.length > 0) {
-        lowQuantityNotifications.forEach(function(product) {
-            addNotification(product);
+        lowQuantityNotifications.forEach(function (product) {
+            addNotification(product); // Call addNotification to show the notification panel
         });
     } else {
         // No notifications, so display a message
@@ -68,6 +73,7 @@ function addLowQuantityNotifications() {
     toggleRedDotVisibility();
 }
 
+
 // Navigate to product edit view
 function navigateToProductView(productId) {
     // Redirect to the product edit view with the corresponding ID
@@ -77,7 +83,7 @@ function navigateToProductView(productId) {
 }
 
 // Call the function to load dismissed notifications when the page loads
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     addLowQuantityNotifications();
     // Check if there are notifications and show the red dot accordingly
     const redDot = document.getElementById('notificationDot');

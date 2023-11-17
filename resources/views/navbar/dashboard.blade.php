@@ -258,5 +258,53 @@
 
     <script src="{{ asset('js/dashboardTable.js') }}"></script>
     <script src="{{ asset('js/chart.js') }}"></script>
+    
+    <script>
+        // Function to automatically close the notification panel after 5 seconds
+        function autoCloseNotificationPanel() {
+            const notificationPanel = document.getElementById('notificationPanel');
+
+            // Show the notification panel
+            notificationPanel.style.display = 'block';
+
+            // Set a timeout to close the notification panel after 5 seconds
+            setTimeout(function() {
+                closeNotification();
+            }, 5000);
+        }
+
+        // Call the function when the page loads (adjust this based on your actual login logic)
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check if the login was successful
+            const loginSuccess = {!! json_encode(Session::pull('login_success', false)) !!};
+
+            if (loginSuccess) {
+                // Call the function to show the notification panel and automatically close it
+                autoCloseNotificationPanel();
+            }
+        });
+
+        // Function to toggle the visibility of the notification panel
+        function toggleNotificationPanel() {
+            const notificationPanel = document.getElementById('notificationPanel');
+            notificationPanelVisible = !notificationPanelVisible; // Toggle the visibility state
+
+            if (notificationPanelVisible) {
+                notificationPanel.style.display = 'block'; // Show the notification panel
+            } else {
+                // Do not hide the notification panel here
+            }
+
+            // If the panel is manually toggled, do not automatically close it
+            // Do not set a timeout here
+        }
+
+        // Function to close the notification panel
+        function closeNotification() {
+            const notificationPanel = document.getElementById('notificationPanel');
+            notificationPanelVisible = false; // Set the visibility state explicitly to false
+            notificationPanel.style.display = 'none';
+        }
+    </script>
 
 @endsection
