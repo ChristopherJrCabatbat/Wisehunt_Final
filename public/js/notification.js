@@ -59,16 +59,30 @@ function addLowQuantityNotifications() {
     // Clear the existing notifications
     notificationList.innerHTML = '';
 
+    let hasSalesForecastNotification = false;
+
     if (lowQuantityNotifications.length > 0) {
         lowQuantityNotifications.forEach(function (product) {
-            addNotification(product); // Call addNotification to show the notification panel
+                addNotification(product);
+                // Check if the notification is a sales forecasting notification
+            if (isSalesForecastNotification(product)) {
+                // If it is, add it to the top of the list
+                addNotification(product);
+                hasSalesForecastNotification = true;
+            } else {
+                // If not, add it to the regular list
+                addNotification(product);
+            }
         });
-    } else {
-        // No notifications, so display a message
-        const noNotificationsItem = document.createElement('li');
-        noNotificationsItem.innerText = 'No notifications.';
-        notificationList.appendChild(noNotificationsItem);
     }
+
+    if (!hasSalesForecastNotification) {
+        // No sales forecasting notification, so display a message
+        const noSalesForecastItem = document.createElement('li');
+        noSalesForecastItem.innerText = 'No notifications.';
+        notificationList.appendChild(noSalesForecastItem);
+    }
+
     // Toggle the red dot visibility based on whether there are notifications
     toggleRedDotVisibility();
 }

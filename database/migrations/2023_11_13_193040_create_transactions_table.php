@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('amount_tendered');
             $table->integer('change_due');
             $table->integer('total_earned');
+            $table->timestamp('last_transaction_date')->nullable(); // Add this line
             $table->timestamps();
         });
     }

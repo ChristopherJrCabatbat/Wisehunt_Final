@@ -70,6 +70,7 @@
                     <!-- Add your notifications here dynamically -->
                 </ul>
             </div>
+            
         </div>
 
         <header>

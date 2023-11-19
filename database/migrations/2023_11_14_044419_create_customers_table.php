@@ -21,6 +21,8 @@ return new class extends Migration
             $table->timestamps();
         });
 
+
+        // Na migrate na?
         Schema::create('customer_transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained(); // Foreign key to link with customers table

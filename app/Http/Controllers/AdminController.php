@@ -24,6 +24,26 @@ use Carbon\Carbon;
 
 class AdminController extends Controller
 {
+    // // SMS
+    // $productsss = Products::all();
+    // $lowQuantityNotifications = [];
+
+    // foreach ($productsss as $product) {
+    //     if ($product->quantity <= 20) {
+    //         $notification = [
+    //             'message' => $product->name . "'s quantity is too low!",
+    //             'productId' => $product->id,
+    //         ];
+    //         $lowQuantityNotifications[] = $notification;
+
+    //         // Access user's phone number from the product's user relation
+    //         $phoneNumber = $product->user->phone_number; // Assuming a 'phone_number' field in the User model
+
+    //         // Call sendSMSNotification using $this
+    //         $this->sendSMSNotification($phoneNumber, $product->name);
+    //     }
+    // }
+
     // Dashboard Controller
     public function dashboard()
     {
@@ -47,30 +67,14 @@ class AdminController extends Controller
             }
         }
 
-        // // SMS
-        // $productsss = Products::all();
-        // $lowQuantityNotifications = [];
-
-        // foreach ($productsss as $product) {
-        //     if ($product->quantity <= 20) {
-        //         $notification = [
-        //             'message' => $product->name . "'s quantity is too low!",
-        //             'productId' => $product->id,
-        //         ];
-        //         $lowQuantityNotifications[] = $notification;
-
-        //         // Access user's phone number from the product's user relation
-        //         $phoneNumber = $product->user->phone_number; // Assuming a 'phone_number' field in the User model
-
-        //         // Call sendSMSNotification using $this
-        //         $this->sendSMSNotification($phoneNumber, $product->name);
-        //     }
-        // }
-
+        // Count the total quantity sold for the day
+        $totalSalesQty = Transaction::selectRaw('SUM(qty) as total_qty')
+            ->whereDate('created_at', today()) // Change this to match your date format
+            ->value('total_qty') ?? 0;
 
         $productCount = Product::count();
+        // $totalSalesQty = Transaction::sum('qty');
         $transactionCount = Transaction::count();
-        $totalSalesQty = Transaction::sum('qty');
         $totalEarnings = Transaction::sum('total_earned');
 
         // Bar Chart/Graph
@@ -152,66 +156,288 @@ class AdminController extends Controller
         ]);
     }
 
+    
     // Product Controller
+    // public function product(Request $request)
+    // {
+    //     $nm = Session::get('name');
+    //     $sortOption = $request->input('sort');
+    //     $query = Product::query();
+
+    //     // Notification
+    //     $productsss = Product::all();
+    //     $lowQuantityNotifications = [];
+    //     $transaction = Transaction::all();
+
+    //     foreach ($productsss as $product) {
+    //         if ($product->quantity <= 20) {
+    //             // Check if the customer is likely to transact again
+    //             foreach ($transaction as $singleTransaction) {
+    //                 $customerId = $singleTransaction->customer_name; // Assuming customer_name is the customer identifier
+    //                 $forecast = $this->forecastSales($customerId);
+        
+    //                 if ($forecast) {
+    //                     // If the forecast indicates a likely transaction, add it to notifications
+    //                     $notification = [
+    //                         'message' => $product->name . "'s quantity is too low!<br>$forecast",
+    //                         'productId' => $product->id,
+    //                     ];
+    //                     $lowQuantityNotifications[] = $notification;
+        
+    //                     // Break the inner loop once a customer is found in transactions
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     $suppliers = Supplier::all();
+    //     $products = $query->paginate(5);
+    //     $searchQuery = $request->input('search');
+
+    //     return view('navbar.product', [
+    //         'username' => $nm,
+    //         'lowQuantityNotifications' => $lowQuantityNotifications,
+    //         'searchQuery' => $searchQuery,
+    //         'products' => $products,
+    //         'suppliers' => $suppliers,
+    //     ]);
+    // }
+
+    // Add the forecastSales method to your controller
+    // private function forecastSales($customerId, $timeFrame = 'week')
+    // {
+    //     // Fetch transactions for the given customer, ordered by transaction date in descending order
+    //     $customerTransactions = Transaction::where('customer_name', $customerId)
+    //         ->orderBy('created_at', 'desc')
+    //         ->get();
+    
+    //     // Check if there are any transactions for the customer
+    //     if ($customerTransactions->count() > 0) {
+    //         // Get the timestamp of the last transaction
+    //         $lastTransactionDate = Carbon::parse($customerTransactions->first()->created_at);
+    
+    //         // Get the current timestamp
+    //         $now = Carbon::now();
+    
+    //         // Calculate the end date based on the selected time frame
+    //         $endDate = ($timeFrame == 'week') ? $lastTransactionDate->copy()->addWeek() : $lastTransactionDate->copy()->addMonth();
+    
+    //         // Check if the current date is within the forecast period
+    //         if ($now->lte($endDate)) {
+    //             return "$customerId is likely to transact again within a week.";
+    //         } else {
+    //             return "$customerId's next transaction is not predicted in the selected time frame.";
+    //         }
+    //     }
+    
+    //     // If there are no transactions for the customer, indicate that there's not enough history for forecasting
+    //     return "No sufficient transaction history for forecasting.";
+    // }
+
     public function product(Request $request)
-    {
-        
-        // Log::info('Session Data in Product Controller', ['session' => Session::all()]);
-        // // Check if the user is authenticated
-        // if (!Session::has('user')) {
-        //     // dd('After middleware check, before redirect', Session::all());
+{
+    $nm = Session::get('name');
+    $sortOption = $request->input('sort');
+    $query = Product::query();
 
-        //     return redirect()->route('login');
-        // }
-        
-        $nm = Session::get('name');
-        $sortOption = $request->input('sort');
-        $query = Product::query();
+    // Notification
+    $productsss = Product::all();
+    $lowQuantityNotifications = [];
 
-        // Notification
-        $productsss = Product::all();
-        $lowQuantityNotifications = [];
+    foreach ($productsss as $product) {
+        if ($product->quantity <= 20) {
+            // Check if there are forecasts for the customer
+            $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+            $forecasts = $this->forecastSalesForAllCustomers();
 
-        foreach ($productsss as $product) {
-            if ($product->quantity <= 20) {
+            // Create a single message by joining the forecasts array elements
+            $forecastMessage = implode('<br>', $forecasts);
 
-                // $user = UserAccount::first();
-                // $user->notify(new SMSNotification);
-
+            // If there are forecasts, add them to notifications
+            if (!empty($forecastMessage)) {
                 $notification = [
-                    'message' => $product->name . "'s quantity is too low!",
-                    'productId' => $product->id, // Assuming 'id' is the product's unique identifier
+                    'message' => $product->name . "'s quantity is too low!<br>$forecastMessage",
+                    'productId' => $product->id,
                 ];
                 $lowQuantityNotifications[] = $notification;
             }
         }
-
-        if ($sortOption === 'name_asc') {
-            $query->orderBy('name', 'asc');
-        } elseif ($sortOption === 'category_asc') {
-            $query->orderBy('category', 'asc');
-        } elseif ($sortOption === 'quantity_asc') {
-            $query->orderBy('quantity', 'asc');
-        } elseif ($sortOption === 'capital_asc') {
-            $query->orderBy('capital', 'asc');
-        } elseif ($sortOption === 'unit_price_asc') {
-            $query->orderBy('unit_price', 'asc');
-        }
-
-        $suppliers = Supplier::all();
-
-        $products = $query->paginate(5);
-
-        $searchQuery = $request->input('search');
-
-        return view('navbar.product', [
-            'username' => $nm,
-            'lowQuantityNotifications' => $lowQuantityNotifications,
-            'searchQuery' => $searchQuery,
-            'products' => $products,
-            'suppliers' => $suppliers,
-        ]);
     }
+
+    if ($sortOption === 'name_asc') {
+        $query->orderBy('name', 'asc');
+    } elseif ($sortOption === 'category_asc') {
+        $query->orderBy('category', 'asc');
+    } elseif ($sortOption === 'quantity_asc') {
+        $query->orderBy('quantity', 'asc');
+    } elseif ($sortOption === 'capital_asc') {
+        $query->orderBy('capital', 'asc');
+    } elseif ($sortOption === 'unit_price_asc') {
+        $query->orderBy('unit_price', 'asc');
+    }
+
+    $suppliers = Supplier::all();
+    $products = $query->paginate(5);
+    $searchQuery = $request->input('search');
+
+    return view('navbar.product', [
+        'username' => $nm,
+        'lowQuantityNotifications' => $lowQuantityNotifications,
+        'searchQuery' => $searchQuery,
+        'products' => $products,
+        'suppliers' => $suppliers,
+    ]);
+}
+
+// Add the forecastSales method to your controller
+private function forecastSalesForAllCustomers($timeFrame = 'week')
+{
+    // Get all unique customer names
+    $uniqueCustomerNames = Transaction::distinct()->pluck('customer_name');
+
+    $forecasts = [];
+
+    foreach ($uniqueCustomerNames as $customerId) {
+        // Fetch transactions for the given customer, ordered by transaction date in descending order
+        $customerTransactions = Transaction::where('customer_name', $customerId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Check if there are any transactions for the customer
+        if ($customerTransactions->count() > 0) {
+            // Get the timestamp of the last transaction
+            $lastTransactionDate = Carbon::parse($customerTransactions->first()->created_at);
+
+            // Get the current timestamp
+            $now = Carbon::now();
+
+            // Calculate the end date based on the selected time frame
+            $endDate = ($timeFrame == 'week') ? $lastTransactionDate->copy()->addWeek() : $lastTransactionDate->copy()->addMonth();
+
+            // Check if the current date is within the forecast period
+            if ($now->lte($endDate)) {
+                $forecasts[] = "$customerId is likely to transact again within a week.";
+            }
+            // If you want to include a message for the case when the next transaction is not predicted, you can add it here
+        } else {
+            // If there are no transactions for the customer, indicate that there's not enough history for forecasting
+            $forecasts[] = "No sufficient transaction history for forecasting for $customerId.";
+        }
+    }
+
+    return $forecasts;
+}
+
+
+
+    
+
+
+
+    // public function product(Request $request)
+    // {
+
+    //     // Log::info('Session Data in Product Controller', ['session' => Session::all()]);
+    //     // // Check if the user is authenticated
+    //     // if (!Session::has('user')) {
+    //     //     // dd('After middleware check, before redirect', Session::all());
+
+    //     //     return redirect()->route('login');
+    //     // }
+
+    //     $nm = Session::get('name');
+    //     $sortOption = $request->input('sort');
+    //     $query = Product::query();
+
+    //     // // Notification
+    //     // $productsss = Product::all();
+    //     // $lowQuantityNotifications = [];
+
+    //     // foreach ($productsss as $product) {
+    //     //     if ($product->quantity <= 20) {
+
+    //     //         // $user = UserAccount::first();
+    //     //         // $user->notify(new SMSNotification);
+
+    //     //         $notification = [
+    //     //             'message' => $product->name . "'s quantity is too low!",
+    //     //             'productId' => $product->id, // Assuming 'id' is the product's unique identifier
+    //     //         ];
+    //     //         $lowQuantityNotifications[] = $notification;
+    //     //     }
+    //     // }
+
+    //     // Notification
+    //     $productsss = Product::all();
+    //     $lowQuantityNotifications = [];
+
+    //     foreach ($productsss as $product) {
+    //         if ($product->quantity <= 20) {
+    //             // Check if the customer is likely to transact again
+    //             $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+    //             $forecast = $this->forecastSales($customerId);
+
+    //             if ($forecast) {
+    //                 // If the forecast indicates a likely transaction, add it to notifications
+    //                 $notification = [
+    //                     'message' => $product->name . "'s quantity is too low!<br>$forecast",
+    //                     'productId' => $product->id,
+    //                 ];
+    //                 $lowQuantityNotifications[] = $notification;
+    //             }
+    //         }
+    //     }
+
+    //     if ($sortOption === 'name_asc') {
+    //         $query->orderBy('name', 'asc');
+    //     } elseif ($sortOption === 'category_asc') {
+    //         $query->orderBy('category', 'asc');
+    //     } elseif ($sortOption === 'quantity_asc') {
+    //         $query->orderBy('quantity', 'asc');
+    //     } elseif ($sortOption === 'capital_asc') {
+    //         $query->orderBy('capital', 'asc');
+    //     } elseif ($sortOption === 'unit_price_asc') {
+    //         $query->orderBy('unit_price', 'asc');
+    //     }
+
+    //     $suppliers = Supplier::all();
+
+    //     $products = $query->paginate(5);
+
+    //     $searchQuery = $request->input('search');
+
+    //     return view('navbar.product', [
+    //         'username' => $nm,
+    //         'lowQuantityNotifications' => $lowQuantityNotifications,
+    //         'searchQuery' => $searchQuery,
+    //         'products' => $products,
+    //         'suppliers' => $suppliers,
+    //     ]);
+    // }
+
+    // // Example function for simple rule-based forecasting
+    // public function forecastSales($customerId, $timeFrame = 'week')
+    // {
+    //     $customerTransactions = Transaction::where('customer_name', $customerId)
+    //         ->orderBy('created_at', 'desc')
+    //         ->get();
+
+    //     if ($customerTransactions->count() > 0) {
+    //         $lastTransactionDate = Carbon::parse($customerTransactions->first()->created_at);
+    //         $now = Carbon::now();
+
+    //         if ($lastTransactionDate->addWeek()->isPast() && $timeFrame == 'week') {
+    //             return "Customer is likely to transact again within a week.";
+    //         } elseif ($lastTransactionDate->addMonth()->isPast() && $timeFrame == 'month') {
+    //             return "Customer is likely to transact again within a month.";
+    //         } else {
+    //             return "Customer's next transaction is not predicted in the selected time frame.";
+    //         }
+    //     }
+
+    //     return "No sufficient transaction history for forecasting.";
+    // }
 
     // public function productStore(Request $request)
     // {
@@ -534,6 +760,9 @@ class AdminController extends Controller
         // return redirect()->route('admin.transaction')->withSuccess('Account deleted successfully!');
         return back()->withSuccess('Account deleted successfully!');
     }
+
+
+
 
     public function generateReport(Request $request)
     {
