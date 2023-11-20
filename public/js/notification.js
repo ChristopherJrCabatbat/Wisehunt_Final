@@ -87,18 +87,18 @@ function addLowQuantityNotifications() {
 
     lowQuantityNotifications.forEach(function (product, index) {
         // If it's not a sales forecast notification, add it to the regular list
-        const lowQuantityItem = document.createElement('li');
-        lowQuantityItem.classList.add('notification-item', 'low-quantity'); // Added 'low-quantity' class
-        lowQuantityItem.innerHTML = `
+        const notificationItem = document.createElement('li');
+        notificationItem.classList.add('notification-item', 'low-quantity'); // Added 'low-quantity' class
+        notificationItem.innerHTML = `
             ${product.message}
             <span class="dot"></span>
         `;
-        lowQuantityItem.addEventListener('click', function () {
+        notificationItem.addEventListener('click', function () {
             navigateToProductView(product.productId);
         });
 
-        // Append the low quantity item to the notification list
-        notificationList.appendChild(lowQuantityItem);
+        // Append the notification item to the notification list
+        notificationList.appendChild(notificationItem);
 
         // Check if forecastMessage is present and not empty
         if (product.forecastMessage && product.forecastMessage.trim() !== '') {
@@ -109,8 +109,11 @@ function addLowQuantityNotifications() {
                 // Check if the forecast message has not been added before
                 if (!addedForecastMessages.includes(forecastMessage)) {
                     const forecastMessageItem = document.createElement('li');
-                    forecastMessageItem.classList.add('forecast-message');
-                    forecastMessageItem.innerHTML = forecastMessage;
+                    forecastMessageItem.classList.add('notification-item', 'forecast-message');
+                    forecastMessageItem.innerHTML = `
+                        ${forecastMessage}
+                        <span class="dot"></span>
+                    `;
 
                     // Append each forecast message to the notification list
                     notificationList.appendChild(forecastMessageItem);
@@ -118,7 +121,7 @@ function addLowQuantityNotifications() {
 
                     // Add margin-top to the first low quantity notification
                     if (index === 0 && forecastIndex === 0) {
-                        lowQuantityItem.style.marginTop = '25px'; // Adjust the margin-top value as needed
+                        notificationItem.style.marginTop = '35px'; // Adjust the margin-top value as needed
                     }
 
                     console.log('Added forecast message:', forecastMessage);
@@ -139,87 +142,6 @@ function addLowQuantityNotifications() {
     // Toggle the red dot visibility based on whether there are low quantity notifications
     toggleRedDotVisibility();
 }
-
-
-
-
-
-
-
-// // Function to add low quantity notifications
-// function addLowQuantityNotifications() {
-//     const notificationList = document.getElementById('notificationList');
-
-//     // Clear the existing notifications
-//     notificationList.innerHTML = '';
-
-//     let hasLowQuantityNotification = false;
-//     let addedForecastMessages = []; // Keep track of added forecast messages
-
-//     lowQuantityNotifications.forEach(function (product) {
-//         // If it's not a sales forecast notification, add it to the regular list
-//         const lowQuantityItem = document.createElement('li');
-//         lowQuantityItem.classList.add('notification-item', 'low-quantity'); // Added 'low-quantity' class
-//         lowQuantityItem.innerHTML = `
-//             ${product.message}
-//             <span class="dot"></span>
-//         `;
-//         lowQuantityItem.addEventListener('click', function () {
-//             navigateToProductView(product.productId);
-//         });
-
-//         // Append the low quantity item to the notification list
-//         notificationList.appendChild(lowQuantityItem);
-
-//         // Add margin-top to the first forecast message
-//         if (hasLowQuantityNotification.length === 1) {
-//             forecastMessageItem.style.marginTop = '40px'; // Adjust the margin-top value as needed
-//         }
-
-//         // Check if forecastMessage is present and not empty
-//         if (product.forecastMessage && product.forecastMessage.trim() !== '') {
-//             const forecastMessages = product.forecastMessage.split('<br>');
-
-//             // Create a separate li for each forecast message
-//             forecastMessages.forEach(function (forecastMessage) {
-//                 // Check if the forecast message has not been added before
-//                 if (!addedForecastMessages.includes(forecastMessage)) {
-//                     const forecastMessageItem = document.createElement('li');
-//                     forecastMessageItem.classList.add('forecast-message');
-//                     forecastMessageItem.innerHTML = forecastMessage;
-
-//                     // Append each forecast message to the notification list
-//                     notificationList.appendChild(forecastMessageItem);
-//                     addedForecastMessages.push(forecastMessage);
-
-//                     console.log('Added forecast message:', forecastMessage);
-
-                    
-//                 }
-//             });
-//         }
-
-//         hasLowQuantityNotification = true;
-//     });
-
-//     if (!hasLowQuantityNotification) {
-//         // No low quantity notifications, so display a message
-//         const noNotificationsItem = document.createElement('li');
-//         noNotificationsItem.innerText = 'No low quantity notifications.';
-//         notificationList.appendChild(noNotificationsItem);
-//     }
-
-//     // Toggle the red dot visibility based on whether there are low quantity notifications
-//     toggleRedDotVisibility();
-// }
-
-
-
-
-
-
-
-
 
 
 // Navigate to product edit view

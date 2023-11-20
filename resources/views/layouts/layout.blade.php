@@ -59,18 +59,6 @@
 
     <div class="container">
 
-        {{-- <div class="container">
-
-            <div id="notificationPanel" class="notification-panel">
-                <span class="close-notification" onclick="closeNotification()">&times;</span>
-                <h3>Notifications</h3>
-                <ul id="notificationList" class="notification-list">
-                    <!-- Add your notifications here dynamically -->
-                </ul>
-            </div>
-
-        </div> --}}
-
         <div class="container">
 
             <div id="notificationPanel" class="notification-panel">
@@ -83,11 +71,6 @@
             </div>
 
         </div>
-
-        <!-- Assuming this is inside your loop for notifications -->
-
-
-
 
         <header>
             <div class="side-navbar">

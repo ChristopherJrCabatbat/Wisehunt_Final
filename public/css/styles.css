@@ -280,8 +280,8 @@ button, input[type="submit"], a{
 }
 
 .h3-notif {
-    background-color: rgb(41, 201, 255, 0.8);
-    padding: 5px;    
+    background-color: #006181;
+    padding: 7px;    
     width: 100%;
     color:white;
     position: absolute;
@@ -307,16 +307,16 @@ button, input[type="submit"], a{
 
 .notification-list li {
     padding: 8px 13px;
-    /* padding-right: 21px; */
+    padding-right: 21px;
     text-decoration: none;
+    /* align-items: center;
     display: flex;
-    align-items: center;
+    flex-direction: row; */
     color: #333;
     transition: background-color 0.1s;
     position: relative;
     cursor: pointer;
     margin-top: 5px;
-    
 }
 
 .notification-list li:hover {
@@ -363,6 +363,16 @@ button, input[type="submit"], a{
     align-content: center;
     user-select: none;
 }
+
+.bold-text {
+    font-weight: bold;
+    white-space: nowrap; /* Prevents text from wrapping onto a new line */
+}
+.notification-item .bold-text {
+    display: inline; /* Display as an inline element */
+}
+
+
 
 
 
