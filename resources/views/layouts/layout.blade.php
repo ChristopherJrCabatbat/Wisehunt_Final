@@ -59,9 +59,7 @@
 
     <div class="container">
 
-        <div class="container">
-            {{-- <!-- Add this hidden input in your Blade view -->
-            <input type="hidden" id="lowQuantityNotifications"> --}}
+        {{-- <div class="container">
 
             <div id="notificationPanel" class="notification-panel">
                 <span class="close-notification" onclick="closeNotification()">&times;</span>
@@ -70,8 +68,26 @@
                     <!-- Add your notifications here dynamically -->
                 </ul>
             </div>
-            
+
+        </div> --}}
+
+        <div class="container">
+
+            <div id="notificationPanel" class="notification-panel">
+                <span class="close-notification" onclick="closeNotification()">&times;</span>
+                <h3 class="h3-notif">Notifications</h3>
+                <ul id="notificationList" class="notification-list">
+                   
+                    <!-- Add your notifications here dynamically -->
+                </ul>
+            </div>
+
         </div>
+
+        <!-- Assuming this is inside your loop for notifications -->
+
+
+
 
         <header>
             <div class="side-navbar">
@@ -130,9 +146,41 @@
     <script src="{{ asset('js/easyAdd.js') }}"></script>
     {{-- <script src="{{ asset('js/easyEdit.js') }}"></script> --}}
 
+    {{-- <script>
+        // Assuming notification.message and notification.forecastMessage are still present
+        lowQuantityNotifications.forEach(notification => {
+            console.log('Message:', notification.message);
+            console.log('Forecast Message:', notification.forecastMessage);
+            console.log('Product ID:', notification.productId);
+
+            // Display the notification with forecastMessage
+            const notificationItem = document.createElement('li');
+            const message = document.createElement('strong');
+            message.innerHTML = notification.message;
+            notificationItem.appendChild(message);
+
+            // Check if forecastMessage is present and not empty
+            if (notification.forecastMessage && notification.forecastMessage.trim() !== '') {
+                const forecastMessage = document.createElement('div');
+                forecastMessage.innerHTML = notification.forecastMessage;
+                notificationItem.appendChild(forecastMessage);
+            }
+
+            // Append the notification to the notificationList
+            document.getElementById('notificationList').appendChild(notificationItem);
+
+            // Handle the data as needed
+        });
+    </script> --}}
+
     <script>
-        const lowQuantityNotifications = {!! json_encode($lowQuantityNotifications) !!};
+        // const lowQuantityNotifications = {!! json_encode($lowQuantityNotifications) !!};
+        const lowQuantityNotifications = {!! json_encode(
+            $lowQuantityNotifications,
+            JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE,
+        ) !!};
     </script>
+
 
     @yield('script')
 

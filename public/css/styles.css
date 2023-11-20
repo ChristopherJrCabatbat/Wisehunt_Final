@@ -183,6 +183,7 @@ img {
     position: relative;
     height: fit-content;
     cursor: pointer;
+    border-radius: 50%;
 }
 
 .dropdown {
@@ -255,6 +256,14 @@ button {
     padding: 7px;
 }
 
+button, input[type="submit"], a{
+    transition: all 0.3s;
+}
+
+
+
+
+
 
 /* Notification */
 .notification-panel {
@@ -267,7 +276,17 @@ button {
     border: 1px solid #ccc;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 1000;
-    padding: 10px;
+    padding: 12px 0;
+}
+
+.h3-notif {
+    background-color: rgb(41, 201, 255, 0.8);
+    padding: 5px;    
+    width: 100%;
+    color:white;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .notification-list {
@@ -288,14 +307,16 @@ button {
 
 .notification-list li {
     padding: 8px 13px;
-    padding-right: 21px;
+    /* padding-right: 21px; */
     text-decoration: none;
     display: flex;
     align-items: center;
     color: #333;
-    transition: background-color 0.3s;
+    transition: background-color 0.1s;
     position: relative;
     cursor: pointer;
+    margin-top: 5px;
+    
 }
 
 .notification-list li:hover {
@@ -343,9 +364,7 @@ button {
     user-select: none;
 }
 
-button, input[type="submit"], a{
-    transition: all 0.3s;
-}
+
 
 
 

@@ -270,7 +270,7 @@
             // Set a timeout to close the notification panel after 5 seconds
             setTimeout(function() {
                 closeNotification();
-            }, 5000);
+            }, 10000);
         }
 
         // Call the function when the page loads (adjust this based on your actual login logic)

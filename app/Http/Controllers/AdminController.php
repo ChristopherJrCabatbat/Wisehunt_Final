@@ -24,25 +24,28 @@ use Carbon\Carbon;
 
 class AdminController extends Controller
 {
-    // // SMS
-    // $productsss = Products::all();
-    // $lowQuantityNotifications = [];
+    public function SMS()
+    {
+        // // SMS
+        // $productsss = Products::all();
+        // $lowQuantityNotifications = [];
 
-    // foreach ($productsss as $product) {
-    //     if ($product->quantity <= 20) {
-    //         $notification = [
-    //             'message' => $product->name . "'s quantity is too low!",
-    //             'productId' => $product->id,
-    //         ];
-    //         $lowQuantityNotifications[] = $notification;
+        // foreach ($productsss as $product) {
+        //     if ($product->quantity <= 20) {
+        //         $notification = [
+        //             'message' => $product->name . "'s quantity is too low!",
+        //             'productId' => $product->id,
+        //         ];
+        //         $lowQuantityNotifications[] = $notification;
 
-    //         // Access user's phone number from the product's user relation
-    //         $phoneNumber = $product->user->phone_number; // Assuming a 'phone_number' field in the User model
+        //         // Access user's phone number from the product's user relation
+        //         $phoneNumber = $product->user->phone_number; // Assuming a 'phone_number' field in the User model
 
-    //         // Call sendSMSNotification using $this
-    //         $this->sendSMSNotification($phoneNumber, $product->name);
-    //     }
-    // }
+        //         // Call sendSMSNotification using $this
+        //         $this->sendSMSNotification($phoneNumber, $product->name);
+        //     }
+        // }
+    }
 
     // Dashboard Controller
     public function dashboard()
@@ -56,14 +59,30 @@ class AdminController extends Controller
         // Notification
         $productsss = Product::all();
         $lowQuantityNotifications = [];
-
+        $salesForecastNotifications = [];
+    
+        // Get forecasts outside the loop to avoid duplication
+        $forecasts = $this->forecastSalesForAllCustomers();
+    
         foreach ($productsss as $product) {
             if ($product->quantity <= 20) {
-                $notification = [
-                    'message' => $product->name . "'s quantity is too low!",
-                    'productId' => $product->id, // Assuming 'id' is the product's unique identifier
-                ];
-                $lowQuantityNotifications[] = $notification;
+                // Check if there are forecasts for the customer
+                $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+                $forecasts = $this->forecastSalesForAllCustomers();
+        
+                // Create a single message by joining the forecasts array elements
+                $forecastMessage = implode('<br>', $forecasts);
+        
+                // If there are forecasts, add them to notifications
+                if (!empty($forecastMessage)) {
+                    $notification = [
+                        'message' => $product->name . "'s quantity is too low!",
+                        'forecastMessage' => $forecastMessage, // This should be specific to each product
+                        'productId' => $product->id,
+                    ];
+        
+                    $lowQuantityNotifications[] = $notification;
+                }
             }
         }
 
@@ -152,11 +171,12 @@ class AdminController extends Controller
             'datasets' => $datasets, // Adding the datasets for the bar chart
             'labels' => $labels, // Adding the labels for the bar chart
             'productLabels' => $productLabels,
+            'salesForecastNotifications' => $salesForecastNotifications,
             'productDatasets' => $productDatasets,
         ]);
     }
 
-    
+
     // Product Controller
     // public function product(Request $request)
     // {
@@ -175,7 +195,7 @@ class AdminController extends Controller
     //             foreach ($transaction as $singleTransaction) {
     //                 $customerId = $singleTransaction->customer_name; // Assuming customer_name is the customer identifier
     //                 $forecast = $this->forecastSales($customerId);
-        
+
     //                 if ($forecast) {
     //                     // If the forecast indicates a likely transaction, add it to notifications
     //                     $notification = [
@@ -183,7 +203,7 @@ class AdminController extends Controller
     //                         'productId' => $product->id,
     //                     ];
     //                     $lowQuantityNotifications[] = $notification;
-        
+
     //                     // Break the inner loop once a customer is found in transactions
     //                     break;
     //                 }
@@ -211,18 +231,18 @@ class AdminController extends Controller
     //     $customerTransactions = Transaction::where('customer_name', $customerId)
     //         ->orderBy('created_at', 'desc')
     //         ->get();
-    
+
     //     // Check if there are any transactions for the customer
     //     if ($customerTransactions->count() > 0) {
     //         // Get the timestamp of the last transaction
     //         $lastTransactionDate = Carbon::parse($customerTransactions->first()->created_at);
-    
+
     //         // Get the current timestamp
     //         $now = Carbon::now();
-    
+
     //         // Calculate the end date based on the selected time frame
     //         $endDate = ($timeFrame == 'week') ? $lastTransactionDate->copy()->addWeek() : $lastTransactionDate->copy()->addMonth();
-    
+
     //         // Check if the current date is within the forecast period
     //         if ($now->lte($endDate)) {
     //             return "$customerId is likely to transact again within a week.";
@@ -230,108 +250,152 @@ class AdminController extends Controller
     //             return "$customerId's next transaction is not predicted in the selected time frame.";
     //         }
     //     }
-    
+
     //     // If there are no transactions for the customer, indicate that there's not enough history for forecasting
     //     return "No sufficient transaction history for forecasting.";
     // }
 
     public function product(Request $request)
-{
-    $nm = Session::get('name');
-    $sortOption = $request->input('sort');
-    $query = Product::query();
-
-    // Notification
-    $productsss = Product::all();
-    $lowQuantityNotifications = [];
-
-    foreach ($productsss as $product) {
-        if ($product->quantity <= 20) {
-            // Check if there are forecasts for the customer
-            $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
-            $forecasts = $this->forecastSalesForAllCustomers();
-
-            // Create a single message by joining the forecasts array elements
-            $forecastMessage = implode('<br>', $forecasts);
-
-            // If there are forecasts, add them to notifications
-            if (!empty($forecastMessage)) {
-                $notification = [
-                    'message' => $product->name . "'s quantity is too low!<br>$forecastMessage",
-                    'productId' => $product->id,
-                ];
-                $lowQuantityNotifications[] = $notification;
-            }
-        }
-    }
-
-    if ($sortOption === 'name_asc') {
-        $query->orderBy('name', 'asc');
-    } elseif ($sortOption === 'category_asc') {
-        $query->orderBy('category', 'asc');
-    } elseif ($sortOption === 'quantity_asc') {
-        $query->orderBy('quantity', 'asc');
-    } elseif ($sortOption === 'capital_asc') {
-        $query->orderBy('capital', 'asc');
-    } elseif ($sortOption === 'unit_price_asc') {
-        $query->orderBy('unit_price', 'asc');
-    }
-
-    $suppliers = Supplier::all();
-    $products = $query->paginate(5);
-    $searchQuery = $request->input('search');
-
-    return view('navbar.product', [
-        'username' => $nm,
-        'lowQuantityNotifications' => $lowQuantityNotifications,
-        'searchQuery' => $searchQuery,
-        'products' => $products,
-        'suppliers' => $suppliers,
-    ]);
-}
-
-// Add the forecastSales method to your controller
-private function forecastSalesForAllCustomers($timeFrame = 'week')
-{
-    // Get all unique customer names
-    $uniqueCustomerNames = Transaction::distinct()->pluck('customer_name');
-
-    $forecasts = [];
-
-    foreach ($uniqueCustomerNames as $customerId) {
-        // Fetch transactions for the given customer, ordered by transaction date in descending order
-        $customerTransactions = Transaction::where('customer_name', $customerId)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        // Check if there are any transactions for the customer
-        if ($customerTransactions->count() > 0) {
-            // Get the timestamp of the last transaction
-            $lastTransactionDate = Carbon::parse($customerTransactions->first()->created_at);
-
-            // Get the current timestamp
-            $now = Carbon::now();
-
-            // Calculate the end date based on the selected time frame
-            $endDate = ($timeFrame == 'week') ? $lastTransactionDate->copy()->addWeek() : $lastTransactionDate->copy()->addMonth();
-
-            // Check if the current date is within the forecast period
-            if ($now->lte($endDate)) {
-                $forecasts[] = "$customerId is likely to transact again within a week.";
-            }
-            // If you want to include a message for the case when the next transaction is not predicted, you can add it here
-        } else {
-            // If there are no transactions for the customer, indicate that there's not enough history for forecasting
-            $forecasts[] = "No sufficient transaction history for forecasting for $customerId.";
-        }
-    }
-
-    return $forecasts;
-}
-
-
-
+    {
+        $nm = Session::get('name');
+        $sortOption = $request->input('sort');
+        $query = Product::query();
     
+        // Notification
+        $productsss = Product::all();
+        $lowQuantityNotifications = [];
+        $salesForecastNotifications = [];
+    
+        // Get forecasts outside the loop to avoid duplication
+        $forecasts = $this->forecastSalesForAllCustomers();
+    
+        foreach ($productsss as $product) {
+            if ($product->quantity <= 20) {
+                // Check if there are forecasts for the customer
+                $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+                $forecasts = $this->forecastSalesForAllCustomers();
+        
+                // Create a single message by joining the forecasts array elements
+                $forecastMessage = implode('<br>', $forecasts);
+        
+                // If there are forecasts, add them to notifications
+                if (!empty($forecastMessage)) {
+                    $notification = [
+                        'message' => $product->name . "'s quantity is too low!",
+                        'forecastMessage' => $forecastMessage, // This should be specific to each product
+                        'productId' => $product->id,
+                    ];
+        
+                    $lowQuantityNotifications[] = $notification;
+                }
+            }
+        }
+        // dd($lowQuantityNotifications);
+
+        // 'salesForecastNotifications' => $salesForecastNotifications,
+        
+        // ... (sorting logic)
+    
+        $suppliers = Supplier::all();
+        $products = $query->paginate(5);
+        $searchQuery = $request->input('search');
+    
+        return view('navbar.product', [
+            'username' => $nm,
+            'lowQuantityNotifications' => $lowQuantityNotifications,
+            'salesForecastNotifications' => $salesForecastNotifications,
+            'searchQuery' => $searchQuery,
+            'products' => $products,
+            'suppliers' => $suppliers,
+        ]);
+    }
+    
+
+
+    // Add the forecastSales method to your controller
+    private function forecastSalesForAllCustomers()
+    {
+        // Get all unique customer names
+        $uniqueCustomerNames = Transaction::distinct()->pluck('customer_name');
+
+        $forecasts = [];
+
+        foreach ($uniqueCustomerNames as $customerId) {
+            // Fetch transactions for the given customer, ordered by transaction date in descending order
+            $customerTransactions = Transaction::where('customer_name', $customerId)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            // Check if there are any transactions for the customer
+            if ($customerTransactions->count() > 0) {
+                // Get the timestamps of the first and last transactions
+                $firstTransactionDate = Carbon::parse($customerTransactions->last()->created_at);
+                $lastTransactionDate = Carbon::parse($customerTransactions->first()->created_at);
+
+                // Calculate the average time between transactions if there is more than one transaction
+                $averageTimeBetweenTransactions = ($customerTransactions->count() > 1)
+                    ? $firstTransactionDate->diffInDays($lastTransactionDate) / ($customerTransactions->count() - 1)
+                    : 0;
+
+                // Determine the most suitable timeframe based on the average time between transactions
+                $timeFrame = ($averageTimeBetweenTransactions <= 7) ? 'week' : 'month';
+
+                // Calculate the end date based on the selected time frame
+                $endDate = ($timeFrame == 'week') ? $lastTransactionDate->copy()->addWeek() : $lastTransactionDate->copy()->addMonth();
+
+                // Check if the current date is within the forecast period
+                if (Carbon::now()->lte($endDate)) {
+                    $forecasts[] = "$customerId is likely to transact again within the next $timeFrame.";
+                }
+
+            }
+        }
+
+        return $forecasts;
+    }
+
+
+
+
+    // private function forecastSalesForAllCustomers($timeFrame = 'week')
+    // {
+    //     // Get all unique customer names
+    //     $uniqueCustomerNames = Transaction::distinct()->pluck('customer_name');
+
+    //     $forecasts = [];
+
+    //     foreach ($uniqueCustomerNames as $customerId) {
+    //         // Fetch transactions for the given customer, ordered by transaction date in descending order
+    //         $customerTransactions = Transaction::where('customer_name', $customerId)
+    //             ->orderBy('created_at', 'desc')
+    //             ->get();
+
+    //         // Check if there are any transactions for the customer
+    //         if ($customerTransactions->count() > 0) {
+    //             // Get the timestamp of the last transaction
+    //             $lastTransactionDate = Carbon::parse($customerTransactions->first()->created_at);
+
+    //             // Get the current timestamp
+    //             $now = Carbon::now();
+
+    //             // Calculate the end date based on the selected time frame
+    //             $endDate = ($timeFrame == 'week') ? $lastTransactionDate->copy()->addWeek() : $lastTransactionDate->copy()->addMonth();
+
+    //             // Check if the current date is within the forecast period
+    //             if ($now->lte($endDate)) {
+    //                 $forecasts[] = "$customerId is likely to transact again within a week.";
+    //             } else {
+    //                 $forecasts[] = "$customerId's next transaction is not predicted in the selected time frame.";
+    //             }
+    //         } else {
+    //             // If there are no transactions for the customer, indicate that there's not enough history for forecasting
+    //             $forecasts[] = "No sufficient transaction history for forecasting for $customerId.";
+    //         }
+    //     }
+
+    //     return $forecasts;
+    // }
+
 
 
 
@@ -591,14 +655,30 @@ private function forecastSalesForAllCustomers($timeFrame = 'week')
         // Notification
         $productsss = Product::all();
         $lowQuantityNotifications = [];
-
+        $salesForecastNotifications = [];
+    
+        // Get forecasts outside the loop to avoid duplication
+        $forecasts = $this->forecastSalesForAllCustomers();
+    
         foreach ($productsss as $product) {
             if ($product->quantity <= 20) {
-                $notification = [
-                    'message' => $product->name . "'s quantity is too low!",
-                    'productId' => $product->id, // Assuming 'id' is the product's unique identifier
-                ];
-                $lowQuantityNotifications[] = $notification;
+                // Check if there are forecasts for the customer
+                $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+                $forecasts = $this->forecastSalesForAllCustomers();
+        
+                // Create a single message by joining the forecasts array elements
+                $forecastMessage = implode('<br>', $forecasts);
+        
+                // If there are forecasts, add them to notifications
+                if (!empty($forecastMessage)) {
+                    $notification = [
+                        'message' => $product->name . "'s quantity is too low!<br>",
+                        'forecastMessage' => $forecastMessage, // This should be specific to each product
+                        'productId' => $product->id,
+                    ];
+        
+                    $lowQuantityNotifications[] = $notification;
+                }
             }
         }
 
@@ -609,7 +689,9 @@ private function forecastSalesForAllCustomers($timeFrame = 'week')
         $searchQuery = $request->input('search');
 
         return view('navbar.transaction', [
-            'transactions' => $transactions, 'username' => $nm, 'products' => $products
+            'transactions' => $transactions, 'username' => $nm, 'products' => $products,
+        'salesForecastNotifications' => $salesForecastNotifications,
+
         ])->with('lowQuantityNotifications', $lowQuantityNotifications)->with('searchQuery', $searchQuery)->with('customers', $customers);
     }
 
@@ -793,19 +875,36 @@ private function forecastSalesForAllCustomers($timeFrame = 'week')
         // Notification
         $productsss = Product::all();
         $lowQuantityNotifications = [];
-
+        $salesForecastNotifications = [];
+    
+        // Get forecasts outside the loop to avoid duplication
+        $forecasts = $this->forecastSalesForAllCustomers();
+    
         foreach ($productsss as $product) {
             if ($product->quantity <= 20) {
-                $notification = [
-                    'message' => $product->name . "'s quantity is too low!",
-                    'productId' => $product->id, // Assuming 'id' is the product's unique identifier
-                ];
-                $lowQuantityNotifications[] = $notification;
+                // Check if there are forecasts for the customer
+                $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+                $forecasts = $this->forecastSalesForAllCustomers();
+        
+                // Create a single message by joining the forecasts array elements
+                $forecastMessage = implode('<br>', $forecasts);
+        
+                // If there are forecasts, add them to notifications
+                if (!empty($forecastMessage)) {
+                    $notification = [
+                        'message' => $product->name . "'s quantity is too low!<br>",
+                        'forecastMessage' => $forecastMessage, // This should be specific to each product
+                        'productId' => $product->id,
+                    ];
+        
+                    $lowQuantityNotifications[] = $notification;
+                }
             }
         }
+        // 'salesForecastNotifications' => $salesForecastNotifications,
 
         $customers = Customer::paginate(6);
-        return view('navbar.customer', ['customers' => $customers])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications);
+        return view('navbar.customer', ['customers' => $customers, 'salesForecastNotifications' => $salesForecastNotifications,])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications);
     }
 
     public function customerStore(Request $request)
@@ -856,19 +955,36 @@ private function forecastSalesForAllCustomers($timeFrame = 'week')
         // Notification
         $productsss = Product::all();
         $lowQuantityNotifications = [];
-
+        $salesForecastNotifications = [];
+    
+        // Get forecasts outside the loop to avoid duplication
+        $forecasts = $this->forecastSalesForAllCustomers();
+    
         foreach ($productsss as $product) {
             if ($product->quantity <= 20) {
-                $notification = [
-                    'message' => $product->name . "'s quantity is too low!",
-                    'productId' => $product->id, // Assuming 'id' is the product's unique identifier
-                ];
-                $lowQuantityNotifications[] = $notification;
+                // Check if there are forecasts for the customer
+                $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+                $forecasts = $this->forecastSalesForAllCustomers();
+        
+                // Create a single message by joining the forecasts array elements
+                $forecastMessage = implode('<br>', $forecasts);
+        
+                // If there are forecasts, add them to notifications
+                if (!empty($forecastMessage)) {
+                    $notification = [
+                        'message' => $product->name . "'s quantity is too low!<br>",
+                        'forecastMessage' => $forecastMessage, // This should be specific to each product
+                        'productId' => $product->id,
+                    ];
+        
+                    $lowQuantityNotifications[] = $notification;
+                }
             }
         }
+        // 'salesForecastNotifications' => $salesForecastNotifications,
 
         $suppliers = Supplier::paginate(6);
-        return view('navbar.supplier', ['suppliers' => $suppliers])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications);
+        return view('navbar.supplier', ['suppliers' => $suppliers, 'salesForecastNotifications' => $salesForecastNotifications,])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications);
     }
 
     public function supplierStore(Request $request)
