@@ -57,7 +57,7 @@
 
                     </div>
                     <div class="column">
-                        <label for="">Quantity in Stock:</label>
+                        <label for="">Stock Quantity:</label>
                         <input required type="number" name="quantity" id="" value="{{ old('quantity') }}"
                             class="row1-input" />
                         @if ($errors->has('quantity'))
@@ -132,7 +132,7 @@
                     enctype="multipart/form-data" method="POST">
                     @csrf
                     @method('PUT')
-                    
+
                     <div class="row1">
                         <div class="column">
                             <label class="modal-top" for="">Product code:</label>
@@ -154,7 +154,7 @@
                             @endif
                         </div>
                         <div class="column">
-                            <label for="">Quantity in Stock:</label>
+                            <label for="">Stock Quantity:</label>
                             <input required autofocus type="number" name="quantity" class="row1-input autofocus"
                                 value="{{ $product->quantity }}" />
                             @if ($errors->has('quantity'))
@@ -182,11 +182,9 @@
                         <div class="column">
                             <label for="">Category:</label>
                             <select name="category" id="" class="row1-input select_categ">
-                                <option value="Paper"
-                                    {{ $product->category === 'Paper' ? 'selected' : '' }}>Paper
+                                <option value="Paper" {{ $product->category === 'Paper' ? 'selected' : '' }}>Paper
                                 </option>
-                                <option value="Machine"
-                                    {{ $product->category === 'Machine' ? 'selected' : '' }}>
+                                <option value="Machine" {{ $product->category === 'Machine' ? 'selected' : '' }}>
                                     Machine</option>
                                 <option value="Food Material"
                                     {{ $product->category === 'Food Material' ? 'selected' : '' }}>
@@ -194,7 +192,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="row3-edit">
                         {{-- Image --}}
                         <div class="column">
@@ -273,11 +271,12 @@
         <div class="taas">
             <button type="button" id="newButton">Add New Product</button>
             <div class="sort-by">
-                {{-- <form action="{{ route('admin.product') }}" method="GET"> --}}
-                <form action="#" method="GET">
-                    <input type="hidden" name="sort" value="{{ request('sort') }}">
+                {{-- <form action="#" method="GET"> --}}
+                <form id="sortForm" action="#" method="GET">
+                    <input type="hidden" name="sort" id="sortInput" value="{{ request('sort') }}">
+                    
                     <label for="sort">Sort by:</label>
-                    <select name="sort" id="sort">
+                    <select name="sort" id="sortSelect">
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
                             Default Sorting --</option>
                         <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product
@@ -285,9 +284,7 @@
                         <option value="category_asc" {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category
                         </option>
                         <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Quantity
-                            in
-                            Stock
-                            (ascending)</option>
+                            in Stock (ascending)</option>
                         <option value="capital_asc" {{ request('sort') === 'capital_asc' ? 'selected' : '' }}>
                             Capital (ascending)</option>
                         <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit
@@ -295,13 +292,13 @@
                             (ascending)
                         </option>
                     </select>
-                    <button type="submit">Sort</button>
+                    {{-- <button type="submit">Sort</button> --}}
                     {{-- <a href="{{ route('admin.product') }}" class="reset-sort">Reset sort</a> --}}
                 </form>
             </div>
             <div>
-                {{-- <form class="form-search" action="{{ route('admin.searchProduct') }}" method="GET"> --}}
-                <form class="form-search" action="" method="GET">
+                <form class="form-search" action="{{ route('admin.searchProduct') }}" method="GET">
+                    {{-- <form class="form-search" action="" method="GET"> --}}
                     <div class="searchs">
                         <div class="form-search">
                             <input required type="text" name="search" placeholder="Search product..."
@@ -329,10 +326,11 @@
                     <th>No.</th>
                     <th>Product Code</th>
                     <th>Product Name</th>
+                    <th>Brand Name</th>
                     <th>Product Description</th>
                     <th>Category</th>
                     <th>Image</th>
-                    <th>Quantity in Stock</th>
+                    <th>Stock Quantity</th>
                     <th>Capital</th>
                     <th>Unit Price</th>
                     <th>Actions</th>
@@ -348,6 +346,7 @@
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
                                 <td>{{ $product->code }}</td>
+                                <td>{{ $product->name }}</td>
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->description }}</td>
                                 <td>{{ $product->category }}</td>
@@ -395,5 +394,10 @@
 @endsection
 
 @section('script')
-
+    <script>
+        // Automatically submit the form when the sorting option changes
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            document.getElementById('sortForm').submit();
+        });
+    </script>
 @endsection

@@ -111,11 +111,11 @@ button[type="button"] {
 }
 
 button.search {
-    right: 176px;
+    right: 179px;
 }
 
 input:focus+.search {
-    right: 177px;
+    right: 180px;
 }
 
 .new-generate {
@@ -166,13 +166,13 @@ label {
     margin-bottom: 6px;
 }
 
-.select {
-    min-width: 100%;
+select {
+    max-width: 100%;
 }
 
 .text-danger {
     color: red;
     font-size: 14px;
-    margin-top: 10px;
+    margin-top: 15px;
     margin-bottom: -8px;
 }

@@ -23,6 +23,7 @@ Route::group([
     // Route::post('/validateProductStore', [AdminController::class, 'validateProductStore'])->name('validateProductStore');
     Route::put('/productUpdate/{id}', [AdminController::class, 'productUpdate'])->name('productUpdate');
     Route::delete('/productDestroy/{id}', [AdminController::class, 'productDestroy'])->name('productDestroy');
+    Route::get('/searchProduct', [AdminController::class, 'searchProduct'])->name('searchProduct');
 
     // Transaction Routes
     Route::get('/transaction', [AdminController::class, 'transaction'])->name('transaction');

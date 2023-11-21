@@ -143,6 +143,45 @@ function addLowQuantityNotifications() {
     toggleRedDotVisibility();
 }
 
+// Function to add best-seller notifications
+function addBestSellerNotifications() {
+    console.log('Adding best-seller notifications:', bestSellerNotifications);
+
+    const notificationList = document.getElementById('notificationList');
+
+    bestSellerNotifications.forEach(function (product) {
+        console.log('Adding notification for product:', product);
+
+        const notificationItem = document.createElement('li');
+        notificationItem.classList.add('notification-item', 'best-seller'); // Added 'best-seller' class
+        notificationItem.innerHTML = `
+            ${product.message}
+            <span class="dot"></span>
+        `;
+        notificationItem.addEventListener('click', function () {
+            navigateToProductView(product.productId);
+        });
+
+        // Append the notification item to the notification list
+        notificationList.appendChild(notificationItem);
+    });
+
+    // Toggle the red dot visibility based on whether there are best-seller notifications
+    toggleRedDotVisibility();
+}
+
+// Call the function to add best-seller notifications when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+    addLowQuantityNotifications();
+    addBestSellerNotifications();
+    // Check if there are notifications and show the red dot accordingly
+    const redDot = document.getElementById('notificationDot');
+    if (document.querySelector('.notification-list li')) {
+        redDot.style.display = 'block'; // Show the red dot
+    } else {
+        redDot.style.display = 'none'; // Hide the red dot
+    }
+});
 
 // Navigate to product edit view
 function navigateToProductView(productId) {
@@ -176,5 +215,88 @@ document.addEventListener("click", function (event) {
     ) {
         notificationPanel.style.display = 'none';
         notificationPanelVisible = false;
+    }
+});
+
+
+// Function to add notifications
+function addNotifications(notifications) {
+    const notificationList = document.getElementById('notificationList');
+
+    // Clear the existing notifications
+    notificationList.innerHTML = '';
+
+    let hasLowQuantityNotification = false;
+    let addedForecastMessages = []; // Keep track of added forecast messages
+
+    notifications.forEach(function (product, index) {
+        // If it's not a sales forecast notification, add it to the regular list
+        const notificationItem = document.createElement('li');
+        notificationItem.classList.add('notification-item'); // Common class for all notifications
+        notificationItem.innerHTML = `
+            ${product.message}
+            <span class="dot"></span>
+        `;
+        notificationItem.addEventListener('click', function () {
+            navigateToProductView(product.productId);
+        });
+
+        // Append the notification item to the notification list
+        notificationList.appendChild(notificationItem);
+
+        // Check if forecastMessage is present and not empty
+        if (product.forecastMessage && product.forecastMessage.trim() !== '') {
+            const forecastMessages = product.forecastMessage.split('<br>');
+
+            // Create a separate li for each forecast message
+            forecastMessages.forEach(function (forecastMessage, forecastIndex) {
+                // Check if the forecast message has not been added before
+                if (!addedForecastMessages.includes(forecastMessage)) {
+                    const forecastMessageItem = document.createElement('li');
+                    forecastMessageItem.classList.add('notification-item', 'forecast-message');
+                    forecastMessageItem.innerHTML = `
+                        ${forecastMessage}
+                        <span class="dot"></span>
+                    `;
+
+                    // Append each forecast message to the notification list
+                    notificationList.appendChild(forecastMessageItem);
+                    addedForecastMessages.push(forecastMessage);
+
+                    // Add margin-top to the first low quantity notification
+                    if (index === 0 && forecastIndex === 0) {
+                        notificationItem.style.marginTop = '35px'; // Adjust the margin-top value as needed
+                    }
+
+                    console.log('Added forecast message:', forecastMessage);
+                }
+            });
+        }
+
+        hasLowQuantityNotification = true;
+    });
+
+    if (!hasLowQuantityNotification) {
+        // No low quantity notifications, so display a message
+        const noNotificationsItem = document.createElement('li');
+        noNotificationsItem.innerText = 'No notifications.';
+        notificationList.appendChild(noNotificationsItem);
+    }
+
+    // Toggle the red dot visibility based on whether there are notifications
+    toggleRedDotVisibility();
+}
+
+// Call the function to add notifications when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+    const combinedNotifications = [...lowQuantityNotifications, ...bestSellerNotifications];
+    addNotifications(combinedNotifications);
+
+    // Check if there are notifications and show the red dot accordingly
+    const redDot = document.getElementById('notificationDot');
+    if (document.querySelector('.notification-list li')) {
+        redDot.style.display = 'block'; // Show the red dot
+    } else {
+        redDot.style.display = 'none'; // Hide the red dot
     }
 });

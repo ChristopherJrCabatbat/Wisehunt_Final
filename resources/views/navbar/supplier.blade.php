@@ -22,17 +22,18 @@
                 <center>
                     <h2 style="margin: 0%; color:#333;">Add Supplier</h2>
                 </center>
-                <label class="modal-top" for="">Supplier:</label>
+                <label class="modal-top" for="">Company Name:</label>
                 <input required autofocus type="text" name="supplier" id="autofocus" />
-                <label for="">Contact Person:</label>
+                <label for="">Contact Name:</label>
                 <input required type="text" name="contact_person" id="" />
-                <label for="">Address:</label>
-                <input required type="text" name="address" id="" />
-                <label for="">Product Name:</label>
-                <input required type="text" name="product_name" id="" />
                 <label for="">Contact Number:</label>
                 <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number" name="contact_num"
                     id="" value="">
+                <label for="">Address:</label>
+                <input required type="text" name="address" id="" />
+                <label for="">Product/s:</label>
+                <input required type="text" name="product_name" id="" />
+              
 
                 <input class="add" type="submit" value="Add" />
             </form>
@@ -52,22 +53,23 @@
                     <center>
                         <h2 style="margin: 0%; color:#333;">Edit Supplier</h2>
                     </center>
-                    <label class="modal-top" for="">Supplier:</label>
+                    <label class="modal-top" for="">Company Name:</label>
                     <input required type="text" class="autofocus" name="supplier" id="" autofocus
                         value="{{ old('supplier', $supplier->supplier) }}" />
-                    <label for="">Contact Person:</label>
+                    <label for="">Contact Name:</label>
                     <input required type="text" name="contact_person" id=""
                         value="{{ old('contact_person', $supplier->contact_person) }}" />
+                        <label for="">Contact Number:</label>
+                        <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
+                            name="contact_num" name="contact_num" id=""
+                            value="{{ old('contact_num', $supplier->contact_num) }}" />
                     <label for="">Address:</label>
                     <input required type="text" name="address" id=""
                         value="{{ old('address', $supplier->address) }}" />
-                    <label for="">Product Name:</label>
+                    <label for="">Product/s:</label>
                     <input required type="text" name="product_name" id=""
                         value="{{ old('product_name', $supplier->product_name) }}" />
-                    <label for="">Contact:</label>
-                    <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
-                        name="contact_num" name="contact_num" id=""
-                        value="{{ old('contact_num', $supplier->contact_num) }}" />
+                   
 
                     <input class="add" type="submit" value="Update" />
                 </form>
@@ -137,12 +139,11 @@
 
                 <tr>
                     <th>No.</th>
-                    <th>Supplier</th>
-                    <th>Contact Person</th>
+                    <th>Company Name</th>
+                    <th>Contact Name</th>
                     <th>Contact Number</th>
                     <th>Address</th>
-                    <th>Product Name</th>
-
+                    <th>Product/s</th>
                     <th>Actions</th>
                 </tr>
 

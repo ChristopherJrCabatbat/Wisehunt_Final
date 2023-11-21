@@ -1,3 +1,5 @@
+{{-- @php dd($bestSellerNotifications) @endphp --}}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -59,18 +61,30 @@
 
     <div class="container">
 
-        <div class="container">
+        <!-- Inside your Blade template -->
+        <div id="notificationPanel" class="notification-panel">
+            <span class="close-notification" onclick="closeNotification()">&times;</span>
+            <h3 class="h3-notif">Notifications</h3>
+            <ul id="notificationList" class="notification-list">
+                <!-- Display low-quantity notifications -->
+                @foreach ($lowQuantityNotifications as $notification)
+                    <li class="notification-item">
+                        {!! $notification['message'] !!}
+                        <span class="dot"></span>
+                    </li>
+                @endforeach
 
-            <div id="notificationPanel" class="notification-panel">
-                <span class="close-notification" onclick="closeNotification()">&times;</span>
-                <h3 class="h3-notif">Notifications</h3>
-                <ul id="notificationList" class="notification-list">
-                   
-                    <!-- Add your notifications here dynamically -->
-                </ul>
-            </div>
-
+                <!-- Display best-seller notifications -->
+                @foreach ($bestSellerNotifications as $notification)
+                    <li class="notification-item best-seller">
+                        {!! $notification['message'] !!}
+                        <span class="dot"></span>
+                    </li>
+                @endforeach
+            </ul>
         </div>
+
+
 
         <header>
             <div class="side-navbar">
@@ -86,6 +100,7 @@
                         <img class="notif" src="{{ asset('images/notif.png') }}" alt="notif img" width="100"
                             height="auto" onclick="toggleNotificationPanel()">
                         <span class="red-dot" id="notificationDot">{{ count($lowQuantityNotifications) }}</span>
+                        {{-- <span class="red-dot" id="notificationDot">{{ count($notifications ?? []) }}</span> --}}
 
                         {{-- <div class="username">{{ $username }}</div> --}}
                         <div class="username">admin</div>
@@ -118,7 +133,6 @@
 
     </div>
 
-    {{-- @yield('labas-content') --}}
     <script>
         window.csrfToken = "{{ csrf_token() }}";
     </script>
@@ -127,41 +141,16 @@
     <script src="{{ asset('js/add.js') }}"></script>
     <script src="{{ asset('js/edit.js') }}"></script>
     <script src="{{ asset('js/easyAdd.js') }}"></script>
-    {{-- <script src="{{ asset('js/easyEdit.js') }}"></script> --}}
-
-    {{-- <script>
-        // Assuming notification.message and notification.forecastMessage are still present
-        lowQuantityNotifications.forEach(notification => {
-            console.log('Message:', notification.message);
-            console.log('Forecast Message:', notification.forecastMessage);
-            console.log('Product ID:', notification.productId);
-
-            // Display the notification with forecastMessage
-            const notificationItem = document.createElement('li');
-            const message = document.createElement('strong');
-            message.innerHTML = notification.message;
-            notificationItem.appendChild(message);
-
-            // Check if forecastMessage is present and not empty
-            if (notification.forecastMessage && notification.forecastMessage.trim() !== '') {
-                const forecastMessage = document.createElement('div');
-                forecastMessage.innerHTML = notification.forecastMessage;
-                notificationItem.appendChild(forecastMessage);
-            }
-
-            // Append the notification to the notificationList
-            document.getElementById('notificationList').appendChild(notificationItem);
-
-            // Handle the data as needed
-        });
-    </script> --}}
 
     <script>
-        // const lowQuantityNotifications = {!! json_encode($lowQuantityNotifications) !!};
         const lowQuantityNotifications = {!! json_encode(
             $lowQuantityNotifications,
             JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE,
         ) !!};
+    </script>
+
+    <script>
+        var bestSellerNotifications = @json($bestSellerNotifications);
     </script>
 
 

@@ -83,6 +83,7 @@
             </div>
         </div>
 
+        {{-- Graph --}}
         <div class="graph">
 
             <div class="bar-graph">
@@ -98,6 +99,7 @@
             </div>
         </div>
 
+
         <div class="box-pinakababa">
             <select name="transactions" id="transactions">
                 <option value="daily-transactions">Daily Transaction</option>
@@ -105,6 +107,7 @@
                 <option value="monthly-transactions">Transaction by Months</option>
                 <option value="yearly-transactions">Transaction by Year</option>
             </select>
+
             <table class="daily-transactions">
                 <thead>
                     <tr>
@@ -129,6 +132,7 @@
                     </tr>
                 </tbody>
             </table>
+
             <table class="weekly-transactions">
                 <thead>
                     <tr>
@@ -165,6 +169,7 @@
                     </tr>
                 </tbody>
             </table>
+
             <table class="monthly-transactions">
                 <thead>
                     <tr>
@@ -200,6 +205,7 @@
                     </tr>
                 </tbody>
             </table>
+
             <table class="yearly-transactions">
                 <thead>
                     <tr>

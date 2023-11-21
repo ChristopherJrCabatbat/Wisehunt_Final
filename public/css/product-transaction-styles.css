@@ -199,7 +199,7 @@ input[type="submit"]:hover {
 }
 
 select {
-    max-width: 220px;
+    max-width: 100%;
 }
 
 .row1-input {
@@ -258,7 +258,7 @@ button.search {
     background-color: transparent;
     top: 86px;
     padding: 5px 8px;
-    right: 207px;
+    right: 217px;
     border-top-right-radius: 1px;
     border-bottom-right-radius: 1px;
     border-top-left-radius: 0;
@@ -271,7 +271,7 @@ button.search:hover {
 
 input:focus + .search {
     top: 87px;
-    right: 208px;
+    right: 218px;
     padding: 4px 7px;
 }
 
@@ -291,6 +291,7 @@ form.form-search input.search {
 select {
     font-size: 0.92rem;
     font-family: "Times New Roman", Times, serif;
+    max-width: 100%;
 }
 
 td {
