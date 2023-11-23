@@ -36,7 +36,7 @@
                 <div class="row1">
                     <div class="column">
                         <label class="modal-top" for="">Product code:</label>
-                        <input required autofocus type="text" name="code" pattern="{3,11}" class="row1-input"
+                        <input required autofocus type="text" name="code" pattern="[0-9]{3,11}" class="row1-input"
                             id="autofocus" value="{{ old('code') }}" />
                     </div>
                     
@@ -127,7 +127,7 @@
                 </div>
                 <div class="row4">
                     <label for="">Product Description:</label>
-                    <textarea required name="description" rows="5" placeholder="Eg. size..." cols="5"
+                    <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
                         class="" value="{{ old('description') }}">{{ old('description') }}</textarea>
                 </div>
 
@@ -158,7 +158,7 @@
                     <div class="row1">
                         <div class="column">
                             <label class="modal-top" for="">Product code:</label>
-                            <input required type="text" name="code" pattern="{3,11}" class="row1-input"
+                            <input required type="text" name="code" pattern="[0-9]{3,11}" class="row1-input"
                                 value="{{ $product->code }}" />
                         </div>
                         <div class="column">
@@ -393,7 +393,7 @@
                                 <td>{{ $rowNumber++ }}</td>
                                 <td>{{ $product->code }}</td>
                                 <td>{{ $product->name }}</td>
-                                <td>{{ $product->brand_name }}</td>
+                                <td>{{ $product->name }}</td>
                                 <td>{{ $product->description }}</td>
                                 <td>{{ $product->category }}</td>
                                 <td>

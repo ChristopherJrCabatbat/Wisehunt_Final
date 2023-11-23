@@ -24,6 +24,7 @@ input:not([type="file"]), textarea {
     justify-content: flex-start;
     position: fixed;
     left: 0;
+    z-index: 1;
     align-items: center;
     padding-top: 30px;
 }
@@ -277,6 +278,18 @@ button, input[type="submit"], a{
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     padding: 12px 0;
+    max-height: 550px; /* Set a fixed height for the panel */
+    height: auto; /* Allow the panel to expand based on content */
+    overflow-y: auto; /* Enable vertical scrollbar when content exceeds the height */
+}
+
+.notification-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 35px;
+    /* max-height: 250px;  */    
+    letter-spacing: 0.3px; 
+
 }
 
 .h3-notif {
@@ -287,11 +300,6 @@ button, input[type="submit"], a{
     position: absolute;
     top: 0;
     left: 0;
-}
-
-.notification-list {
-    list-style: none;
-    padding: 0;
 }
 
 .notification-panel h3 {
@@ -366,7 +374,6 @@ button, input[type="submit"], a{
 
 .bold-text {
     font-weight: bold;
-    white-space: nowrap; /* Prevents text from wrapping onto a new line */
 }
 .notification-item .bold-text {
     display: inline; /* Display as an inline element */

@@ -4,6 +4,45 @@
 
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/dashboard-styles.css') }}">
+    
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Product', 'Quantity'],
+          <?php echo $pieChartData?>
+        ]);
+
+        var options = {
+          title: 'High in Demand Products',
+        //   is3D:true,
+        //   pieHole: 0.4,
+        titleTextStyle: {
+            color: '#414141',   
+            fontSize: 28,      
+            bold: true,          
+            fontFamily: 'Arial, Helvetica, sans-serif',
+        },
+        backgroundColor: '#dfe0e0', 
+        slices: {
+        0: { color: '#2c5c78' }, 
+        1: { color: '#2dc0d0' }, 
+        2: { color: '#6c6c6c' }, 
+        3: { color: '#050A30' }, 
+        4: { color: '#0000FF' }  
+    }
+
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+    </script>
 @endsection
 
 @section('side-navbar')
@@ -88,15 +127,20 @@
 
             <div class="bar-graph">
                 <div class="chart-container">
-                    <canvas id="chart" width="834" height="400"></canvas>
+                    <canvas id="chart" width="1100" height="400"></canvas>
+                    {{-- <canvas id="chart" width="834" height="400"></canvas> --}}
                     <div class="chart-label chart-y-label">Earnings</div>
                 </div>
             </div>
 
             <div class="pie-graph">
-                <canvas id="pieChart" width="800" height="750"></canvas>
-                <div class="demand">High in Demand Products</div>
+                <div id="piechart" style="width: 700px; height: 700px;"></div> 
+
+                {{-- <canvas id="pieChart" width="800" height="750"></canvas> --}}
+                {{-- <canvas id="pieChart" width="260px" height="260px"></canvas> --}}
+                {{-- <div class="demand">High in Demand Products</div> --}}
             </div>
+            
         </div>
 
 

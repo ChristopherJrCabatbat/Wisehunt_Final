@@ -150,7 +150,7 @@
                 <tbody>
                     @if ($suppliers->isEmpty())
                         <tr>
-                            <td colspan="7">No results found.</td>
+                            <td colspan="7">No data found.</td>
                         </tr>
                     @else
                         @foreach ($suppliers as $supplier)

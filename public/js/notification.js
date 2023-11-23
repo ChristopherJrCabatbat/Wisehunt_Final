@@ -120,9 +120,9 @@ function addLowQuantityNotifications() {
                     addedForecastMessages.push(forecastMessage);
 
                     // Add margin-top to the first low quantity notification
-                    if (index === 0 && forecastIndex === 0) {
-                        notificationItem.style.marginTop = '35px'; // Adjust the margin-top value as needed
-                    }
+                    // if (index === 0 && forecastIndex === 0) {
+                    //     notificationItem.style.marginTop = '35px'; // Adjust the margin-top value as needed
+                    // }
 
                     console.log('Added forecast message:', forecastMessage);
                 }
@@ -203,7 +203,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// Close the notificationPanel when clicking anywhere outside of it
+// // Close the notificationPanel when clicking anywhere outside of it
+// document.addEventListener("click", function (event) {
+//     const notificationPanel = document.getElementById('notificationPanel');
+//     const notifButton = document.querySelector('.notif');
+
+//     if (
+//         event.target !== notifButton &&
+//         event.target !== notificationPanel &&
+//         !notificationPanel.contains(event.target)
+//     ) {
+//         notificationPanel.style.display = 'none';
+//         notificationPanelVisible = false;
+//     }
+// });
+
+// // Close the notificationPanel when clicking anywhere outside of it
 document.addEventListener("click", function (event) {
     const notificationPanel = document.getElementById('notificationPanel');
     const notifButton = document.querySelector('.notif');
@@ -215,6 +230,9 @@ document.addEventListener("click", function (event) {
     ) {
         notificationPanel.style.display = 'none';
         notificationPanelVisible = false;
+        
+        // Toggle the red dot visibility after closing the notification panel
+        toggleRedDotVisibility();
     }
 });
 
@@ -287,16 +305,25 @@ function addNotifications(notifications) {
     toggleRedDotVisibility();
 }
 
+// // Call the function to add notifications when the page loads
+// document.addEventListener("DOMContentLoaded", function () {
+//     const combinedNotifications = [...lowQuantityNotifications, ...bestSellerNotifications];
+//     addNotifications(combinedNotifications);
+
+//     // Check if there are notifications and show the red dot accordingly
+//     const redDot = document.getElementById('notificationDot');
+//     if (document.querySelector('.notification-list li')) {
+//         redDot.style.display = 'block'; // Show the red dot
+//     } else {
+//         redDot.style.display = 'none'; // Hide the red dot
+//     }
+// });
+
 // Call the function to add notifications when the page loads
 document.addEventListener("DOMContentLoaded", function () {
     const combinedNotifications = [...lowQuantityNotifications, ...bestSellerNotifications];
     addNotifications(combinedNotifications);
 
-    // Check if there are notifications and show the red dot accordingly
-    const redDot = document.getElementById('notificationDot');
-    if (document.querySelector('.notification-list li')) {
-        redDot.style.display = 'block'; // Show the red dot
-    } else {
-        redDot.style.display = 'none'; // Hide the red dot
-    }
+    // Toggle the red dot visibility based on whether there are notifications
+    toggleRedDotVisibility();
 });

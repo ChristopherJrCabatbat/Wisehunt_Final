@@ -26,7 +26,7 @@
                 <label for="">Contact Name:</label>
                 <input required type="text" name="contact_person" id="" />
                 <label for="">Contact Number:</label>
-                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number" name="contact_num"
+                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
                     id="" value="">
                 <label for="">Address:</label>
                 <input required type="text" name="address" id="" />
@@ -61,7 +61,7 @@
                         value="{{ old('contact_person', $customer->contact_person) }}">
 
                     <label for="">Contact Number:</label>
-                    <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
+                    <input required type="text" pattern="{5,15}" title="Enter a valid contact number"
                         name="contact_num" name="contact_num" id=""
                         value="{{ old('contact_num', $customer->contact_num) }}">
 
@@ -150,7 +150,7 @@
                 <tbody>
                     @if ($customers->isEmpty())
                         <tr>
-                            <td colspan="7">No results found.</td>
+                            <td colspan="7">No data found.</td>
                         </tr>
                     @else
                         @foreach ($customers as $customer)

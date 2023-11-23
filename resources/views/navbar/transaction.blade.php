@@ -12,75 +12,68 @@
     <div class="overlay editOverlay"></div>
 
     {{-- Add Modal --}}
-    @foreach ($transactions as $transaction)
-        <div id="newModal" class="modal">
-            <div class="modal-content">
-                <a class="close closeModal">&times;</a>
+    <div id="newModal" class="modal">
+        <div class="modal-content">
+            <a class="close closeModal">&times;</a>
 
-                <form class="modal-form" action="{{ route('admin.transactionStore') }}" method="POST">
-                    @csrf
-                    <center>
-                        <h2 style="margin: 0%; color:#333;">Add Transaction</h2>
-                    </center>
+            <form class="modal-form" action="{{ route('admin.transactionStore') }}" method="POST">
+                @csrf
+                <center>
+                    <h2 style="margin: 0%; color:#333;">Add Transaction</h2>
+                </center>
 
-                    <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                    <select required name="customer_name" id="customer" onchange="updateContactNumber()"
+                <label class="baba-h2 taas-select" for="customer">Customer:</label>
+                <select required name="customer_name" id="customer" onchange="updateContactNumber()"
                     class="select customer">
-                    {{-- <select class="select autofocus" name="customer_name" id="customer_{{ $transaction->id }}"
-                        onchange="updateContactNumber('{{ $transaction->id }}')"> --}}
+                    <option value="" disabled selected>-- Select a Customer --</option>
+                    @foreach ($customers as $customer)
+                        <option value="{{ $customer->name }}" data-contact="{{ $customer->contact_num }}"
+                            {{ old('customer_name') === $customer->name ? 'selected' : '' }}>
+                            {{ $customer->name }}
+                        </option>
+                    @endforeach
+                </select>
 
-                        <option value="" disabled selected>-- Select a Customer --</option>
-                        @foreach ($customers as $customer)
-                            <option value="{{ $customer->name }}" data-contact="{{ $customer->contact_num }}"
-                                {{ old('customer_name') === $customer->name ? 'selected' : '' }}>
-                                {{ $customer->name }}
-                            </option>
-                        @endforeach
-                    </select>
-
-                    <label for="contact_num">Contact Number:</label>
+                {{-- <label for="contact_num">Contact Number:</label>
                     <input required readonly name="contact_num" id="contact_num" pattern="[0-9]{5,11}"
-                    title="Enter a valid contact number" type="text" value="{{ old('contact_num') }}"
-                    class="contact_num">
-                    {{-- <input required readonly name="contact_num" id="contact_num_{{ $transaction->id }}"
-                        pattern="[0-9]{5,11}" title="Enter a valid contact number" type="text"
-                        value="{{ old('contact_num') }}"> --}}
+                        title="Enter a valid contact number" type="text" value="{{ old('contact_num') }}"
+                        class="contact_num"> --}}
 
+                <label for="product_name" class="taas-select">Product:</label>
+                <select required name="product_name" id="product_name" class="select product_name"
+                    onchange="updateUnitPrice()">
+                    <option value="" disabled selected>-- Select a Product --</option>
+                    @foreach ($products as $product)
+                        <option value="{{ $product->name }}" data-unit-price="{{ $product->unit_price }}"
+                            {{ old('product_name') === $product->name ? 'selected' : '' }}>
+                            {{ $product->name }}
+                        </option>
+                    @endforeach
+                </select>
 
-                    <label for="product_name" class="taas-select">Product Name:</label>
-                    <select required name="product_name" id="product_name" class="select product_name" onchange="updateUnitPrice()">
-                    {{-- <select class="select" name="product_name" id="product_name_{{ $transaction->id }}"
-                        onchange="updateUnitPrice('{{ $transaction->id }}')"> --}}
-                        <option value="" disabled selected>-- Select a Product --</option>
-                        @foreach ($products as $product)
-                            <option value="{{ $product->name }}" data-unit-price="{{ $product->unit_price }}"
-                                {{ old('product_name') === $product->name ? 'selected' : '' }}>
-                                {{ $product->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div class="text-danger">{{ $errors->first('error') }}</div> <!-- Display the error message here -->
 
-                    <div class="text-danger">{{ $errors->first('error') }}</div> <!-- Display the error message here -->
-
-                    <label for="unit_price">Unit Price:</label>
-                    <input readonly required name="unit_price" id="unit_price" type="number" value="{{ old('unit_price') }}" class="unit_price">
-                    {{-- <input readonly required name="unit_price" id="unit_price_{{ $transaction->id }}" type="number"
-                        value="{{ old('unit_price') }}"> --}}
-
-                    <label for="">Amount Tendered:</label>
+                {{-- <label for="">Amount Tendered:</label>
                     <input required name="amount_tendered" type="number" value="{{ old('amount_tendered') }}">
-                    <div class="text-danger">{{ $errors->first('error_change') }}</div>
+                    <div class="text-danger">{{ $errors->first('error_change') }}</div> --}}
 
-                    <label for="">Quantity:</label>
-                    <input required name="qty" type="number" value="{{ old('qty') }}">
-                    <div class="text-danger">{{ $errors->first('error_stock') }}</div>
+                <label for="">Quantity:</label>
+                <input required name="qty" type="number" id="qty" value="{{ old('qty') }}">
+                <div class="text-danger">{{ $errors->first('error_stock') }}</div>
 
-                    <input type="submit" value="Add">
-                </form>
-            </div>
+                <label for="unit_price">Unit Price:</label>
+                <input readonly required name="unit_price" id="unit_price" type="number" value="{{ old('unit_price') }}"
+                    class="unit_price">
 
+                <label for="unit_price">Total Price:</label>
+                <input readonly name="total_price" id="total_price" type="number" value="{{ $totalPrice }}"
+                    class="total_price">
+
+                <input type="submit" value="Add" id="button-transac">
+            </form>
         </div>
-    @endforeach
+
+    </div>
 
 
     {{-- Edit Modal --}}
@@ -99,8 +92,9 @@
                     </center>
 
                     <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                    <select class="select autofocus" name="customer_name" id="customer-edit" onchange="editUpdateContactNumber()">
-                    
+                    <select class="select autofocus" name="customer_name" id="customer-edit"
+                        onchange="editUpdateContactNumber()">
+
                         @foreach ($customers as $customer)
                             <option value="{{ $customer->name }}" data-contact-edit="{{ $customer->contact_num }}"
                                 {{ old('customer_name', $transaction->customer_name) === $customer->name ? 'selected' : '' }}>
@@ -109,36 +103,38 @@
                         @endforeach
                     </select>
 
-                    <label for="contact_num">Contact Number:</label>
+                    {{-- <label for="contact_num">Contact Number:</label>
                     <input required readonly name="contact_num" id="contact_num-edit" pattern="[0-9]{5,11}"
                         title="Enter a valid contact number" type="text"
-                        value="{{ old('contact_num', $transaction->contact_num) }}">
+                        value="{{ old('contact_num', $transaction->contact_num) }}"> --}}
 
 
-                        <label for="product_name" class="taas-select">Product Name:</label>
-                        <select class="select" name="product_name" id="product_name-edit" onchange="editUpdateUnitPrice('{{ $transaction->id }}')">
-                            @foreach ($products as $product)
-                                <option value="{{ $product->name }}" data-unit-price-edit="{{ $product->unit_price }}"
-                                    {{ old('product_name', $transaction->product_name) === $product->name ? 'selected' : '' }}>
-                                    {{ $product->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <label for="product_name" class="taas-select">Product:</label>
+                    <select class="select" name="product_name" id="product_name-edit"
+                        onchange="editUpdateUnitPrice('{{ $transaction->id }}')">
+                        @foreach ($products as $product)
+                            <option value="{{ $product->name }}" data-unit-price-edit="{{ $product->unit_price }}"
+                                {{ old('product_name', $transaction->product_name) === $product->name ? 'selected' : '' }}>
+                                {{ $product->name }}
+                            </option>
+                        @endforeach
+                    </select>
                     <div class="text-danger">{{ $errors->first('error') }}</div>
+
+                    <label for="">Quantity:</label>
+                    <input required name="qty" type="number" value="{{ old('qty', $transaction->qty) }}">
+                    <div class="text-danger">{{ $errors->first('error_stock') }}</div>
 
                     <label for="unit_price">Unit Price:</label>
                     <input readonly required name="unit_price" id="unit_price-edit" type="number"
                         value="{{ old('unit_price', $transaction->unit_price) }}">
 
-                    <label for="">Quantity:</label>
-                    <input required name="qty" type="number" value="{{ old('qty', $transaction->qty) }}">
-                    <div class="text-danger">{{ $errors->first('error_stock') }}</div>
-                    <label for="">Amount Tendered:</label>
+                    {{-- <label for="">Amount Tendered:</label>
                     <input required name="amount_tendered" type="number"
                         value="{{ old('amount_tendered', $transaction->amount_tendered) }}">
-                    <div class="text-danger">{{ $errors->first('error_change') }}</div>
+                    <div class="text-danger">{{ $errors->first('error_change') }}</div> --}}
 
-                    <input type="submit" value="Update">
+                    <input type="submit" id="button-transac" value="Update">
                 </form>
             </div>
 
@@ -255,34 +251,37 @@
                 </form>
             </div>
 
+            {{-- Search --}}
+
             {{-- <form class="form-search" action="{{ route('admin.searchTransaction') }}" method="GET"> --}}
-            <form class="form-search" action="#" method="GET">
+            {{-- <form class="form-search" action="#" method="GET"> --}}
+            <div>
                 <div class="searchs">
                     <div class="form-search">
-                        <input type="text" name="search" required class="search-prod"
+                        <input type="text" name="search" id="search" required class="search-prod"
                             placeholder="Search product..." value="{{ $searchQuery }}" />
-                        <button class="search" type="submit"><img class="search"
-                                src="{{ asset('images/search.png') }}" alt=""></button>
+                        <i class="fa fa-search search-icon"></i>
+                        {{-- <button class="search" type="submit"><img class="search"
+                                src="{{ asset('images/search.png') }}" alt=""></button> --}}
                     </div>
-                    <a href="{{ route('admin.transaction') }}" class="cancel-search">Cancel search</a>
+                    {{-- <a href="{{ route('admin.transaction') }}" class="cancel-search">Cancel search</a> --}}
                 </div>
-            </form>
+                {{-- </form> --}}
+            </div>
 
         </div>
 
-        <div class="table">
+        <div class="table" id="search-results">
             <table>
-
                 <tr>
                     <th colspan="13" class="table-th">TRANSACTIONS</th>
                 </tr>
-
                 @php
                     $rowNumber = ($transactions->currentPage() - 1) * $transactions->perPage() + 1;
                 @endphp
 
                 <tr>
-                    <th>ID</th>
+                    <th>No.</th>
                     <th>Customer</th>
                     {{-- <th>Contact Number</th> --}}
                     <th>Product</th>
@@ -290,16 +289,16 @@
                     <th>Unit Price</th>
                     <th>Total Price</th>
                     {{-- <th>Amount Tendered</th> --}}
-                    <th>Change Due</th>
+                    {{-- <th>Change Due</th> --}}
                     <th>Total Earn</th>
                     <th>Date</th>
                     <th>Actions</th>
                 </tr>
 
-                <tbody>
+                <tbody class="all-data">
                     @if ($transactions->isEmpty())
                         <tr>
-                            <td colspan="13">No results found.</td>
+                            <td colspan="13">No data found.</td>
                         </tr>
                     @else
                         @foreach ($transactions as $transaction)
@@ -312,7 +311,7 @@
                                 <td>{{ $transaction->unit_price }}</td>
                                 <td>{{ $transaction->total_price }}</td>
                                 {{-- <td>{{ $transaction->amount_tendered }}</td> --}}
-                                <td>{{ $transaction->change_due }}</td>
+                                {{-- <td>{{ $transaction->change_due }}</td> --}}
                                 <td>{{ $transaction->total_earned }}</td>
                                 <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                                 <td class="actions">
@@ -323,8 +322,8 @@
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>
-                                        {{-- <form action="{{ route('productDestroy', $product->id) }}" method="POST"> --}}
-                                        <form action="#" method="POST">
+                                        <form action="{{ route('admin.transactionDestroy', $transaction->id) }}"
+                                            method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button onclick="return confirm('Are you sure you want to delete this?')"
@@ -338,6 +337,7 @@
                         @endforeach
                     @endif
                 </tbody>
+                <tbody id="content" class="search-data"></tbody>
 
             </table>
 
@@ -356,6 +356,7 @@
 @section('script')
     <script src="{{ asset('js/generateReport.js') }}"></script>
 
+    {{-- Auto Sorting --}}
     <script>
         // Automatically submit the form when the sorting option changes
         document.getElementById('sortSelect').addEventListener('change', function() {
@@ -363,81 +364,116 @@
         });
     </script>
 
-    {{-- <script>
-        function updateContactNumber(transactionId) {
-            var customerSelect = document.querySelector('#customer_' + transactionId);
-            var contactNumberInput = document.querySelector('#contact_num_' + transactionId);
+    {{-- Live Search --}}
+    <script type="text/javascript">
+        $('#search').on('input', function() {
 
-            var selectedOption = customerSelect.options[customerSelect.selectedIndex];
-            var contactNumber = selectedOption.getAttribute('data-contact');
+            const contentContainer = $('#content');
+            $value = $(this).val();
 
-            contactNumberInput.value = contactNumber;
-        }
+            if ($value) {
+                $('.all-data').hide();
+                $('.search-data').show();
+            } else {
+                $('.all-data').show();
+                $('.search-data').hide();
+            }
 
-        function updateUnitPrice(transactionId) {
-            var productNameSelect = document.querySelector('#product_name_' + transactionId);
-            var unitPriceField = document.querySelector('#unit_price_' + transactionId);
+            // Clear the existing results instantly
+            contentContainer.html('');
 
-            // Get the selected option
-            var selectedOption = productNameSelect.options[productNameSelect.selectedIndex];
-
-            // Access the unit price attribute directly
-            var unitPrice = selectedOption.getAttribute('data-unit-price');
-
-            unitPriceField.value = unitPrice;
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            // Iterate through each edit modal to trigger the initial update
-            @foreach ($transactions as $transaction)
-                updateContactNumber('{{ $transaction->id }}');
-                updateUnitPrice('{{ $transaction->id }}');
-            @endforeach
+            $.ajax({
+                type: 'get',
+                url: '{{ route('admin.transactionSearch') }}',
+                data: {
+                    'search': $value
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data.trim() === "") {
+                        contentContainer.html(
+                            '<tr><td colspan="11" class="id">No Result Found</td></tr>');
+                    } else {
+                        contentContainer.html(data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
         });
-    </script> --}}
+    </script>
 
+    {{-- Auto Contact Number at Unit Price --}}
     <script>
+        // Add Modal
         function updateContactNumber() {
             var customerSelect = document.getElementById('customer');
             var contactNumberInput = document.getElementById('contact_num');
-        
+
             var selectedOption = customerSelect.options[customerSelect.selectedIndex];
             var contactNumber = selectedOption.getAttribute('data-contact');
-        
+
             contactNumberInput.value = contactNumber;
         }
 
         function updateUnitPrice() {
             var productSelect = document.getElementById('product_name');
             var unitPriceInput = document.getElementById('unit_price');
-        
+
             var selectedPrice = productSelect.options[productSelect.selectedIndex];
             var unitPrice = selectedPrice.getAttribute('data-unit-price');
-        
+
             unitPriceInput.value = unitPrice;
         }
-    </script>
 
-    {{-- Edit --}}
-    <script>
+
+        // Edit Modal
         function editUpdateContactNumber() {
             var editCustomerSelect = document.getElementById('customer-edit');
             var editContactNumberInput = document.getElementById('contact_num-edit');
-        
+
             var editSelectedOption = editCustomerSelect.options[editCustomerSelect.selectedIndex];
             var editContactNumber = editSelectedOption.getAttribute('data-contact-edit');
-        
+
             editContactNumberInput.value = editContactNumber;
         }
 
         function editUpdateUnitPrice() {
             var editProductSelect = document.getElementById('product_name-edit');
             var editUnitPriceInput = document.getElementById('unit_price-edit');
-        
+
             var editSelectedPrice = editProductSelect.options[editProductSelect.selectedIndex];
             var editUnitPrice = editSelectedPrice.getAttribute('data-unit-price-edit');
-        
+
             editUnitPriceInput.value = editUnitPrice;
         }
     </script>
+
+    {{-- Auto Total Price --}}
+    <script>
+        // Wait for the DOM to be ready
+        document.addEventListener("DOMContentLoaded", function() {
+            // Select the quantity input field
+            var qtyInput = document.getElementById('qty');
+
+            // Add an event listener for the 'input' event on the quantity input field
+            qtyInput.addEventListener('input', function() {
+                // Get the quantity value
+                var qty = parseFloat(qtyInput.value) || 0;
+
+                // Get the unit price value from the selected product
+                var unitPrice = parseFloat(document.getElementById('product_name').options[document
+                    .getElementById('product_name').selectedIndex].getAttribute('data-unit-price')) || 0;
+
+                // Calculate the total price
+                var totalPrice = qty * unitPrice;
+
+                // Update the total price input field
+                document.getElementById('total_price').value = totalPrice.toFixed(
+                    2); // You can adjust the number of decimal places as needed
+            });
+        });
+    </script>
+
 @endsection

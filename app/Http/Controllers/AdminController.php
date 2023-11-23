@@ -80,7 +80,7 @@ class AdminController extends Controller
 
                 // Check if the current date is within the forecast period
                 if (Carbon::now()->lte($endDate)) {
-                    $forecasts[] = '<span class="bold-text">ATTENTION!</span> </br>Data indicates <span class="bold-text">' . $customerId . '</span> will transact again within a <span class="bold-text">' . $timeFrame . '</span>.';
+                    $forecasts[] = '<span class="bold-text">ATTENTION!</span> </br>Data indicates <span class="bold-text">' . $customerId . '</span> will transact again next <span class="bold-text">' . $timeFrame . '</span>.';
 
                     // $forecasts[] = '<span class="bold-text">' . $customerId . '</span> is likely to transact again within the next ' . $timeFrame . '.';
                 }
@@ -130,8 +130,8 @@ class AdminController extends Controller
                 ];
 
                 $lowQuantityNotifications[] = $outOfStockNotification;
-            } elseif (!empty($forecastMessage) && $product->quantity <= 20) {
-                // If there are forecasts and the quantity is low, add them to low quantity notifications
+            } elseif ($product->quantity <= 20) {
+                // If the quantity is low, add it to low quantity notifications
                 $notification = [
                     'message' => '<span class="bold-text">LOW STOCK!</span><br> We wish to inform you that your inventory <span class="bold-text">' . $product->name . "</span> is running critically low. Its time for a restock!",
                     'forecastMessage' => $forecastMessage,
@@ -223,8 +223,56 @@ class AdminController extends Controller
             ]
         ];
 
+
+        // // Pie Chart YouTube
+        // $pieChart = DB::table('students')
+        // ->select(DB::raw('count(*) as total_city'), 'city')
+        // ->groupBy('city')
+        // ->get();
+
+        // $pieChartData="";
+        // foreach($pieChart as $pieChart)
+        // {
+        //     $pieChartData.= "['".$pieChart->city."', ".$pieChart->total_city."],";
+        // }
+
+        // $arr['pieChartData']=rtrim($pieChartData,",");
+
+        
+        // High Demand Products Pie Chart Logic
+        $highDemandProducts = DB::table('transactions')
+            ->select('product_name', DB::raw('SUM(qty) as total_qty'))
+            ->groupBy('product_name')
+            ->orderByDesc('total_qty')
+            ->limit(5)
+            ->get();
+
+        $pieChartData = "";
+        foreach ($highDemandProducts as $product) {
+            $pieChartData .= "['" . $product->product_name . "', " . $product->total_qty . "],";
+        }
+
+        $arr['pieChartData'] = rtrim($pieChartData, ",");
+
+
+
+        $totalLowQuantityNotifications = count($lowQuantityNotifications);
+        $totalBestSellerNotifications = count($bestSellerNotifications);
+
+        // Count the number of forecast messages
+        $totalForecastMessages = 0;
+        foreach ($lowQuantityNotifications as $notification) {
+            if (!empty($notification['forecastMessage'])) {
+                // Split forecast messages and count them
+                $totalForecastMessages += count(explode('<br>', $notification['forecastMessage']));
+            }
+        }
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
         // Pass both arrays to the view
-        return view('navbar.dashboard', [
+        return view('navbar.dashboard', $arr, [
             'username' => $nm,
             'productCount' => $productCount,
             'transactionCount' => $transactionCount,
@@ -238,7 +286,25 @@ class AdminController extends Controller
             'salesForecastNotifications' => $salesForecastNotifications,
             'productDatasets' => $productDatasets,
             'bestSeller' => $bestSeller, // Pass the best seller information to the view
+            'totalNotifications' => $totalNotifications, // Pass the best seller information to the view
         ]);
+    }
+
+    public function index()
+    {
+        $pieChart = DB::table('students')
+            ->select(DB::raw('count(*) as total_city'), 'city')
+            ->groupBy('city')
+            ->get();
+
+        $pieChartData = "";
+        foreach ($pieChart as $pieChart) {
+            $pieChartData .= "['" . $pieChart->city . "', " . $pieChart->total_city . "],";
+        }
+
+        $arr['pieChartData'] = rtrim($pieChartData, ",");
+
+        return view("chart", $arr);
     }
 
     // public function dashboard()
@@ -271,10 +337,18 @@ class AdminController extends Controller
     //         // Create a single message by joining the forecasts array elements
     //         $forecastMessage = implode('<br>', $forecasts);
 
-    //         // If there are forecasts, add them to low quantity notifications
-    //         if (!empty($forecastMessage) && $product->quantity <= 20) {
+    //         // If the product quantity is zero, add a specific message
+    //         if ($product->quantity == 0) {
+    //             $outOfStockNotification = [
+    //                 'message' => '<span class="bold-text">OUT OF STOCK!<br> Update: ' . $product->name . '</span> is out of stock. Urgently needs restocking!',
+    //                 'productId' => $product->id,
+    //             ];
+
+    //             $lowQuantityNotifications[] = $outOfStockNotification;
+    //         } elseif (!empty($forecastMessage) || $product->quantity <= 20) {
+    //             // If there are forecasts and the quantity is low, add them to low quantity notifications
     //             $notification = [
-    //                 'message' => '<span class="bold-text">' . $product->name . "</span>'s quantity is too low!",
+    //                 'message' => '<span class="bold-text">LOW STOCK!</span><br> We wish to inform you that your inventory <span class="bold-text">' . $product->name . "</span> is running critically low. Its time for a restock!",
     //                 'forecastMessage' => $forecastMessage,
     //                 'productId' => $product->id,
     //             ];
@@ -290,9 +364,9 @@ class AdminController extends Controller
     //             ];
 
     //             $bestSellerNotifications[] = $bestSellerNotification;
-
     //         }
     //     }
+
 
     //     // Count the total quantity sold for the day
     //     $totalSalesQty = Transaction::selectRaw('SUM(qty) as total_qty')
@@ -364,6 +438,21 @@ class AdminController extends Controller
     //         ]
     //     ];
 
+    //     $totalLowQuantityNotifications = count($lowQuantityNotifications);
+    //     $totalBestSellerNotifications = count($bestSellerNotifications);
+
+    //     // Count the number of forecast messages
+    //     $totalForecastMessages = 0;
+    //     foreach ($lowQuantityNotifications as $notification) {
+    //         if (!empty($notification['forecastMessage'])) {
+    //             // Split forecast messages and count them
+    //             $totalForecastMessages += count(explode('<br>', $notification['forecastMessage']));
+    //         }
+    //     }
+
+    //     // Calculate the total number of notifications
+    //     $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
     //     // Pass both arrays to the view
     //     return view('navbar.dashboard', [
     //         'username' => $nm,
@@ -379,14 +468,13 @@ class AdminController extends Controller
     //         'salesForecastNotifications' => $salesForecastNotifications,
     //         'productDatasets' => $productDatasets,
     //         'bestSeller' => $bestSeller, // Pass the best seller information to the view
+    //         'totalNotifications' => $totalNotifications, // Pass the best seller information to the view
     //     ]);
     // }
 
 
-
-
-
     // Product Controller
+
     public function product(Request $request)
     {
         $nm = Session::get('name');
@@ -417,10 +505,18 @@ class AdminController extends Controller
             // Create a single message by joining the forecasts array elements
             $forecastMessage = implode('<br>', $forecasts);
 
-            // If there are forecasts, add them to low quantity notifications
-            if (!empty($forecastMessage) && $product->quantity <= 20) {
+            // If the product quantity is zero, add a specific message
+            if ($product->quantity == 0) {
+                $outOfStockNotification = [
+                    'message' => '<span class="bold-text">OUT OF STOCK!<br> Update: ' . $product->name . '</span> is out of stock. Urgently needs restocking!',
+                    'productId' => $product->id,
+                ];
+
+                $lowQuantityNotifications[] = $outOfStockNotification;
+            } elseif ($product->quantity <= 20) {
+                // If the quantity is low, add it to low quantity notifications
                 $notification = [
-                    'message' => '<span class="bold-text">' . $product->name . "</span>'s quantity is too low!",
+                    'message' => '<span class="bold-text">LOW STOCK!</span><br> We wish to inform you that your inventory <span class="bold-text">' . $product->name . "</span> is running critically low. Its time for a restock!",
                     'forecastMessage' => $forecastMessage,
                     'productId' => $product->id,
                 ];
@@ -458,6 +554,21 @@ class AdminController extends Controller
         $products = $query->paginate(5);
         $searchQuery = $request->input('search');
 
+        $totalLowQuantityNotifications = count($lowQuantityNotifications);
+        $totalBestSellerNotifications = count($bestSellerNotifications);
+
+        // Count the number of forecast messages
+        $totalForecastMessages = 0;
+        foreach ($lowQuantityNotifications as $notification) {
+            if (!empty($notification['forecastMessage'])) {
+                // Split forecast messages and count them
+                $totalForecastMessages += count(explode('<br>', $notification['forecastMessage']));
+            }
+        }
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
         return view('navbar.product', [
             'username' => $nm,
             'lowQuantityNotifications' => $lowQuantityNotifications,
@@ -465,11 +576,12 @@ class AdminController extends Controller
             'searchQuery' => $searchQuery,
             'products' => $products,
             'bestSellerNotifications' => $bestSellerNotifications,
-            'bestSeller' => $bestSeller, // Pass the best seller information to the view
+            'bestSeller' => $bestSeller,
             'suppliers' => $suppliers,
+            'totalNotifications' => $totalNotifications,
+
         ]);
     }
-
 
     public function productStore(Request $request)
     {
@@ -477,6 +589,7 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             'code' => 'required',
             'name' => 'required|unique:products,name,NULL,id',
+            'brand_name' => 'required',
             'description' => 'required',
             'category' => 'required',
             'quantity' => 'required|numeric|min:1',
@@ -493,6 +606,7 @@ class AdminController extends Controller
         $products = new Product;
         $products->code = $request->input('code');
         $products->name = $request->input('name');
+        $products->brand_name = $request->input('brand_name');
         $products->description = $request->input('description');
         $products->category = $request->input('category');
         $products->quantity = $request->input('quantity');
@@ -514,6 +628,7 @@ class AdminController extends Controller
         $updateValidator = Validator::make($request->all(), [
             'code' => 'required',
             'name' => 'required|unique:products,name,' . $id . ',id',
+            'brand_name' => 'required',
             'description' => 'required',
             'category' => 'required',
             'quantity' => 'required|numeric|min:0',
@@ -535,6 +650,7 @@ class AdminController extends Controller
 
         $product->code = $request->code;
         $product->name = $request->name;
+        $product->brand_name = $request->brand_name;
         $product->description = $request->description;
         $product->category = $request->category;
         $product->quantity = $request->quantity;
@@ -579,6 +695,21 @@ class AdminController extends Controller
         // return view('product', ['products' => $products])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications)->with('searchQuery', $searchQuery);
     }
 
+    public function productSearch(Request $request)
+    {
+        $searchTerm = $request->input('searchTerm');
+
+        // Query the products table for matching records
+        $results = Product::where('code', 'like', "%$searchTerm%")
+            ->orWhere('name', 'like', "%$searchTerm%")
+            ->orWhere('description', 'like', "%$searchTerm%")
+            ->orWhere('category', 'like', "%$searchTerm%")
+            ->get();
+
+        // Return the results as JSON data
+        return response()->json($results);
+    }
+
 
 
 
@@ -606,6 +737,11 @@ class AdminController extends Controller
             $query->orderByDesc('total_earned');
         }
 
+        $unitPrice = $request->input('unit_price');
+        $qty = $request->input('qty');
+        $totalPrice = $unitPrice * $qty;
+
+
         // Notification arrays
         $lowQuantityNotifications = [];
         $bestSellerNotifications = [];
@@ -631,10 +767,18 @@ class AdminController extends Controller
             // Create a single message by joining the forecasts array elements
             $forecastMessage = implode('<br>', $forecasts);
 
-            // If there are forecasts, add them to low quantity notifications
-            if (!empty($forecastMessage) && $product->quantity <= 20) {
+            // If the product quantity is zero, add a specific message
+            if ($product->quantity == 0) {
+                $outOfStockNotification = [
+                    'message' => '<span class="bold-text">OUT OF STOCK!<br> Update: ' . $product->name . '</span> is out of stock. Urgently needs restocking!',
+                    'productId' => $product->id,
+                ];
+
+                $lowQuantityNotifications[] = $outOfStockNotification;
+            } elseif ($product->quantity <= 20) {
+                // If the quantity is low, add it to low quantity notifications
                 $notification = [
-                    'message' => '<span class="bold-text">' . $product->name . "</span>'s quantity is too low!",
+                    'message' => '<span class="bold-text">LOW STOCK!</span><br> We wish to inform you that your inventory <span class="bold-text">' . $product->name . "</span> is running critically low. Its time for a restock!",
                     'forecastMessage' => $forecastMessage,
                     'productId' => $product->id,
                 ];
@@ -653,20 +797,35 @@ class AdminController extends Controller
             }
         }
 
-        $transactions = $query->paginate(5);
         $products = Product::all();
         $customers = Customer::all();
-
         $searchQuery = $request->input('search');
+
+        $totalLowQuantityNotifications = count($lowQuantityNotifications);
+        $totalBestSellerNotifications = count($bestSellerNotifications);
+
+        // Count the number of forecast messages
+        $totalForecastMessages = 0;
+        foreach ($lowQuantityNotifications as $notification) {
+            if (!empty($notification['forecastMessage'])) {
+                // Split forecast messages and count them
+                $totalForecastMessages += count(explode('<br>', $notification['forecastMessage']));
+            }
+        }
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+        $transactions = $query->paginate(8);
 
         return view('navbar.transaction', [
             'bestSellerNotifications' => $bestSellerNotifications,
             'transactions' => $transactions, 'username' => $nm, 'products' => $products,
             'salesForecastNotifications' => $salesForecastNotifications,
-
+            'totalNotifications' => $totalNotifications,
+            'totalPrice' => $totalPrice,
         ])->with('lowQuantityNotifications', $lowQuantityNotifications)->with('searchQuery', $searchQuery)->with('customers', $customers);
     }
-
 
     public function transactionStore(Request $request)
     {
@@ -674,11 +833,9 @@ class AdminController extends Controller
         $productName = $request->input('product_name');
         $unitPrice = $request->input('unit_price');
         $qty = $request->input('qty');
-        $amountTendered = $request->input('amount_tendered');
         $customerName = $request->input('customer_name');
-        $customerPhone = $request->input('contact_num');
 
-        // Retrieve the product's capital from the Products table (assuming you have a 'Product' model)
+        // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
         $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
 
         if ($product) {
@@ -687,34 +844,16 @@ class AdminController extends Controller
                 // Calculate total price
                 $totalPrice = $unitPrice * $qty;
 
-                // Calculate change due
-                $changeDue = $amountTendered - $totalPrice;
-
-                // Check if change_due is negative
-                if ($changeDue < 0) {
-                    // Calculate the required amount to cover total_price
-                    $requiredAmount = $totalPrice - $amountTendered;
-
-                    // Return an error message with the required amount
-                    return redirect()->back()
-                        ->withInput()
-                        // ->withErrors(['error_change' => 'Insufficient amount tendered. Please add at least ₱' . $requiredAmount . ' to cover the total price.']);
-                        ->withErrors(['error_change' => 'Insufficient amount tendered. Your total price is: ' . $totalPrice . '.']);
-                }
-
                 // Calculate total earned
                 $capital = $product->capital;
                 $totalEarned = ($unitPrice - $capital) * $qty;
 
                 // Create a new Transactions record and save it to the database
                 $transaction = new Transaction;
-                $transaction->product_name = $productName;
-                $transaction->unit_price = $unitPrice;
-                $transaction->qty = $qty;
-                $transaction->amount_tendered = $amountTendered;
                 $transaction->customer_name = $customerName;
-                $transaction->contact_num = $customerPhone;
-                $transaction->change_due = $changeDue;
+                $transaction->product_name = $productName;
+                $transaction->qty = $qty;
+                $transaction->unit_price = $unitPrice;
                 $transaction->total_price = $totalPrice;
                 $transaction->total_earned = $totalEarned;
                 $transaction->save();
@@ -724,7 +863,6 @@ class AdminController extends Controller
                 $product->save();
 
                 return back();
-                // return redirect()->route('admin.transaction');
             } else {
                 // Handle the case where the quantity is insufficient
                 return redirect()->back()
@@ -741,8 +879,6 @@ class AdminController extends Controller
 
     public function transactionUpdate(Request $request, string $id)
     {
-        // Aayusin pa ito
-
         // Retrieve the existing transaction record by its ID
         $transaction = Transaction::find($id);
 
@@ -754,14 +890,12 @@ class AdminController extends Controller
         $productName = $request->input('product_name');
         $unitPrice = $request->input('unit_price');
         $qty = $request->input('qty');
-        $amountTendered = $request->input('amount_tendered');
         $customerName = $request->input('customer_name');
-        $customerPhone = $request->input('contact_num');
 
         // Retrieve the old 'qty' for the transaction
         $oldQty = $transaction->qty;
 
-        // Retrieve the product's capital from the Products table (assuming you have a 'Product' model)
+        // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
         $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
 
         if ($product) {
@@ -769,9 +903,6 @@ class AdminController extends Controller
             if ($product->quantity + $oldQty >= $qty) {
                 // Calculate total price
                 $totalPrice = $unitPrice * $qty;
-
-                // Calculate change due
-                $changeDue = $amountTendered - $totalPrice;
 
                 // Calculate total earned
                 $capital = $product->capital;
@@ -781,10 +912,6 @@ class AdminController extends Controller
                 $transaction->product_name = $productName;
                 $transaction->unit_price = $unitPrice;
                 $transaction->qty = $qty;
-                $transaction->amount_tendered = $amountTendered;
-                $transaction->customer_name = $customerName;
-                $transaction->contact_num = $customerPhone;
-                $transaction->change_due = $changeDue;
                 $transaction->total_price = $totalPrice;
                 $transaction->total_earned = $totalEarned;
                 $transaction->save();
@@ -802,12 +929,156 @@ class AdminController extends Controller
                     ->withInput()
                     ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $remainingQuantity]);
             }
+        } else {
             // Keep the form data and repopulate the fields
-            // return redirect()->back()
-            //     ->withInput()
-            //     ->withErrors(['error' => 'Selected product and unit price did not match.']);
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Selected product and unit price did not match.']);
         }
     }
+
+
+
+    // // Lumang Transact Store at Update
+    // public function transactionStore(Request $request)
+    // {
+    //     // Retrieve data from the request
+    //     $productName = $request->input('product_name');
+    //     $unitPrice = $request->input('unit_price');
+    //     $qty = $request->input('qty');
+    //     $amountTendered = $request->input('amount_tendered');
+    //     $customerName = $request->input('customer_name');
+    //     $customerPhone = $request->input('contact_num');
+
+    //     // Retrieve the product's capital from the Products table (assuming you have a 'Product' model)
+    //     $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+
+    //     if ($product) {
+    //         // Check if there's enough quantity to subtract
+    //         if ($product->quantity >= $qty) {
+    //             // Calculate total price
+    //             $totalPrice = $unitPrice * $qty;
+
+    //             // Calculate change due
+    //             $changeDue = $amountTendered - $totalPrice;
+
+    //             // Check if change_due is negative
+    //             if ($changeDue < 0) {
+    //                 // Calculate the required amount to cover total_price
+    //                 $requiredAmount = $totalPrice - $amountTendered;
+
+    //                 // Return an error message with the required amount
+    //                 return redirect()->back()
+    //                     ->withInput()
+    //                     // ->withErrors(['error_change' => 'Insufficient amount tendered. Please add at least ₱' . $requiredAmount . ' to cover the total price.']);
+    //                     ->withErrors(['error_change' => 'Insufficient amount tendered. Your total price is: ' . $totalPrice . '.']);
+    //             }
+
+    //             // Calculate total earned
+    //             $capital = $product->capital;
+    //             $totalEarned = ($unitPrice - $capital) * $qty;
+
+    //             // Create a new Transactions record and save it to the database
+    //             $transaction = new Transaction;
+    //             $transaction->product_name = $productName;
+    //             $transaction->unit_price = $unitPrice;
+    //             $transaction->qty = $qty;
+    //             $transaction->amount_tendered = $amountTendered;
+    //             $transaction->customer_name = $customerName;
+    //             $transaction->contact_num = $customerPhone;
+    //             $transaction->change_due = $changeDue;
+    //             $transaction->total_price = $totalPrice;
+    //             $transaction->total_earned = $totalEarned;
+    //             $transaction->save();
+
+    //             // Update the product quantity by subtracting the sold quantity
+    //             $product->quantity -= $qty;
+    //             $product->save();
+
+    //             return back();
+    //             // return redirect()->route('admin.transaction');
+    //         } else {
+    //             // Handle the case where the quantity is insufficient
+    //             return redirect()->back()
+    //                 ->withInput()
+    //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
+    //         }
+    //     } else {
+    //         // Keep the form data and repopulate the fields
+    //         return redirect()->back()
+    //             ->withInput()
+    //             ->withErrors(['error' => 'Selected product and unit price did not match.']);
+    //     }
+    // }
+    // public function transactionUpdate(Request $request, string $id)
+    // {
+    //     // Aayusin pa ito
+
+    //     // Retrieve the existing transaction record by its ID
+    //     $transaction = Transaction::find($id);
+
+    //     if (!$transaction) {
+    //         return redirect()->route('admin.transaction')->with("error", "Transaction not found!");
+    //     }
+
+    //     // Retrieve data from the request
+    //     $productName = $request->input('product_name');
+    //     $unitPrice = $request->input('unit_price');
+    //     $qty = $request->input('qty');
+    //     $amountTendered = $request->input('amount_tendered');
+    //     $customerName = $request->input('customer_name');
+    //     $customerPhone = $request->input('contact_num');
+
+    //     // Retrieve the old 'qty' for the transaction
+    //     $oldQty = $transaction->qty;
+
+    //     // Retrieve the product's capital from the Products table (assuming you have a 'Product' model)
+    //     $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+
+    //     if ($product) {
+    //         // Check if there's enough quantity to subtract
+    //         if ($product->quantity + $oldQty >= $qty) {
+    //             // Calculate total price
+    //             $totalPrice = $unitPrice * $qty;
+
+    //             // Calculate change due
+    //             $changeDue = $amountTendered - $totalPrice;
+
+    //             // Calculate total earned
+    //             $capital = $product->capital;
+    //             $totalEarned = ($unitPrice - $capital) * $qty;
+
+    //             // Update the existing transaction record with the new data
+    //             $transaction->product_name = $productName;
+    //             $transaction->unit_price = $unitPrice;
+    //             $transaction->qty = $qty;
+    //             $transaction->amount_tendered = $amountTendered;
+    //             $transaction->customer_name = $customerName;
+    //             $transaction->contact_num = $customerPhone;
+    //             $transaction->change_due = $changeDue;
+    //             $transaction->total_price = $totalPrice;
+    //             $transaction->total_earned = $totalEarned;
+    //             $transaction->save();
+
+    //             // Update the product quantity by adding the old 'qty' and subtracting the new 'qty'
+    //             $product->quantity += $oldQty;
+    //             $product->quantity -= $qty;
+    //             $product->save();
+
+    //             return redirect()->route('admin.transaction')->with("message", "Transaction updated successfully!");
+    //         } else {
+    //             // Calculate the remaining quantity as the sum of the past 'qty' and the current 'quantity'
+    //             $remainingQuantity = $product->quantity + $oldQty;
+    //             return redirect()->back()
+    //                 ->withInput()
+    //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $remainingQuantity]);
+    //         }
+    //         // Keep the form data and repopulate the fields
+    //         // return redirect()->back()
+    //         //     ->withInput()
+    //         //     ->withErrors(['error' => 'Selected product and unit price did not match.']);
+    //     }
+    // }
 
     public function transactionDestroy(string $id)
     {
@@ -871,10 +1142,18 @@ class AdminController extends Controller
             // Create a single message by joining the forecasts array elements
             $forecastMessage = implode('<br>', $forecasts);
 
-            // If there are forecasts, add them to low quantity notifications
-            if (!empty($forecastMessage) && $product->quantity <= 20) {
+            // If the product quantity is zero, add a specific message
+            if ($product->quantity == 0) {
+                $outOfStockNotification = [
+                    'message' => '<span class="bold-text">OUT OF STOCK!<br> Update: ' . $product->name . '</span> is out of stock. Urgently needs restocking!',
+                    'productId' => $product->id,
+                ];
+
+                $lowQuantityNotifications[] = $outOfStockNotification;
+            } elseif ($product->quantity <= 20) {
+                // If the quantity is low, add it to low quantity notifications
                 $notification = [
-                    'message' => '<span class="bold-text">' . $product->name . "</span>'s quantity is too low!",
+                    'message' => '<span class="bold-text">LOW STOCK!</span><br> We wish to inform you that your inventory <span class="bold-text">' . $product->name . "</span> is running critically low. Its time for a restock!",
                     'forecastMessage' => $forecastMessage,
                     'productId' => $product->id,
                 ];
@@ -893,10 +1172,26 @@ class AdminController extends Controller
             }
         }
 
-        $customers = Customer::paginate(6);
+        $totalLowQuantityNotifications = count($lowQuantityNotifications);
+        $totalBestSellerNotifications = count($bestSellerNotifications);
+
+        // Count the number of forecast messages
+        $totalForecastMessages = 0;
+        foreach ($lowQuantityNotifications as $notification) {
+            if (!empty($notification['forecastMessage'])) {
+                // Split forecast messages and count them
+                $totalForecastMessages += count(explode('<br>', $notification['forecastMessage']));
+            }
+        }
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+        $customers = Customer::paginate(7);
+
         return view('navbar.customer', [
             'customers' => $customers, 'bestSellerNotifications' => $bestSellerNotifications, 'salesForecastNotifications' => $salesForecastNotifications,
-            'username' => $nm,
+            'username' => $nm, 'totalNotifications' => $totalNotifications,
             'lowQuantityNotifications' => $lowQuantityNotifications,
         ]);
     }
@@ -918,7 +1213,7 @@ class AdminController extends Controller
         $customers->contact_person = $request->input('contact_person');
         $customers->address = $request->input('address');
         $customers->contact_num = $request->input('contact_num');
-        $customers->item_sold = $request->input('item_sold');
+        // $customers->item_sold = $request->input('item_sold');
         $customers->save();
         return redirect()->route('admin.customer')->with("message", "Customer added successfully!");
     }
@@ -930,7 +1225,7 @@ class AdminController extends Controller
         $customers->contact_person = $request->contact_person;
         $customers->address = $request->address;
         $customers->contact_num = $request->contact_num;
-        $customers->item_sold = $request->item_sold;
+        // $customers->item_sold = $request->item_sold;
         $customers->save();
         return redirect()->route('admin.customer')->with("message", "Customer updated successfully!");
     }
@@ -973,10 +1268,18 @@ class AdminController extends Controller
             // Create a single message by joining the forecasts array elements
             $forecastMessage = implode('<br>', $forecasts);
 
-            // If there are forecasts, add them to low quantity notifications
-            if (!empty($forecastMessage) && $product->quantity <= 20) {
+            // If the product quantity is zero, add a specific message
+            if ($product->quantity == 0) {
+                $outOfStockNotification = [
+                    'message' => '<span class="bold-text">OUT OF STOCK!<br> Update: ' . $product->name . '</span> is out of stock. Urgently needs restocking!',
+                    'productId' => $product->id,
+                ];
+
+                $lowQuantityNotifications[] = $outOfStockNotification;
+            } elseif ($product->quantity <= 20) {
+                // If the quantity is low, add it to low quantity notifications
                 $notification = [
-                    'message' => '<span class="bold-text">' . $product->name . "</span>'s quantity is too low!",
+                    'message' => '<span class="bold-text">LOW STOCK!</span><br> We wish to inform you that your inventory <span class="bold-text">' . $product->name . "</span> is running critically low. Its time for a restock!",
                     'forecastMessage' => $forecastMessage,
                     'productId' => $product->id,
                 ];
@@ -995,9 +1298,28 @@ class AdminController extends Controller
             }
         }
 
-        $suppliers = Supplier::paginate(6);
-        // 'bestSellerNotifications' => $bestSellerNotifications,
-        return view('navbar.supplier', ['suppliers' => $suppliers, 'salesForecastNotifications' => $salesForecastNotifications, 'bestSellerNotifications' => $bestSellerNotifications,])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications);
+        $totalLowQuantityNotifications = count($lowQuantityNotifications);
+        $totalBestSellerNotifications = count($bestSellerNotifications);
+
+        // Count the number of forecast messages
+        $totalForecastMessages = 0;
+        foreach ($lowQuantityNotifications as $notification) {
+            if (!empty($notification['forecastMessage'])) {
+                // Split forecast messages and count them
+                $totalForecastMessages += count(explode('<br>', $notification['forecastMessage']));
+            }
+        }
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+        $suppliers = Supplier::paginate(8);
+
+        return view('navbar.supplier', [
+            'suppliers' => $suppliers, 'salesForecastNotifications' => $salesForecastNotifications, 'lowQuantityNotifications' => $lowQuantityNotifications,
+            'bestSellerNotifications' => $bestSellerNotifications,
+            'totalNotifications' => $totalNotifications,
+        ])->with('username', $nm);
     }
 
 

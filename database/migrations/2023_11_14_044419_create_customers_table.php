@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('contact_person');
             $table->string('address');
             $table->char('contact_num');
-            $table->string('item_sold');
+            // $table->string('item_sold');
             $table->timestamps();
         });
 

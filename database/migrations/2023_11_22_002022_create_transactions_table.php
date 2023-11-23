@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->string('customer_name');
-            $table->char('contact_num');
+            // $table->char('contact_num');
             $table->string('product_name');
             $table->integer('qty');
             $table->integer('unit_price');
             $table->integer('total_price');
-            $table->integer('amount_tendered');
-            $table->integer('change_due');
+            // $table->integer('amount_tendered');
+            // $table->integer('change_due');
             $table->integer('total_earned');
-            $table->timestamp('last_transaction_date')->nullable(); // Add this line
+            $table->timestamp('last_transaction_date')->nullable();
             $table->timestamps();
         });
     }
