@@ -12,7 +12,7 @@ Route::post('/loginStore', [LoginController::class, 'loginStore'])->name('loginS
 
 Route::group([
     'prefix' => 'admin', 'as' => 'admin.', 
-    // 'middleware' => 'admin'
+    'middleware' => 'admin'
 ], function () {
 
     // Dashboard

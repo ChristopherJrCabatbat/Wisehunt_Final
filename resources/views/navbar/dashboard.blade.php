@@ -27,7 +27,7 @@
             bold: true,          
             fontFamily: 'Arial, Helvetica, sans-serif',
         },
-        backgroundColor: '#dfe0e0', 
+        backgroundColor: '#f0f0f0', 
         slices: {
         0: { color: '#2c5c78' }, 
         1: { color: '#2dc0d0' }, 
@@ -288,23 +288,23 @@
         </div>
 
     </div>
+    
+    @endsection
 
-@endsection
-
-
-@section('footer')
-
-@endsection
-
-
-@section('script')
+    
+    @section('footer')
+    
+    @endsection
+    
+    
+    @section('script')
+    {{-- var productLabels = {!! json_encode($productLabels) !!};
+     var productDatasets = {!! json_encode($productDatasets) !!}; --}}
 
     <script>
         var labels = {!! json_encode($labels) !!};
         var datasets = {!! json_encode($datasets) !!};
-        var productLabels = {!! json_encode($productLabels) !!};
-        var productDatasets = {!! json_encode($productDatasets) !!};
-    </script>
+        </script>
 
     <script src="{{ asset('js/dashboardTable.js') }}"></script>
     <script src="{{ asset('js/chart.js') }}"></script>

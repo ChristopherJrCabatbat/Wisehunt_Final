@@ -8,18 +8,6 @@
 
 @section('modals')
 
-    {{-- @if ($errors->any())
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                // Open the modal if there are validation errors
-                const newModal = document.getElementById("newModal");
-                const overlay = document.querySelector(".overlay");
-                newModal.style.display = "block";
-                overlay.style.display = "block";
-            });
-        </script>
-    @endif --}}
-
     <div class="overlay editOverlay"></div>
 
     {{-- Add Modal --}}
@@ -30,7 +18,6 @@
             <hr>
 
             <form class="modal-form" action="{{ route('admin.productStore') }}" enctype="multipart/form-data" method="POST">
-                {{-- <form class="modal-form" action="{{ route('admin.productStore') }}" enctype="multipart/form-data" method="POST" data-validation-url="{{ route('admin.validateProductStore') }}"> --}}
                 @csrf
 
                 <div class="row1">
@@ -120,10 +107,22 @@
                 </div>
                 
                 <div class="row3">
-                    <label for="">Image:</label>
-                    <div class="input_container">
-                        <input type="file" name="photo" id="fileUpload">
+                    <div class="column">
+                        <label for="">Image:</label>
+                        <div class="input_container">
+                            <input type="file" name="photo" id="fileUpload">
+                        </div>
                     </div>
+
+                    <div class="column">
+                        <label for="">Receive Notification when Quantity is:</label>
+                        <div class="input_container_ginaya">
+                            <input type="number" name="low_quantity_threshold" placeholder="Enter threshold"
+                                title="Receive notification when the stock quantity reaches or falls below this value."
+                                value="{{ old('low_quantity_threshold') }}" required/>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="row4">
                     <label for="">Product Description:</label>
@@ -245,10 +244,18 @@
                         <div class="column">
                             <label for="">Change Image:</label>
                             {{-- <input required type="file" name="image" id="" class="row2-input" /> --}}
-                            <div class="input_container">
+                            <div class="input_container_edit">
                                 <input type="file" name="photo" id="fileUpload">
                             </div>
                         </div>
+                          <div class="column">
+                        <label for="">Receive Notification when Quantity is:</label>
+                        <div class="input_container_ginaya_edit">
+                            <input type="number" name="low_quantity_threshold" placeholder="Enter threshold"
+                                title="Receive notification when the stock quantity reaches or falls below this value."
+                                value="{{ $product->low_quantity_threshold }}" required/>
+                        </div>
+                    </div>
                     </div>
 
                     <div class="row4">
@@ -431,9 +438,6 @@
         </div>
     </div>
 
-    <input type="hidden" id="showNotification" value="{{ count($lowQuantityNotifications) > 0 ? 'true' : 'false' }}">
-
-
 @endsection
 
 @section('footer')
@@ -452,7 +456,7 @@
 
     {{-- Live Search --}}
     <script type="text/javascript">
-        $('#search').on('input', function() {
+        $('#search').on('keyup', function() {
 
             const contentContainer = $('#content');
             $value = $(this).val();

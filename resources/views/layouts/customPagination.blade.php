@@ -2,11 +2,21 @@
     .pagination {
         margin: 2px 6px 7px 0;
         display: flex;
+        justify-content: center;
+        position: relative;
+        bottom: 0;
+        left: 5px;
+        margin-top: 19px;
+    }
+
+    {{-- .pagination {
+        margin: 2px 6px 7px 0;
+        display: flex;
         justify-content: flex-end;
         position: fixed;
         bottom: 12px;
         left: 52%;
-    }
+    } --}}
 
     .pagination a, .pagination span {
         display: inline-block;

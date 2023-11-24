@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('category');
             $table->string('photo')->nullable();
             $table->integer('quantity');
+            $table->integer('low_quantity_threshold')->default(0); // New column
             $table->bigInteger('capital');
             $table->bigInteger('unit_price');
             $table->timestamps();

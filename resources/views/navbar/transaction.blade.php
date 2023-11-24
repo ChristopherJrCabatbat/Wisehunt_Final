@@ -40,8 +40,8 @@
                         class="contact_num"> --}}
 
                 <label for="product_name" class="taas-select">Product:</label>
-                <select required name="product_name" id="product_name" class="select product_name"
-                    onchange="updateUnitPrice()">
+                <select required name="product_name" id="product_name" class="select product_name product-select"
+                    onchange="updateUnitPrice('newModal')">
                     <option value="" disabled selected>-- Select a Product --</option>
                     @foreach ($products as $product)
                         <option value="{{ $product->name }}" data-unit-price="{{ $product->unit_price }}"
@@ -58,7 +58,7 @@
                     <div class="text-danger">{{ $errors->first('error_change') }}</div> --}}
 
                 <label for="">Quantity:</label>
-                <input required name="qty" type="number" id="qty" value="{{ old('qty') }}">
+                <input required name="qty" class="qty" type="number" id="qty" value="{{ old('qty') }}">
                 <div class="text-danger">{{ $errors->first('error_stock') }}</div>
 
                 <label for="unit_price">Unit Price:</label>
@@ -110,10 +110,10 @@
 
 
                     <label for="product_name" class="taas-select">Product:</label>
-                    <select class="select" name="product_name" id="product_name-edit"
-                        onchange="editUpdateUnitPrice('{{ $transaction->id }}')">
+                    <select class="select product-select" name="product_name" id="product_name-edit"
+                        onchange="updateUnitPrice('editModal{{ $transaction->id }}')">
                         @foreach ($products as $product)
-                            <option value="{{ $product->name }}" data-unit-price-edit="{{ $product->unit_price }}"
+                            <option value="{{ $product->name }}" data-unit-price="{{ $product->unit_price }}"
                                 {{ old('product_name', $transaction->product_name) === $product->name ? 'selected' : '' }}>
                                 {{ $product->name }}
                             </option>
@@ -122,12 +122,16 @@
                     <div class="text-danger">{{ $errors->first('error') }}</div>
 
                     <label for="">Quantity:</label>
-                    <input required name="qty" type="number" value="{{ old('qty', $transaction->qty) }}">
+                    <input required id="qty-edit" class="qty" name="qty" type="number" value="{{ old('qty', $transaction->qty) }}">
                     <div class="text-danger">{{ $errors->first('error_stock') }}</div>
 
                     <label for="unit_price">Unit Price:</label>
-                    <input readonly required name="unit_price" id="unit_price-edit" type="number"
+                    <input readonly required name="unit_price" class="unit_price" id="unit_price-edit" type="number"
                         value="{{ old('unit_price', $transaction->unit_price) }}">
+
+                    <label for="unit_price">Total Price:</label>
+                    <input readonly name="total_price" id="total_price_edit" type="number" value="{{ $transaction->total_price }}"
+                        class="total_price">
 
                     {{-- <label for="">Amount Tendered:</label>
                     <input required name="amount_tendered" type="number"
@@ -404,8 +408,8 @@
         });
     </script>
 
-    {{-- Auto Contact Number at Unit Price --}}
-    <script>
+    {{-- Luma Auto Contact Number at Unit Price --}}
+    {{-- <script>
         // Add Modal
         function updateContactNumber() {
             var customerSelect = document.getElementById('customer');
@@ -448,32 +452,49 @@
 
             editUnitPriceInput.value = editUnitPrice;
         }
+    </script> --}}
+
+    <!-- Auto Unit Price Script -->
+    <script>
+        function updateUnitPrice(elementId) {
+            var productSelect = document.querySelector('#' + elementId + ' .product-select');
+            var unitPriceInput = document.querySelector('#' + elementId + ' .unit_price');
+
+            var selectedPrice = productSelect.options[productSelect.selectedIndex];
+            var unitPrice = selectedPrice.getAttribute('data-unit-price');
+
+            unitPriceInput.value = unitPrice;
+        }
     </script>
+
+
 
     {{-- Auto Total Price --}}
     <script>
-        // Wait for the DOM to be ready
         document.addEventListener("DOMContentLoaded", function() {
             // Select the quantity input field
-            var qtyInput = document.getElementById('qty');
-
-            // Add an event listener for the 'input' event on the quantity input field
-            qtyInput.addEventListener('input', function() {
-                // Get the quantity value
-                var qty = parseFloat(qtyInput.value) || 0;
-
-                // Get the unit price value from the selected product
-                var unitPrice = parseFloat(document.getElementById('product_name').options[document
-                    .getElementById('product_name').selectedIndex].getAttribute('data-unit-price')) || 0;
-
-                // Calculate the total price
-                var totalPrice = qty * unitPrice;
-
-                // Update the total price input field
-                document.getElementById('total_price').value = totalPrice.toFixed(
-                    2); // You can adjust the number of decimal places as needed
+            var qtyInputs = document.querySelectorAll('.qty');
+    
+            qtyInputs.forEach(function(qtyInput) {
+                // Add an event listener for the 'input' event on the quantity input field
+                qtyInput.addEventListener('input', function() {
+                    // Get the quantity value
+                    var qty = parseFloat(qtyInput.value) || 0;
+    
+                    // Get the unit price value from the selected product
+                    var productSelect = qtyInput.closest('.modal-content').querySelector('.product-select');
+                    var unitPrice = parseFloat(productSelect.options[productSelect.selectedIndex].getAttribute('data-unit-price')) || 0;
+    
+                    // Calculate the total price
+                    var totalPrice = qty * unitPrice;
+    
+                    // Update the total price input field
+                    var totalPriceInput = qtyInput.closest('.modal-content').querySelector('.total_price');
+                    totalPriceInput.value = totalPrice.toFixed(2);
+                });
             });
         });
     </script>
+
 
 @endsection

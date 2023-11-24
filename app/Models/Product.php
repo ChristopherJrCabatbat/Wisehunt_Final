@@ -16,6 +16,7 @@ class Product extends Model
         'category',
         'photo',
         'quantity',
+        'low_quantity_threshold',
         'capital',
         'unit_price',
     ];
