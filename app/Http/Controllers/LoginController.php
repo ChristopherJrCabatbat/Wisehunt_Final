@@ -18,37 +18,51 @@ class LoginController extends Controller
         return view('login');
     }
 
+    // public function loginStore(Request $request)
+    // {
+    //     // Session::forget('user');
+
+    //     $username = $request->input('username');
+    //     $password = $request->input('password');
+    //     $user = Login::where("username", $username)->first();
+
+    //     if ($user) {
+    //         $db_password = $user->password;
+    //         // $decrypted = Crypt::decryptString($db_password);
+
+    //         // if ($password === $decrypted) {
+    //         if ($password === $db_password) {
+    //             Session::put('user', $user);
+
+    //             // Set a session variable to indicate a successful login
+    //             Session::put('login_success', true);
+    //             return redirect()->route('admin.dashboard');
+    //             // return redirect("/Client")->with("message", "Login successful!");
+    //         } else {
+    //             // return view('login');
+    //             return redirect()->route('login');
+    //             // return redirect('LoginForm')->with("message", "Wrong password! Please try again.");
+    //         }
+    //     } else {
+    //         // return view('login');
+    //         return redirect()->route('login');
+    //         // return redirect('LoginForm')->with("message", " Account not found! Please try again.");  
+    //     }
+    // }
+
     public function loginStore(Request $request)
     {
-        // Session::forget('user');
-
-        $username = $request->input('username');
-        $password = $request->input('password');
-        $user = Login::where("username", $username)->first();
-
-        if ($user) {
-            $db_password = $user->password;
-            // $decrypted = Crypt::decryptString($db_password);
-
-            // if ($password === $decrypted) {
-            if ($password === $db_password) {
-                Session::put('user', $user);
-
-                // Set a session variable to indicate a successful login
-                Session::put('login_success', true);
-                return redirect()->route('admin.dashboard');
-                // return redirect("/Client")->with("message", "Login successful!");
-            } else {
-                // return view('login');
-                return redirect()->route('login');
-                // return redirect('LoginForm')->with("message", "Wrong password! Please try again.");
-            }
-        } else {
-            // return view('login');
-            return redirect()->route('login');
-            // return redirect('LoginForm')->with("message", " Account not found! Please try again.");  
+        $credentials = $request->only('username', 'password');
+    
+        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
+            // Authentication passed
+            return redirect()->route('admin.dashboard');
         }
+    
+        // Authentication failed
+        return redirect()->route('login');
     }
+    
 
     public function logout()
     {

@@ -276,7 +276,6 @@ function addNotifications(notifications) {
     // Clear the existing notifications
     notificationList.innerHTML = '';
 
-    let hasLowQuantityNotification = false;
     let addedForecastMessages = []; // Keep track of added forecast messages
 
     notifications.forEach(function (product, index) {
@@ -299,7 +298,7 @@ function addNotifications(notifications) {
             const forecastMessages = product.forecastMessage.split('<br>');
 
             // Create a separate li for each forecast message
-            forecastMessages.forEach(function (forecastMessage, forecastIndex) {
+            forecastMessages.forEach(function (forecastMessage) {
                 // Check if the forecast message has not been added before
                 if (!addedForecastMessages.includes(forecastMessage)) {
                     const forecastMessageItem = document.createElement('li');
@@ -314,7 +313,7 @@ function addNotifications(notifications) {
                     addedForecastMessages.push(forecastMessage);
 
                     // Add margin-top to the first low quantity notification
-                    if (index === 0 && forecastIndex === 0) {
+                    if (index === 0) {
                         notificationItem.style.marginTop = '35px'; // Adjust the margin-top value as needed
                     }
 
@@ -322,12 +321,10 @@ function addNotifications(notifications) {
                 }
             });
         }
-
-        hasLowQuantityNotification = true;
     });
 
-    if (!hasLowQuantityNotification) {
-        // No low quantity notifications, so display a message
+    if (notifications.length === 0) {
+        // No notifications, so display a message
         const noNotificationsItem = document.createElement('li');
         noNotificationsItem.innerText = 'No notifications.';
         notificationList.appendChild(noNotificationsItem);
@@ -336,6 +333,75 @@ function addNotifications(notifications) {
     // Toggle the red dot visibility based on whether there are notifications
     toggleRedDotVisibility();
 }
+
+
+// // Function to add notifications
+// function addNotifications(notifications) {
+//     const notificationList = document.getElementById('notificationList');
+
+//     // Clear the existing notifications
+//     notificationList.innerHTML = '';
+
+//     let hasLowQuantityNotification = false;
+//     let addedForecastMessages = []; // Keep track of added forecast messages
+
+//     notifications.forEach(function (product, index) {
+//         // If it's not a sales forecast notification, add it to the regular list
+//         const notificationItem = document.createElement('li');
+//         notificationItem.classList.add('notification-item'); // Common class for all notifications
+//         notificationItem.innerHTML = `
+//             ${product.message}
+//             <span class="dot"></span>
+//         `;
+//         notificationItem.addEventListener('click', function () {
+//             navigateToProductView(product.productId);
+//         });
+
+//         // Append the notification item to the notification list
+//         notificationList.appendChild(notificationItem);
+
+//         // Check if forecastMessage is present and not empty
+//         if (product.forecastMessage && product.forecastMessage.trim() !== '') {
+//             const forecastMessages = product.forecastMessage.split('<br>');
+
+//             // Create a separate li for each forecast message
+//             forecastMessages.forEach(function (forecastMessage, forecastIndex) {
+//                 // Check if the forecast message has not been added before
+//                 if (!addedForecastMessages.includes(forecastMessage)) {
+//                     const forecastMessageItem = document.createElement('li');
+//                     forecastMessageItem.classList.add('notification-item', 'forecast-message');
+//                     forecastMessageItem.innerHTML = `
+//                         ${forecastMessage}
+//                         <span class="dot"></span>
+//                     `;
+
+//                     // Append each forecast message to the notification list
+//                     notificationList.appendChild(forecastMessageItem);
+//                     addedForecastMessages.push(forecastMessage);
+
+//                     // Add margin-top to the first low quantity notification
+//                     if (index === 0 && forecastIndex === 0) {
+//                         notificationItem.style.marginTop = '35px'; // Adjust the margin-top value as needed
+//                     }
+
+//                     console.log('Added forecast message:', forecastMessage);
+//                 }
+//             });
+//         }
+
+//         hasLowQuantityNotification = true;
+//     });
+
+//     if (!hasLowQuantityNotification) {
+//         // No low quantity notifications, so display a message
+//         const noNotificationsItem = document.createElement('li');
+//         noNotificationsItem.innerText = 'No notifications.';
+//         notificationList.appendChild(noNotificationsItem);
+//     }
+
+//     // Toggle the red dot visibility based on whether there are notifications
+//     toggleRedDotVisibility();
+// }
 
 
 // Call the function to add notifications when the page loads

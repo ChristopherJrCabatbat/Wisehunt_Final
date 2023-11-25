@@ -87,6 +87,12 @@
                             <option value="" disabled selected>-- Select Category --</option>
                             <option value="Paper" {{ old('category') === 'Paper' ? 'selected' : '' }}>Paper
                             </option>
+                            <option value="Tape" {{ old('category') === 'Tape' ? 'selected' : '' }}>Tape
+                            </option>
+                            <option value="Plastic" {{ old('category') === 'Plastic' ? 'selected' : '' }}>Plastic
+                            </option>
+                            <option value="Gloves" {{ old('category') === 'Gloves' ? 'selected' : '' }}>Gloves
+                            </option>
                             <option value="Machine" {{ old('category') === 'Machine' ? 'selected' : '' }}>
                                 Machine</option>
                             <option value="Food Material" {{ old('category') === 'Food Material' ? 'selected' : '' }}>Food
@@ -224,6 +230,12 @@
                             <label for="">Category:</label>
                             <select name="category" id="" class="row1-input select_categ">
                                 <option value="Paper" {{ $product->category === 'Paper' ? 'selected' : '' }}>Paper
+                                </option>
+                                <option value="Tape" {{ $product->category === 'Tape' ? 'selected' : '' }}>Tape
+                                </option>
+                                <option value="Plastic" {{ $product->category === 'Plastic' ? 'selected' : '' }}>Plastic
+                                </option>
+                                <option value="Gloves" {{ $product->category === 'Gloves' ? 'selected' : '' }}>Gloves
                                 </option>
                                 <option value="Machine" {{ $product->category === 'Machine' ? 'selected' : '' }}>
                                     Machine</option>

@@ -117,81 +117,83 @@
 
 @endsection
 
-@section('main-content')
+@if(auth()->user()->role === 'admin')
+    @section('main-content')
 
-    <div class="content">
-        <div class="taas">
-            <form id="addCustomerForm">
-                <button class="add" type="button" id="addBtn">Add Supplier</button>
-            </form>
-        </div>
-        <div class="table">
-            <table>
+        <div class="content">
+            <div class="taas">
+                <form id="addCustomerForm">
+                    <button class="add" type="button" id="addBtn">Add Supplier</button>
+                </form>
+            </div>
+            <div class="table">
+                <table>
 
-                <tr>
-                    <th colspan="11" class="table-th">SUPPLIERS</th>
-                </tr>
+                    <tr>
+                        <th colspan="11" class="table-th">SUPPLIERS</th>
+                    </tr>
 
-                @php
-                    // Calculate the initial row number based on the current page
-                    $rowNumber = ($suppliers->currentPage() - 1) * $suppliers->perPage() + 1;
-                @endphp
+                    @php
+                        // Calculate the initial row number based on the current page
+                        $rowNumber = ($suppliers->currentPage() - 1) * $suppliers->perPage() + 1;
+                    @endphp
 
-                <tr>
-                    <th>No.</th>
-                    <th>Company Name</th>
-                    <th>Contact Name</th>
-                    <th>Contact Number</th>
-                    <th>Address</th>
-                    <th>Product/s</th>
-                    <th>Actions</th>
-                </tr>
+                    <tr>
+                        <th>No.</th>
+                        <th>Company Name</th>
+                        <th>Contact Name</th>
+                        <th>Contact Number</th>
+                        <th>Address</th>
+                        <th>Product/s</th>
+                        <th>Actions</th>
+                    </tr>
 
-                <tbody>
-                    @if ($suppliers->isEmpty())
-                        <tr>
-                            <td colspan="7">No data found.</td>
-                        </tr>
-                    @else
-                        @foreach ($suppliers as $supplier)
+                    <tbody>
+                        @if ($suppliers->isEmpty())
                             <tr>
-                                <td>{{ $rowNumber++ }}</td>
-                                <td>{{ $supplier->supplier }}</td>
-                                <td>{{ $supplier->contact_person }}</td>
-                                <td>{{ $supplier->contact_num }}</td>
-                                <td>{{ $supplier->address }}</td>
-                                <td>{{ $supplier->product_name }}</td>
-
-                                <td class="actions">
-                                    <div class="actions-container">
-                                            <button type="button" class="edit editButton" id="edit"
-                                                data-id="{{ $supplier->id }}">
-                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                            </button>
-
-                                        <form action="{{ route('admin.supplierDestroy', $supplier->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button onclick="return confirm('Are you sure you want to delete this?')"
-                                                type="submit" class="delete" id="delete">
-                                                <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-
+                                <td colspan="7">No data found.</td>
                             </tr>
-                        @endforeach
-                    @endif
-                </tbody>
+                        @else
+                            @foreach ($suppliers as $supplier)
+                                <tr>
+                                    <td>{{ $rowNumber++ }}</td>
+                                    <td>{{ $supplier->supplier }}</td>
+                                    <td>{{ $supplier->contact_person }}</td>
+                                    <td>{{ $supplier->contact_num }}</td>
+                                    <td>{{ $supplier->address }}</td>
+                                    <td>{{ $supplier->product_name }}</td>
 
-            </table>
+                                    <td class="actions">
+                                        <div class="actions-container">
+                                                <button type="button" class="edit editButton" id="edit"
+                                                    data-id="{{ $supplier->id }}">
+                                                    <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                                </button>
 
-            <div class="pagination">{{ $suppliers->links('layouts.customPagination') }}</div>
+                                            <form action="{{ route('admin.supplierDestroy', $supplier->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button onclick="return confirm('Are you sure you want to delete this?')"
+                                                    type="submit" class="delete" id="delete">
+                                                    <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
 
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+
+                </table>
+
+                <div class="pagination">{{ $suppliers->links('layouts.customPagination') }}</div>
+
+            </div>
         </div>
-    </div>
-@endsection
+    @endsection
+@endif
 
 @section('footer')
 

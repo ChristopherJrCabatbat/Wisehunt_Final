@@ -89,6 +89,39 @@
         </div>
 
 
+        {{-- <!-- Notification -->
+        <div id="notificationPanel" class="notification-panel">
+            <span class="close-notification" onclick="closeNotification()">&times;</span>
+            <h3 class="h3-notif">Notifications</h3>
+            <ul id="notificationList" class="notification-list">
+                <!-- Display low-quantity notifications -->
+                @foreach ($lowQuantityNotifications as $notification)
+                    <li class="notification-item">
+                        {!! $notification['message'] !!}
+                        <span class="dot"></span>
+                    </li>
+        
+                    <!-- Check if there are forecast messages and display them -->
+                    @if (!empty($notification['forecastMessage']))
+                        @foreach (explode('<br>', $notification['forecastMessage']) as $forecast)
+                            <li class="notification-item forecast-message">
+                                {!! $forecast !!}
+                                <span class="dot"></span>
+                            </li>
+                        @endforeach
+                    @endif
+                @endforeach
+        
+                <!-- Display best-seller notifications -->
+                @foreach ($bestSellerNotifications as $notification)
+                    <li class="notification-item best-seller">
+                        {!! $notification['message'] !!}
+                        <span class="dot"></span>
+                    </li>
+                @endforeach
+            </ul>
+        </div> --}}
+
 
         <header>
             <div class="side-navbar">
