@@ -113,6 +113,12 @@
                 <a class="sidebar active" href="{{ route('admin.supplier') }}">SUPPLIER</a>
             </div>
         </li>
+        <li>
+            <div class="baba-container">
+                <img src="{{ asset('images/supplier.png') }}" class="user-i" alt="">
+                <a class="sidebar" href="{{ route('admin.supplier') }}">USERS</a>
+            </div>
+        </li>
     </ul>
 
 @endsection

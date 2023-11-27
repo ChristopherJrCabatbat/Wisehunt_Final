@@ -140,18 +140,44 @@
                             {{-- <span class="red-dot" id="notificationDot">{{ count($lowQuantityNotifications) }}</span> --}}
                         
                         {{-- <div class="username">{{ $username }}</div> --}}
+
+                    @if(auth()->user()->role === 'admin')                
                         <div class="username">admin</div>
+                    @endif
+
+                    @if(auth()->user()->role === 'staff')                
+                    <div class="username" style="margin-left: 12px; margin-right: 12px">staff</div>
+                    @endif
 
                         <!-- Log out -->
                         <div class="dropdown">
                             <label for="logout">
+                            @if(auth()->user()->role === 'admin')                
                                 <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-user.png') }}"
                                     alt="" width="100" height="auto">
-                            </label>
+                            @endif
+                            @if(auth()->user()->role === 'staff')                
+                                <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-users.png') }}"
+                                    alt="" width="100" height="auto">
+                            @endif
+                                </label>
                             <input type="checkbox" id="logout">
                             <div class="dropdown-menu" id="dropdownMenu">
-                                <a class="dropdown-item" href="{{ route('logout') }}"
-                                    onclick="return confirm('Are you sure you want to log out?')">Log out</a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+        
+                                    <x-dropdown-link :href="route('logout')"
+                                            onclick="event.preventDefault();
+                                                        this.closest('form').submit();" class="dropdown-item" >
+                                        {{ __('Log Out') }}
+                                    </x-dropdown-link>
+                                </form>
+                                {{-- <form method="POST" action="{{ route('logout') }}" >
+                                    <button type="submit" class="dropdown-item" onclick="event.preventDefault();
+                                    this.closest('form').submit();">Log out</button>
+                                </form> --}}
+                                {{-- <a method="POST" class="dropdown-item" href="{{ route('logout') }}"
+                                    onclick="return confirm('Are you sure you want to log out?')">Log out</a> --}}
                             </div>
                         </div>
 
@@ -160,7 +186,7 @@
             </div>
         </header>
 
-        <main>
+        <main id="main">
             @yield('main-content')
         </main>
 

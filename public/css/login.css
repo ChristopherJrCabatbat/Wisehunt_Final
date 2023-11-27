@@ -195,3 +195,18 @@ footer {
     display: flex;
     gap: 5px;
 }
+
+.input-field input.has-value ~ label,
+.input-field input:focus ~ label,
+.input-field input:valid ~ label {
+    font-size: 0.8rem;
+    top: 10px;
+    transform: translateY(-120%);
+}
+
+.text-danger {
+    color: red;
+    font-size: 14px;
+    position: relative;
+    bottom: 8px;
+}

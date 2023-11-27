@@ -106,6 +106,12 @@ a:hover {
     top: 317px;
     position: absolute;
 }
+.user-i {
+    width: 25px;
+    left: 26px;
+    top: 370px;
+    position: absolute;
+}
 
 /* Top Navbar */
 .top-navbar {
@@ -158,6 +164,8 @@ img {
     margin-right: 25px;
     margin-top: 8px;
     display: flex;
+    justify-content: flex-end;
+
     gap: 12px;
 }
 
@@ -198,10 +206,11 @@ img {
     right: 0;
     /* top: 22px; */
     background-color: #f9f9f9;
-    min-width: 120px;
+    /* min-width: 120px; */
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
+
 
 .dropdown input[type="checkbox"] {
     display: none;
@@ -214,14 +223,16 @@ img {
 } */
 
 .dropdown-item {
-    padding: 12px 16px;
+    padding: 12px 35px 12px 16px;
+    text-wrap: nowrap;
     text-decoration: none;
     display: block;
     color: black;
+    background-color: white;
 }
 
 .dropdown-item:hover {
-    background-color: #ddd;
+    background-color: #a3a3a3;
 }
 
 
@@ -423,3 +434,4 @@ form button#delete {
 form button#delete:hover {
     background-color: #a11c29;
 }
+

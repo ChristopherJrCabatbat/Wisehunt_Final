@@ -86,7 +86,7 @@ class AdminController extends Controller
     //     return $forecasts;
     // }
 
-    
+
     private function forecastSalesForAllCustomers()
     {
         // Get all unique customer names
@@ -125,6 +125,31 @@ class AdminController extends Controller
         return $forecasts;
     }
 
+    public function getCurrentEarnings()
+    {
+        // Fetch the current month
+        $currentMonth = now()->format('m');
+
+        // Retrieve current month earnings logic
+        $currentMonthEarnings = Transaction::where(DB::raw('MONTH(created_at)'), '=', $currentMonth)
+            ->whereYear('created_at', '=', now()->year)
+            ->sum('total_earned');
+
+        return response()->json(['data' => $currentMonthEarnings]);
+    }
+
+    public function getForecastEarnings()
+    {
+        // Fetch the current month
+        $currentMonth = now()->format('m');
+
+        // Retrieve forecast month earnings logic
+        $forecastMonthEarnings = Transaction::where(DB::raw('MONTH(created_at)'), '=', $currentMonth)
+            ->whereYear('created_at', '=', now()->year + 1)
+            ->sum('total_earned');
+
+        return response()->json(['data' => $forecastMonthEarnings]);
+    }
 
 
     // Dashboard Controller
@@ -140,7 +165,7 @@ class AdminController extends Controller
 
         // Get forecasts outside the loop to avoid duplication
         $forecasts = $this->forecastSalesForAllCustomers();
-        
+
         // Find the best-selling product
         $bestSeller = Product::select('products.id', 'products.name')
             ->join('transactions', 'products.name', '=', 'transactions.product_name')
@@ -164,7 +189,7 @@ class AdminController extends Controller
                     $forecastMessages[] = $forecast;
                 }
             }
-    
+
             // Create a single message by joining the forecast messages
             $forecastMessage = implode('<br>', $forecastMessages);
 
@@ -249,7 +274,7 @@ class AdminController extends Controller
                 'backgroundColor' => $colors,
             ]
         ];
-        
+
         // Pie Chart Logic
         $highDemandProducts = DB::table('transactions')
             ->select('product_name', DB::raw('SUM(qty) as total_qty'))
@@ -264,6 +289,17 @@ class AdminController extends Controller
         }
 
         $arr['pieChartData'] = rtrim($pieChartData, ",");
+
+
+        // $result = DB::select(DB::raw("SELECT store_master.name,sum(sales_master.amount) as sales,sum(expense_master.amount) as expense,(sum(sales_master.amount)-sum sales_master.store_id = store_master.id LEFT JOIN expense_master on expense_master.store_id = store_master.id GROUP BY store_master.id")); 
+        // $data = "";
+        // foreach($result as $val)
+        // {
+        //     $data.="['".$val->name."',".$val->sales.",".$val->expense.",".$val->profit."],";
+        // }
+
+        $nextMonthStartDate = now()->addMonth()->startOfMonth();
+$nextMonthEndDate = now()->addMonth()->endOfMonth();
 
         // Pass both arrays to the view
         return view('navbar.dashboard', $arr, [
@@ -281,8 +317,197 @@ class AdminController extends Controller
             // 'productDatasets' => $productDatasets,
             'bestSeller' => $bestSeller, // Pass the best seller information to the view
             'totalNotifications' => $totalNotifications, // Pass the best seller information to the view
+            'nextMonthStartDate' => $nextMonthStartDate,
+            'nextMonthEndDate' => $nextMonthEndDate,
         ]);
     }
+
+    public function getEarningsForecast()
+    {
+        $forecastData = [];
+
+        // Loop through the months and fetch forecasted earnings
+        for ($i = 1; $i <= 12; $i++) {
+            $forecastData[$i] = Transaction::whereMonth('created_at', $i)
+                ->whereYear('created_at', today()->year + 1)
+                ->sum('total_earned') ?? 0;
+        }
+
+        return response()->json($forecastData);
+    }
+
+    public function forecastSalesForNextMonth() {
+        // Get the current date
+        $currentDate = Carbon::now();
+    
+        // Calculate the start and end date for the next month
+        $startDate = $currentDate->copy()->addMonthNoOverflow()->startOfMonth();
+        $endDate = $currentDate->copy()->addMonthNoOverflow()->endOfMonth();
+    
+        // Query the database to get historical sales data for the next month
+        $forecastedSales = Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
+    
+        // You can apply your own forecasting algorithm or adjustments here
+    
+        return $forecastedSales;
+    }
+    
+
+    // public function dashboard()
+    // {
+    //     $nm = Session::get('name');
+    //     $acc = Session::get('acc');
+
+    //     // Notification arrays
+    //     $lowQuantityNotifications = [];
+    //     $bestSellerNotifications = [];
+    //     $salesForecastNotifications = [];
+
+    //     // Get forecasts outside the loop to avoid duplication
+    //     $forecasts = $this->forecastSalesForAllCustomers();
+
+    //     // Find the best-selling product
+    //     $bestSeller = Product::select('products.id', 'products.name')
+    //         ->join('transactions', 'products.name', '=', 'transactions.product_name')
+    //         ->selectRaw('SUM(transactions.qty) as total_qty')
+    //         ->groupBy('products.id', 'products.name')
+    //         ->orderByDesc('total_qty')
+    //         ->first();
+
+    //     $productsss = Product::all();
+
+    //     foreach ($productsss as $product) {
+    //         // Check if there are forecasts for the customer
+    //         $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+
+    //         $forecastMessages = [];
+
+    //         // Generate forecast messages for the current product
+    //         foreach ($forecasts as $forecast) {
+    //             // Customize the following condition based on your criteria
+    //             if (strpos($forecast, $customerId) !== false) {
+    //                 $forecastMessages[] = $forecast;
+    //             }
+    //         }
+
+    //         // Create a single message by joining the forecast messages
+    //         $forecastMessage = implode('<br>', $forecastMessages);
+
+    //         // If the product quantity is zero, add a specific message
+    //         if ($product->quantity == 0) {
+    //             $outOfStockNotification = [
+    //                 'message' => '<span class="bold-text">OUT OF STOCK!<br> Update: ' . $product->name . '</span> is out of stock. Urgently needs restocking!',
+    //                 'productId' => $product->id,
+    //             ];
+
+    //             $lowQuantityNotifications[] = $outOfStockNotification;
+    //         } elseif ($product->quantity <= $product->low_quantity_threshold) {
+    //             // If the quantity is low, add it to low quantity notifications
+    //             $notification = [
+    //                 'message' => '<span class="bold-text">LOW STOCK!</span><br> We wish to inform you that your inventory <span class="bold-text">' . $product->name . "</span> is running critically low. Its time for a restock!",
+    //                 'forecastMessage' => $forecastMessage,
+    //                 'productId' => $product->id,
+    //             ];
+
+    //             $lowQuantityNotifications[] = $notification;
+    //         }
+
+    //         // Display the best seller quantity sold in the notification
+    //         if ($bestSeller && $bestSeller->id == $product->id && $bestSeller->total_qty > 0) {
+    //             $bestSellerNotification = [
+    //                 'message' => '<span class="bold-text">' . e($bestSeller->name) . '</span> is your best seller. It might be wise to increase stock levels to meet the high demand and capitalize on its popularity.',
+    //                 'productId' => $bestSeller->id,
+    //             ];
+
+    //             $bestSellerNotifications[] = $bestSellerNotification;
+    //         }
+    //     }
+
+    //     $totalLowQuantityNotifications = count($lowQuantityNotifications);
+    //     $totalBestSellerNotifications = count($bestSellerNotifications);
+    //     $totalForecastMessages = count($forecastMessages);
+
+    //     // Calculate the total number of notifications
+    //     $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+    //     // Count the total quantity sold for the day
+    //     $totalSalesQty = Transaction::selectRaw('SUM(qty) as total_qty')
+    //         ->whereDate('created_at', today()) // Change this to match your date format
+    //         ->value('total_qty') ?? 0;
+
+    //     $productCount = Product::count();
+    //     $transactionCount = Transaction::count();
+    //     $totalEarnings = Transaction::sum('total_earned');
+
+    //     // Bar Chart/Graph
+    //     $currentYear = date('Y');
+
+    //     $earnings = Transaction::selectRaw('MONTH(created_at) as month, SUM(total_earned) as total_earned')
+    //         ->whereYear('created_at', $currentYear)
+    //         ->groupBy('month')
+    //         ->orderBy('month')
+    //         ->get();
+
+    //     $labels = [];
+    //     $data = [];
+    //     $colors = ['#2c5c78', '#2dc0d0', '#6c6c6c', '#2c5c78', '#2dc0d0', '#6c6c6c', '#2c5c78', '#2dc0d0', '#6c6c6c', '#2c5c78', '#2dc0d0', '#6c6c6c'];
+
+    //     for ($i = 1; $i <= 12; $i++) {
+    //         $month = date('F', mktime(0, 0, 0, $i, 1));
+    //         $earningsPerMonth = 0;
+
+    //         foreach ($earnings as $earning) {
+    //             if ($earning->month == $i) {
+    //                 $earningsPerMonth = $earning->total_earned;
+    //                 break;
+    //             }
+    //         }
+
+    //         array_push($labels, $month);
+    //         array_push($data, $earningsPerMonth);
+    //     }
+
+    //     $datasets = [
+    //         [
+    //             'label' => 'Monthly earnings (' . $currentYear . ')',
+    //             'data' => $data,
+    //             'backgroundColor' => $colors,
+    //         ]
+    //     ];
+
+    //     // Pie Chart Logic
+    //     $highDemandProducts = DB::table('transactions')
+    //         ->select('product_name', DB::raw('SUM(qty) as total_qty'))
+    //         ->groupBy('product_name')
+    //         ->orderByDesc('total_qty')
+    //         ->limit(5)
+    //         ->get();
+
+    //     $pieChartData = "";
+    //     foreach ($highDemandProducts as $product) {
+    //         $pieChartData .= "['" . $product->product_name . "', " . $product->total_qty . "],";
+    //     }
+
+    //     $arr['pieChartData'] = rtrim($pieChartData, ",");
+
+    //     // Pass both arrays to the view
+    //     return view('navbar.dashboard', $arr, [
+    //         'username' => $nm,
+    //         'productCount' => $productCount,
+    //         'transactionCount' => $transactionCount,
+    //         'totalSalesQty' => $totalSalesQty,
+    //         'totalEarnings' => $totalEarnings,
+    //         'lowQuantityNotifications' => $lowQuantityNotifications,
+    //         'bestSellerNotifications' => $bestSellerNotifications,
+    //         'datasets' => $datasets, // Adding the datasets for the bar chart
+    //         'labels' => $labels, // Adding the labels for the bar chart
+    //         // 'productLabels' => $productLabels,
+    //         'salesForecastNotifications' => $salesForecastNotifications,
+    //         // 'productDatasets' => $productDatasets,
+    //         'bestSeller' => $bestSeller, // Pass the best seller information to the view
+    //         'totalNotifications' => $totalNotifications, // Pass the best seller information to the view
+    //     ]);
+    // }
 
 
     // Product Controller
@@ -298,7 +523,7 @@ class AdminController extends Controller
 
         // Get forecasts outside the loop to avoid duplication
         $forecasts = $this->forecastSalesForAllCustomers();
-        
+
         // Find the best-selling product
         $bestSeller = Product::select('products.id', 'products.name')
             ->join('transactions', 'products.name', '=', 'transactions.product_name')
@@ -322,7 +547,7 @@ class AdminController extends Controller
                     $forecastMessages[] = $forecast;
                 }
             }
-    
+
             // Create a single message by joining the forecast messages
             $forecastMessage = implode('<br>', $forecastMessages);
 
@@ -396,115 +621,12 @@ class AdminController extends Controller
         ]);
     }
 
-    // public function product(Request $request)
-    // {
-    //     $nm = Session::get('name');
-    //     $query = Product::query();
 
-    //     // Notification arrays
-    //     $lowQuantityNotifications = [];
-    //     $bestSellerNotifications = [];
-    //     $salesForecastNotifications = [];
-
-    //     // Get forecasts outside the loop to avoid duplication
-    //     $forecasts = $this->forecastSalesForAllCustomers();
+    public function LineChart()
+    {
         
-    //     // Find the best-selling product
-    //     $bestSeller = Product::select('products.id', 'products.name')
-    //         ->join('transactions', 'products.name', '=', 'transactions.product_name')
-    //         ->selectRaw('SUM(transactions.qty) as total_qty')
-    //         ->groupBy('products.id', 'products.name')
-    //         ->orderByDesc('total_qty')
-    //         ->first();
+    }
 
-    //     $productsss = Product::all();
-
-    //     foreach ($productsss as $product) {
-    //         // Check if there are forecasts for the customer
-    //         $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
-
-    //         $forecastMessages = [];
-
-    //         // Generate forecast messages for the current product
-    //         foreach ($forecasts as $forecast) {
-    //             // Customize the following condition based on your criteria
-    //             if (strpos($forecast, $customerId) !== false) {
-    //                 $forecastMessages[] = $forecast;
-    //             }
-    //         }
-    
-    //         // Create a single message by joining the forecast messages
-    //         $forecastMessage = implode('<br>', $forecastMessages);
-
-    //         // If the product quantity is zero, add a specific message
-    //         if ($product->quantity == 0) {
-    //             $outOfStockNotification = [
-    //                 'message' => '<span class="bold-text">OUT OF STOCK!<br> Update: ' . $product->name . '</span> is out of stock. Urgently needs restocking!',
-    //                 'productId' => $product->id,
-    //             ];
-
-    //             $lowQuantityNotifications[] = $outOfStockNotification;
-    //         } elseif ($product->quantity <= $product->low_quantity_threshold) {
-    //             // If the quantity is low, add it to low quantity notifications
-    //             $notification = [
-    //                 'message' => '<span class="bold-text">LOW STOCK!</span><br> We wish to inform you that your inventory <span class="bold-text">' . $product->name . "</span> is running critically low. Its time for a restock!",
-    //                 'forecastMessage' => $forecastMessage,
-    //                 'productId' => $product->id,
-    //             ];
-
-    //             $lowQuantityNotifications[] = $notification;
-    //         }
-
-    //         // Display the best seller quantity sold in the notification
-    //         if ($bestSeller && $bestSeller->id == $product->id && $bestSeller->total_qty > 0) {
-    //             $bestSellerNotification = [
-    //                 'message' => '<span class="bold-text">' . e($bestSeller->name) . '</span> is your best seller. It might be wise to increase stock levels to meet the high demand and capitalize on its popularity.',
-    //                 'productId' => $bestSeller->id,
-    //             ];
-
-    //             $bestSellerNotifications[] = $bestSellerNotification;
-    //         }
-    //     }
-
-    //     $totalLowQuantityNotifications = count($lowQuantityNotifications);
-    //     $totalBestSellerNotifications = count($bestSellerNotifications);
-    //     $totalForecastMessages = count($forecastMessages);
-
-    //     // Calculate the total number of notifications
-    //     $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
-
-    //     // Sort
-    //     $sortOption = $request->input('sort');
-
-    //     if ($sortOption === 'name_asc') {
-    //         $query->orderBy('name', 'asc');
-    //     } elseif ($sortOption === 'category_asc') {
-    //         $query->orderBy('category', 'asc');
-    //     } elseif ($sortOption === 'quantity_asc') {
-    //         $query->orderBy('quantity', 'asc');
-    //     } elseif ($sortOption === 'capital_asc') {
-    //         $query->orderBy('capital', 'asc');
-    //     } elseif ($sortOption === 'unit_price_asc') {
-    //         $query->orderBy('unit_price', 'asc');
-    //     }
-
-    //     $suppliers = Supplier::all();
-    //     $products = $query->paginate(5);
-    //     $searchQuery = $request->input('search');
-
-    //     return view('navbar.product', [
-    //         'username' => $nm,
-    //         'lowQuantityNotifications' => $lowQuantityNotifications,
-    //         'salesForecastNotifications' => $salesForecastNotifications,
-    //         'searchQuery' => $searchQuery,
-    //         'products' => $products,
-    //         'bestSellerNotifications' => $bestSellerNotifications,
-    //         'bestSeller' => $bestSeller,
-    //         'suppliers' => $suppliers,
-    //         'totalNotifications' => $totalNotifications,
-
-    //     ]);
-    // }
 
     public function productStore(Request $request)
     {
@@ -602,6 +724,20 @@ class AdminController extends Controller
         // return back()->withSuccess('Account deleted successfully!');
     }
 
+    public function productSearch(Request $request)
+    {
+        $searchTerm = $request->input('searchTerm');
+
+        // Query the products table for matching records
+        $results = Product::where('code', 'like', "%$searchTerm%")
+            ->orWhere('name', 'like', "%$searchTerm%")
+            ->orWhere('description', 'like', "%$searchTerm%")
+            ->orWhere('category', 'like', "%$searchTerm%")
+            ->get();
+
+        // Return the results as JSON data
+        return response()->json($results);
+    }
     public function searchProduct(Request $request)
     {
         $searchQuery = $request->input('search');
@@ -622,20 +758,6 @@ class AdminController extends Controller
         // return view('product', ['products' => $products])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications)->with('searchQuery', $searchQuery);
     }
 
-    public function productSearch(Request $request)
-    {
-        $searchTerm = $request->input('searchTerm');
-
-        // Query the products table for matching records
-        $results = Product::where('code', 'like', "%$searchTerm%")
-            ->orWhere('name', 'like', "%$searchTerm%")
-            ->orWhere('description', 'like', "%$searchTerm%")
-            ->orWhere('category', 'like', "%$searchTerm%")
-            ->get();
-
-        // Return the results as JSON data
-        return response()->json($results);
-    }
 
 
 
@@ -676,7 +798,7 @@ class AdminController extends Controller
 
         // Get forecasts outside the loop to avoid duplication
         $forecasts = $this->forecastSalesForAllCustomers();
-        
+
         // Find the best-selling product
         $bestSeller = Product::select('products.id', 'products.name')
             ->join('transactions', 'products.name', '=', 'transactions.product_name')
@@ -700,7 +822,7 @@ class AdminController extends Controller
                     $forecastMessages[] = $forecast;
                 }
             }
-    
+
             // Create a single message by joining the forecast messages
             $forecastMessage = implode('<br>', $forecastMessages);
 
@@ -740,7 +862,7 @@ class AdminController extends Controller
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
-        
+
         $products = Product::all();
         $customers = Customer::all();
         $searchQuery = $request->input('search');
@@ -1015,9 +1137,6 @@ class AdminController extends Controller
         return back()->withSuccess('Account deleted successfully!');
     }
 
-
-
-
     public function generateReport(Request $request)
     {
         $fromDate = $request->input('from_date');
@@ -1051,7 +1170,7 @@ class AdminController extends Controller
 
         // Get forecasts outside the loop to avoid duplication
         $forecasts = $this->forecastSalesForAllCustomers();
-        
+
         // Find the best-selling product
         $bestSeller = Product::select('products.id', 'products.name')
             ->join('transactions', 'products.name', '=', 'transactions.product_name')
@@ -1075,7 +1194,7 @@ class AdminController extends Controller
                     $forecastMessages[] = $forecast;
                 }
             }
-    
+
             // Create a single message by joining the forecast messages
             $forecastMessage = implode('<br>', $forecastMessages);
 
@@ -1180,7 +1299,7 @@ class AdminController extends Controller
 
         // Get forecasts outside the loop to avoid duplication
         $forecasts = $this->forecastSalesForAllCustomers();
-        
+
         // Find the best-selling product
         $bestSeller = Product::select('products.id', 'products.name')
             ->join('transactions', 'products.name', '=', 'transactions.product_name')
@@ -1204,7 +1323,7 @@ class AdminController extends Controller
                     $forecastMessages[] = $forecast;
                 }
             }
-    
+
             // Create a single message by joining the forecast messages
             $forecastMessage = implode('<br>', $forecastMessages);
 
@@ -1260,7 +1379,7 @@ class AdminController extends Controller
 
         $request->validate([
             "supplier" => "required",
-            "contact_person" => "required|min:1|max:20",
+            "contact_person" => "required|min:1",
             "address" => "required",
             "contact_num" => "required|numeric|digits_between:5,11",
         ]);

@@ -14,9 +14,32 @@ class LoginController extends Controller
 
     public function login()
     {
-        Session::forget('user');
+        // Session::forget('user');
         return view('login');
     }
+
+    
+    public function loginStore(Request $request)
+    {
+        $credentials = $request->only('username', 'password');
+    
+        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
+            // Authentication passed
+            return redirect()->route('admin.dashboard');
+        }
+    
+        // Authentication failed
+        return redirect()->route('loginForm');
+    }
+    
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('loginForm');
+        // return redirect('/LoginForm');
+    }
+    
 
     // public function loginStore(Request $request)
     // {
@@ -50,26 +73,6 @@ class LoginController extends Controller
     //     }
     // }
 
-    public function loginStore(Request $request)
-    {
-        $credentials = $request->only('username', 'password');
-    
-        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password']])) {
-            // Authentication passed
-            return redirect()->route('admin.dashboard');
-        }
-    
-        // Authentication failed
-        return redirect()->route('login');
-    }
-    
-
-    public function logout()
-    {
-        Auth::logout();
-        return redirect()->route('login');
-        // return redirect('/LoginForm');
-    }
 
     // public function loginStore(Request $request)
     // {

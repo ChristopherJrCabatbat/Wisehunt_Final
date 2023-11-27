@@ -30,13 +30,21 @@ class Admin
         //     // return redirect("/LoginForm");
         // }
 
-        Log::info('Middleware Executed', ['session' => Session::all()]);
 
-        if (!Session::has('user')) {
-            Log::info('Redirecting...', ['session' => Session::all()]);
-            return redirect()->route('login');
+        // Log::info('Middleware Executed', ['session' => Session::all()]);
+
+        // if (!Session::has('user')) {
+        //     Log::info('Redirecting...', ['session' => Session::all()]);
+        //     return redirect()->route('login');
+        // }
+
+
+        if (Auth()->user()->role == 'admin') 
+        {
+            return $next($request);
         }
+        abort(401);
 
-        return $next($request);
+        // return $next($request);
     }
 }
