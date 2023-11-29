@@ -12,7 +12,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
@@ -27,16 +27,32 @@
 <body>
 
     {{-- @if ($errors->any())
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                // Open the modal if there are validation errors
-                const newModal = document.getElementById("newModal");
-                const overlay = document.querySelector(".overlay");
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check if there are validation errors for the add modal
+            const newModal = document.getElementById("newModal");
+            const overlay = document.querySelector(".overlay");
+
+            if (newModal) {
                 newModal.style.display = "block";
                 overlay.style.display = "block";
-            });
-        </script>
-    @endif --}}
+            }
+
+            // Check if there are validation errors for any of the edit modals
+            @foreach ($users as $user)
+                @if($errors->has('name', 'email', 'password', 'role', "editModal{{$user->id}}"))
+                    const editModal{{ $user->id }} = document.getElementById("editModal{{ $user->id }}");
+                    const editOverlay{{ $user->id }} = document.querySelector(".editOverlay{{ $user->id }}");
+
+                    if (editModal{{ $user->id }}) {
+                        editModal{{ $user->id }}.style.display = "block";
+                        editOverlay{{ $user->id }}.style.display = "block";
+                    }
+                @endif
+            @endforeach
+        });
+    </script>
+@endif --}}
 
     @if ($errors->any())
         <script>
@@ -136,39 +152,40 @@
                     <div class="top-account">
                         <img class="notif" src="{{ asset('images/notif.png') }}" alt="notif img" width="100"
                             height="auto" onclick="toggleNotificationPanel()">
-                            <span class="red-dot" id="notificationDot">{{ $totalNotifications }}</span>
-                            {{-- <span class="red-dot" id="notificationDot">{{ count($lowQuantityNotifications) }}</span> --}}
-                        
+                        <span class="red-dot" id="notificationDot">{{ $totalNotifications }}</span>
+                        {{-- <span class="red-dot" id="notificationDot">{{ count($lowQuantityNotifications) }}</span> --}}
+
                         {{-- <div class="username">{{ $username }}</div> --}}
 
-                    @if(auth()->user()->role === 'admin')                
-                        <div class="username">admin</div>
-                    @endif
+                        @if (auth()->user()->role === 'Admin')
+                            <div class="username">admin</div>
+                        @endif
 
-                    @if(auth()->user()->role === 'staff')                
-                    <div class="username" style="margin-left: 12px; margin-right: 12px">staff</div>
-                    @endif
+                        @if (auth()->user()->role === 'Staff')
+                            <div class="username" style="margin-left: 12px; margin-right: 12px">staff</div>
+                        @endif
 
                         <!-- Log out -->
                         <div class="dropdown">
                             <label for="logout">
-                            @if(auth()->user()->role === 'admin')                
-                                <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-user.png') }}"
-                                    alt="" width="100" height="auto">
-                            @endif
-                            @if(auth()->user()->role === 'staff')                
-                                <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-users.png') }}"
-                                    alt="" width="100" height="auto">
-                            @endif
-                                </label>
+                                @if (auth()->user()->role === 'Admin')
+                                    <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-user.png') }}"
+                                        alt="" width="100" height="auto">
+                                @endif
+                                @if (auth()->user()->role === 'Staff')
+                                    <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-users.png') }}"
+                                        alt="" width="100" height="auto">
+                                @endif
+                            </label>
                             <input type="checkbox" id="logout">
                             <div class="dropdown-menu" id="dropdownMenu">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-        
+
                                     <x-dropdown-link :href="route('logout')"
-                                            onclick="event.preventDefault();
-                                                        this.closest('form').submit();" class="dropdown-item" >
+                                        onclick="event.preventDefault();
+                                                        this.closest('form').submit();"
+                                        class="dropdown-item">
                                         {{ __('Log Out') }}
                                     </x-dropdown-link>
                                 </form>
@@ -203,7 +220,7 @@
     <script src="{{ asset('js/logout.js') }}"></script>
     <script src="{{ asset('js/add.js') }}"></script>
     <script src="{{ asset('js/edit.js') }}"></script>
-    <script src="{{ asset('js/easyAdd.js') }}"></script>
+    {{-- <script src="{{ asset('js/easyAdd.js') }}"></script> --}}
 
     <script>
         const lowQuantityNotifications = {!! json_encode(

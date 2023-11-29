@@ -1,5 +1,5 @@
 const addBtn = document.getElementById("addBtn");
-const myModal = document.getElementById("myModal");
+const myModal = document.getElementById("newModal");
 const closeBtn = document.getElementsByClassName("close")[0];
 
 addBtn.addEventListener("click", function () {

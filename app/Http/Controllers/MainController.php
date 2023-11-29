@@ -15,11 +15,11 @@ class MainController extends Controller
             $role = Auth()->user()->role;
         }
 
-        if($role == 'staff')
+        if($role == 'Staff')
         {
             return redirect()->route('staff.dashboard');
         }
-        else if($role == 'admin')
+        else if($role == 'Admin')
         {
             // return view('admin.admin-home');
             return redirect()->route('admin.dashboard');

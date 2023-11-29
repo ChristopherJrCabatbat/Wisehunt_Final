@@ -12,26 +12,29 @@
     <div class="overlay editOverlay"></div>
 
     {{-- Add Modal --}}
-    <div id="myModal" class="modal">
+    <div id="newModal" class="modal">
         <div class="modal-content">
-            <span class="close ">&times;</span>
+            <span class="closeModal close">&times;</span>
 
             <form class="modal-form" action="{{ route('admin.customerStore') }}" method="POST">
                 @csrf
+
                 <center>
                     <h2 style="margin: 0%; color:#333;">Add Customer</h2>
                 </center>
+                
                 <label class="modal-top" for="">Company Name:</label>
                 <input required autofocus type="text" name="name" id="autofocus" />
+
                 <label for="">Contact Name:</label>
                 <input required type="text" name="contact_person" id="" />
+
                 <label for="">Contact Number:</label>
                 <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+
                     id="" value="">
                 <label for="">Address:</label>
                 <input required type="text" name="address" id="" />
-                {{-- <label for="">Item Sold:</label>
-                <input required type="text" name="item_sold" id="" /> --}}
 
                 <input class="add" type="submit" value="Add" />
             </form>
@@ -61,9 +64,8 @@
                         value="{{ old('contact_person', $customer->contact_person) }}">
 
                     <label for="">Contact Number:</label>
-                    <input required type="text" pattern="{5,15}" title="Enter a valid contact number"
-                        name="contact_num" name="contact_num" id=""
-                        value="{{ old('contact_num', $customer->contact_num) }}">
+                    <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+                        name="contact_num" id="" value="{{ old('contact_num', $customer->contact_num) }}">
 
                     <label for="">Address:</label>
                     <input required type="text" name="address" id=""
@@ -86,38 +88,45 @@
     <ul>
         <li>
             <div class="dashboard-container">
-                <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
-                <a href="{{ route('admin.dashboard') }}" class="sidebar top">DASHBOARD</a>
+                <a class="sidebar top" href="{{ route('admin.dashboard') }}">
+                    <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
+                    DASHBOARD</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
-                <a class="sidebar" href="{{ route('admin.product') }}">PRODUCT</a>
+                <a class="sidebar" href="{{ route('admin.product') }}">
+                    <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
+                    PRODUCT</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
-                <a class="sidebar" href="{{ route('admin.transaction') }}">TRANSACTION</a>
+                <a class="sidebar" href="{{ route('admin.transaction') }}">
+                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                    TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
-                <a class="sidebar active" href="{{ route('admin.customer') }}">CUSTOMER</a>
+                <a class="sidebar active" href="{{ route('admin.customer') }}">
+                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                    CUSTOMER</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/supplier.png') }}" class="supplier-i" alt="">
-                <a class="sidebar" href="{{ route('admin.supplier') }}">SUPPLIER</a>
+                <a class="sidebar" href="{{ route('admin.supplier') }}">
+                    <img src="{{ asset('images/supplier.png') }}" class="supplier-i" alt="">
+                    SUPPLIER</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/supplier.png') }}" class="user-i" alt="">
-                <a class="sidebar" href="{{ route('admin.supplier') }}">USERS</a>
+                <a class="sidebar" href="{{ route('admin.user') }}">
+                    <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
+                    {{-- <img src="{{ asset('images/supplier.png') }}" class="user-i" alt=""> --}}
+                    USERS</a>
             </div>
         </li>
     </ul>
@@ -129,7 +138,7 @@
     <div class="content">
         <div class="taas">
             <form id="addCustomerForm">
-                <button class="add" type="button" id="addBtn">Add Customer</button>
+                <button class="add" type="button" id="newButton">Add Customer</button>
             </form>
         </div>
 

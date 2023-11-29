@@ -27,13 +27,10 @@
             <tr>
                 <th>No.</th>
                 <th>Customer</th>
-                <th>Contact No.</th>
                 <th>Product Name</th>
                 <th>Quantity</th>
                 <th>Unit Price</th>
                 <th>Total Price</th>
-                <th>Amount Tendered</th>
-                <th>Change Due</th>
                 <th>Total Earned on Item</th>
                 <th>Date</th>
             </tr>
@@ -47,16 +44,12 @@
                         <tr>
                             <td>{{ $rowNumber++ }}</td>
                             <td>{{ $transaction->customer_name }}</td>
-                            <td>{{ $transaction->contact_num }}</td>
                             <td>{{ $transaction->product_name }}</td>
                             <td>{{ $transaction->qty }}</td>
                             <td>{{ $transaction->unit_price }}</td>
                             <td>{{ $transaction->total_price }}</td>
-                            <td>{{ $transaction->amount_tendered }}</td>
-                            <td>{{ $transaction->change_due }}</td>
                             <td>{{ $transaction->total_earned }}</td>
                             <td>{{ $transaction->created_at->format('M. d, Y') }}</td>
-                            {{-- <td>{{ $transaction->created_at->date }}</td> --}}
                         </tr>
                     @endforeach
             </tbody>

@@ -43,7 +43,7 @@ label {
     transition: all 0.3s;
 }
 
-input {
+input, select {
     margin-top: 5px;
     margin-bottom: 5px;
     padding: 6px;

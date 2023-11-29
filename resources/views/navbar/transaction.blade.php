@@ -122,7 +122,8 @@
                     <div class="text-danger">{{ $errors->first('error') }}</div>
 
                     <label for="">Quantity:</label>
-                    <input required id="qty-edit" class="qty" name="qty" type="number" value="{{ old('qty', $transaction->qty) }}">
+                    <input required id="qty-edit" class="qty" name="qty" type="number"
+                        value="{{ old('qty', $transaction->qty) }}">
                     <div class="text-danger">{{ $errors->first('error_stock') }}</div>
 
                     <label for="unit_price">Unit Price:</label>
@@ -130,8 +131,8 @@
                         value="{{ old('unit_price', $transaction->unit_price) }}">
 
                     <label for="unit_price">Total Price:</label>
-                    <input readonly name="total_price" id="total_price_edit" type="number" value="{{ $transaction->total_price }}"
-                        class="total_price">
+                    <input readonly name="total_price" id="total_price_edit" type="number"
+                        value="{{ $transaction->total_price }}" class="total_price">
 
                     {{-- <label for="">Amount Tendered:</label>
                     <input required name="amount_tendered" type="number"
@@ -180,38 +181,45 @@
     <ul>
         <li>
             <div class="dashboard-container">
-                <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
-                <a href="{{ route('admin.dashboard') }}" class="sidebar top">DASHBOARD</a>
+                <a class="sidebar top" href="{{ route('admin.dashboard') }}">
+                    <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
+                    DASHBOARD</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
-                <a class="sidebar" href="{{ route('admin.product') }}">PRODUCT</a>
+                <a class="sidebar" href="{{ route('admin.product') }}">
+                    <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
+                    PRODUCT</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
-                <a class="sidebar active" href="{{ route('admin.transaction') }}">TRANSACTION</a>
+                <a class="sidebar active" href="{{ route('admin.transaction') }}">
+                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                    TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
-                <a class="sidebar" href="{{ route('admin.customer') }}">CUSTOMER</a>
+                <a class="sidebar" href="{{ route('admin.customer') }}">
+                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                    CUSTOMER</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/supplier.png') }}" class="supplier-i" alt="">
-                <a class="sidebar" href="{{ route('admin.supplier') }}">SUPPLIER</a>
+                <a class="sidebar" href="{{ route('admin.supplier') }}">
+                    <img src="{{ asset('images/supplier.png') }}" class="supplier-i" alt="">
+                    SUPPLIER</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/supplier.png') }}" class="user-i" alt="">
-                <a class="sidebar" href="{{ route('admin.supplier') }}">USERS</a>
+                <a class="sidebar" href="{{ route('admin.user') }}">
+                    <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
+                    {{-- <img src="{{ asset('images/supplier.png') }}" class="user-i" alt=""> --}}
+                    USERS</a>
             </div>
         </li>
     </ul>
@@ -480,22 +488,25 @@
         document.addEventListener("DOMContentLoaded", function() {
             // Select the quantity input field
             var qtyInputs = document.querySelectorAll('.qty');
-    
+
             qtyInputs.forEach(function(qtyInput) {
                 // Add an event listener for the 'input' event on the quantity input field
                 qtyInput.addEventListener('input', function() {
                     // Get the quantity value
                     var qty = parseFloat(qtyInput.value) || 0;
-    
+
                     // Get the unit price value from the selected product
-                    var productSelect = qtyInput.closest('.modal-content').querySelector('.product-select');
-                    var unitPrice = parseFloat(productSelect.options[productSelect.selectedIndex].getAttribute('data-unit-price')) || 0;
-    
+                    var productSelect = qtyInput.closest('.modal-content').querySelector(
+                        '.product-select');
+                    var unitPrice = parseFloat(productSelect.options[productSelect.selectedIndex]
+                        .getAttribute('data-unit-price')) || 0;
+
                     // Calculate the total price
                     var totalPrice = qty * unitPrice;
-    
+
                     // Update the total price input field
-                    var totalPriceInput = qtyInput.closest('.modal-content').querySelector('.total_price');
+                    var totalPriceInput = qtyInput.closest('.modal-content').querySelector(
+                        '.total_price');
                     totalPriceInput.value = totalPrice.toFixed(2);
                 });
             });

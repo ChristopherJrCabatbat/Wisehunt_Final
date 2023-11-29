@@ -6,111 +6,104 @@
     <link rel="stylesheet" href="{{ asset('css/dashboard-styles.css') }}">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-    {{-- Line Chart --}}
-<script type="text/javascript">
+  {{-- // Line Chart --}}
+  <script type="text/javascript">
     google.charts.load('current', {
         'packages': ['corechart']
     });
     google.charts.setOnLoadCallback(drawChart);
 
-    function calculateMovingAverage(data, currentIndex, windowSize) {
-        var total = 0;
-        for (var i = currentIndex; i > currentIndex - windowSize; i--) {
-            if (i >= 0) {
-                total += data.getValue(i, 1);
-            }
+    function calculateWeightedAverage(data, currentIndex, alpha) {
+        var weightedTotal = 0;
+        var weightSum = 0;
+
+        for (var i = currentIndex; i >= 0; i--) {
+            var weight = Math.pow(alpha, currentIndex - i);
+            weightedTotal += weight * data.getValue(i, 1);
+            weightSum += weight;
         }
-        return total / windowSize;
+
+        return weightedTotal / weightSum;
+    }
+
+    function calculateWeightedAverageDynamic(data, currentIndex, alpha) {
+        var weightedTotal = 0;
+        var weightSum = 0;
+
+        for (var i = currentIndex; i >= 0; i--) {
+            var weight = Math.pow(alpha, currentIndex - i);
+            weightedTotal += weight * data.getValue(i, 1);
+            weightSum += weight;
+        }
+
+        return weightedTotal / weightSum;
+    }
+
+    function calculateDynamicAlpha(data, currentIndex, baseAlpha, sensitivity) {
+        // If there's not enough data points to calculate the trend, use the base alpha
+        if (currentIndex < 2) {
+            return baseAlpha;
+        }
+
+        var recentTrend = data.getValue(currentIndex, 1) - data.getValue(currentIndex - 1, 1);
+        var alpha = baseAlpha * (1 + sensitivity * recentTrend);
+        return Math.max(0, Math.min(1, alpha)); // Ensure alpha is between 0 and 1
     }
 
     function drawChart() {
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Month');
-        data.addColumn('number', 'Current Earnings');
-        data.addColumn('number', 'Forecast/Future Earnings');
+        data.addColumn('number', 'Current Sales');
+        data.addColumn('number', 'Forecast/Future Sales');
 
         var monthsWithData = [];
         var latestMonthWithData = null;
 
-        // Fetch data for each month
         @for ($i = 1; $i <= 12; $i++)
-            @php
-                $monthDate = date('Y-m', mktime(0, 0, 0, $i, 1));
-            @endphp
+            var month = new Date('{{ date('Y-m', mktime(0, 0, 0, $i, 1)) }}');
+            var currentMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
+                ->whereYear('created_at', today()->year)
+                ->sum(DB::raw('qty * unit_price')) ?? 0; ?>;
 
-            // Make AJAX request to fetch data for the current month
-            $.ajax({
-                url: '/admin/get-current-earnings',
-                method: 'GET',
-                async: false, // Make the request synchronous to handle data order
-                data: {
-                    month: '{{ $monthDate }}',
-                },
-                success: function(response) {
-                    var currentMonthEarnings = response.data;
-
-                    // Make AJAX request to fetch forecast data for the current month
-                    $.ajax({
-                        url: '/admin/get-forecast-earnings',
-                        method: 'GET',
-                        async: false, // Make the request synchronous
-                        data: {
-                            month: '{{ $monthDate }}',
-                        },
-                        success: function(response) {
-                            var forecastMonthEarnings = response.data;
-
-                            // Add data to the chart
-                            data.addRow([ '{{ $monthDate }}', currentMonthEarnings, forecastMonthEarnings ]);
-                            monthsWithData.push('{{ $monthDate }}');
-                            latestMonthWithData = new Date('{{ $monthDate }}');
-                        },
-                        error: function(error) {
-                            console.error('Error fetching forecast month earnings:', error);
-                        }
-                    });
-                },
-                error: function(error) {
-                    console.error('Error fetching current month earnings:', error);
-                }
-            });
+            if (currentMonthSales > 0) {
+                data.addRow([month.toLocaleString('default', { month: 'long' }), currentMonthSales, null]);
+                monthsWithData.push(month.toLocaleString('default', { month: 'long' }));
+                latestMonthWithData = month;
+            }
         @endfor
 
         // Include the next month after the latest month with data
         if (latestMonthWithData !== null) {
             var nextMonth = new Date(latestMonthWithData);
             nextMonth.setMonth(nextMonth.getMonth() + 1);
-            var nextMonthString = nextMonth.toLocaleString('default', {
-                month: 'long'
-            });
+            var nextMonthString = nextMonth.toLocaleString('default', { month: 'long' });
 
-            // Make AJAX request to fetch forecast for the next month
-            $.ajax({
-                url: '/admin/get-forecast-earnings',
-                method: 'GET',
-                async: false, // Make the request synchronous
-                data: {
-                    month: '{{ $monthDate }}',
-                },
-                success: function(response) {
-                    var nextMonthForecast = response.data;
+            // Check if the next month is not already in the array before adding it
+            if (!monthsWithData.includes(nextMonthString)) {
+                monthsWithData.push(nextMonthString);
 
-                    // Check if the next month is not already in the array before adding it
-                    if (!monthsWithData.includes(nextMonthString)) {
-                        monthsWithData.push(nextMonthString);
+                // Set the base alpha parameter for weighted average
+                var baseAlpha = 0.2; // You can adjust this value
 
-                        // Add the data for the next month
-                        data.addRow([nextMonthString, null, nextMonthForecast]);
-                    }
-                },
-                error: function(error) {
-                    console.error('Error fetching forecast for the next month:', error);
-                }
-            });
+                // Calculate dynamic alpha based on recent trend
+                var dynamicAlpha = calculateDynamicAlpha(data, data.getNumberOfRows() - 1, baseAlpha, 0.1);
+
+                // Calculate forecasted sales using weighted average with dynamic alpha
+                var forecastedSales = calculateWeightedAverageDynamic(data, data.getNumberOfRows() - 1, dynamicAlpha);
+
+                // Add the data for the next month
+                data.addRow([nextMonthString, null, forecastedSales]);
+            }
+        }
+
+        // Add the weighted average for the Future Sales line
+        for (var i = 0; i < data.getNumberOfRows(); i++) {
+            var weightedAverage = calculateWeightedAverage(data, i, baseAlpha);
+            data.setValue(i, 2, weightedAverage);
         }
 
         var options = {
-            title: 'Earnings Forecasting',
+            title: 'Sales Forecasting',
             titleTextStyle: {
                 color: '#414141',
                 fontSize: 28,
@@ -144,136 +137,10 @@
     }
 </script>
 
-    {{-- Line Chart
-    <script type="text/javascript">
-        google.charts.load('current', {
-            'packages': ['corechart']
-        });
-        google.charts.setOnLoadCallback(drawChart);
-
-        function calculateMovingAverage(data, currentIndex, windowSize) {
-            // Calculate the moving average based on a window of data points
-            var total = 0;
-            for (var i = currentIndex; i > currentIndex - windowSize; i--) {
-                if (i >= 0) {
-                    total += data.getValue(i, 1); // Assuming the current earnings are in the second column
-                }
-            }
-            return total / windowSize;
-        }
-
-        function drawChart() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Month');
-            data.addColumn('number', 'Current Earnings');
-            data.addColumn('number', 'Forecast/Future Earnings');
-
-            var monthsWithData = [];
-            var latestMonthWithData = null;
-
-            // Fetch data for each month
-            // Fetch data for each month
-            @for ($i = 1; $i <= 12; $i++)
-                @php
-                    $monthDate = date('Y-m', mktime(0, 0, 0, $i, 1));
-                @endphp
-
-                var month = new Date('{{ $monthDate }}');
-
-                // Make AJAX request to fetch current month earnings
-                var currentMonthEarnings = 0;
-                $.ajax({
-                    url: '/admin/get-current-earnings', // Updated URL with /admin prefix
-                    method: 'GET',
-                    data: {
-                        month: '{{ $monthDate }}',
-                    },
-                    success: function(response) {
-                        currentMonthEarnings = response.data;
-                    },
-                    error: function(error) {
-                        console.error('Error fetching current month earnings:', error);
-                    }
-                });
-
-                // Make AJAX request to fetch forecast month earnings for the next year
-                var forecastMonthEarnings = 0;
-                $.ajax({
-                    url: '/admin/get-forecast-earnings', // Updated URL with /admin prefix
-                    method: 'GET',
-                    data: {
-                        month: '{{ $monthDate }}',
-                    },
-                    success: function(response) {
-                        forecastMonthEarnings = response.data;
-                    },
-                    error: function(error) {
-                        console.error('Error fetching forecast month earnings:', error);
-                    }
-                });
-            @endfor
-
-            // Include the next month after the latest month with data
-            if (latestMonthWithData !== null) {
-                var nextMonth = new Date(latestMonthWithData);
-                nextMonth.setMonth(nextMonth.getMonth() + 1);
-                var nextMonthString = nextMonth.toLocaleString('default', {
-                    month: 'long'
-                });
-
-                // Make AJAX request to fetch forecast for the next month
-                var nextMonthForecast = 0; // Replace with your actual AJAX logic
-
-                // Check if the next month is not already in the array before adding it
-                if (!monthsWithData.includes(nextMonthString)) {
-                    monthsWithData.push(nextMonthString);
-
-                    // Add the data for the next month
-                    data.addRow([nextMonthString, null, nextMonthForecast]);
-                }
-            }
-
-            var options = {
-                title: 'Earnings Forecasting',
-                titleTextStyle: {
-                    color: '#414141',
-                    fontSize: 28,
-                    bold: true,
-                    fontFamily: 'Arial, Helvetica, sans-serif',
-                },
-                curveType: 'function',
-                legend: {
-                    position: 'bottom'
-                },
-                series: {
-                    0: {
-                        pointShape: 'circle',
-                        pointSize: 5,
-                        lineWidth: 2
-                    },
-                    1: {
-                        pointShape: 'circle',
-                        pointSize: 5,
-                        lineWidth: 2
-                    },
-                },
-            };
-
-            try {
-                var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-                chart.draw(data, options);
-            } catch (error) {
-                console.error('Error drawing the chart:', error);
-            }
-        }
-    </script> --}}
 
 
 
-
-
-
-    {{-- Pie Chart --}}
+    // {{-- Pie Chart --}}
     <script type="text/javascript">
         google.charts.load('current', {
             'packages': ['corechart']
@@ -323,6 +190,7 @@
             chart.draw(data, options);
         }
     </script>
+
 @endsection
 
 @section('side-navbar')
@@ -330,38 +198,45 @@
     <ul>
         <li>
             <div class="dashboard-container">
-                <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
-                <a href="{{ route('admin.dashboard') }}" class="sidebar top active">DASHBOARD</a>
+                <a class="sidebar top active" href="{{ route('admin.dashboard') }}">
+                    <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
+                    DASHBOARD</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
-                <a class="sidebar" href="{{ route('admin.product') }}">PRODUCT</a>
+                <a class="sidebar" href="{{ route('admin.product') }}">
+                    <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
+                    PRODUCT</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
-                <a class="sidebar" href="{{ route('admin.transaction') }}">TRANSACTION</a>
+                <a class="sidebar" href="{{ route('admin.transaction') }}">
+                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                    TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
-                <a class="sidebar" href="{{ route('admin.customer') }}">CUSTOMER</a>
+                <a class="sidebar" href="{{ route('admin.customer') }}">
+                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                    CUSTOMER</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/supplier.png') }}" class="supplier-i" alt="">
-                <a class="sidebar" href="{{ route('admin.supplier') }}">SUPPLIER</a>
+                <a class="sidebar" href="{{ route('admin.supplier') }}">
+                    <img src="{{ asset('images/supplier.png') }}" class="supplier-i" alt="">
+                    SUPPLIER</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/supplier.png') }}" class="user-i" alt="">
-                <a class="sidebar" href="{{ route('admin.supplier') }}">USERS</a>
+                <a class="sidebar" href="{{ route('admin.user') }}">
+                    <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
+                    {{-- <img src="{{ asset('images/supplier.png') }}" class="user-i" alt=""> --}}
+                    USERS</a>
             </div>
         </li>
     </ul>

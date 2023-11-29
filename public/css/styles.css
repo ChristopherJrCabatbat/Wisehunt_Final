@@ -107,7 +107,8 @@ a:hover {
     position: absolute;
 }
 .user-i {
-    width: 25px;
+    /* width: 100px; */
+    font-size: 25px;
     left: 26px;
     top: 370px;
     position: absolute;

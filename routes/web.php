@@ -83,14 +83,14 @@ Route::group([
     // Dashboard
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
 
-    // Endpoint for current month earnings
-    Route::get('/get-current-earnings', [AdminController::class, 'getCurrentEarnings'])->name('getCurrentEarnings');
+    // Endpoint for current month sales
+    Route::get('/get-current-sales', [AdminController::class, 'getCurrentSales'])->name('getCurrentSales');
 
-    // Endpoint for forecast month earnings
-    Route::get('/get-forecast-earnings', [AdminController::class, 'getForecastEarnings'])->name('getForecastEarnings');
+    // Endpoint for forecast month sales
+    Route::get('/get-forecast-sales', [AdminController::class, 'getForecastSales'])->name('getForecastSales');
 
 
-    
+
     // Product Routes
     Route::get('/product', [AdminController::class, 'product'])->name('product');
     Route::post('/productStore', [AdminController::class, 'productStore'])->name('productStore');
@@ -121,6 +121,13 @@ Route::group([
     Route::post('/supplierStore', [AdminController::class, 'supplierStore'])->name('supplierStore');
     Route::put('/supplierUpdate/{id}', [AdminController::class, 'supplierUpdate'])->name('supplierUpdate');
     Route::delete('/supplierDestroy/{id}', [AdminController::class, 'supplierDestroy'])->name('supplierDestroy');
+
+
+    // User Routes
+    Route::get('/user', [AdminController::class, 'user'])->name('user');
+    Route::post('/userStore', [AdminController::class, 'userStore'])->name('userStore');
+    Route::put('/userUpdate/{id}', [AdminController::class, 'userUpdate'])->name('userUpdate');
+    Route::delete('/userDestroy/{id}', [AdminController::class, 'userDestroy'])->name('userDestroy');
 });
 
 // Route::get('/logout', function () {

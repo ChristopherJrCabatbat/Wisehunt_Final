@@ -25,44 +25,27 @@ function openEditModal(dataId) {
         }
     }, 0);
 
-     // Include CSRF token in the form
-     const form = openedModal.querySelector(".edit-modal-form");
-     const csrfField = document.createElement("input");
-     csrfField.type = "hidden";
-     csrfField.name = "_token";
-     csrfField.value = window.csrfToken;
-     form.appendChild(csrfField);
+    //  // Include CSRF token in the form
+    //  const form = openedModal.querySelector(".edit-modal-form");
+    //  console.log("Form method:", form.method); // Add this line to log the form method
+
+    //  const csrfField = document.createElement("input");
+    //  csrfField.type = "hidden";
+    //  csrfField.name = "_token";
+    //  csrfField.value = window.csrfToken;
+    //  form.appendChild(csrfField);
+    
+    // Include CSRF token in the form
+    const form = openedModal.querySelector(".edit-modal-form");
+    console.log("Form method:", form.getAttribute("method")); // Use getAttribute to get the method
+
+    const csrfField = document.createElement("input");
+    csrfField.type = "hidden";
+    csrfField.name = "_token";
+    csrfField.value = window.csrfToken;
+    form.appendChild(csrfField);
+
 }
-
-// function openEditModal(dataId) {
-//     // Find the corresponding modal based on brand ID and show it
-//     openedModal = document.getElementById("editModal" + dataId);
-
-//     // Empty the input fields in the edit modal
-//     const form = openedModal.querySelector(".edit-modal-form");
-//     form.querySelectorAll("input:not([type='submit']), select, textarea").forEach((element) => {
-//         element.value = "";
-//     });
-
-//     // Autofocus
-//     setTimeout(() => {
-//         const autofocus = openedModal.querySelector('.autofocus');
-//         if (autofocus) {
-//             autofocus.focus();
-//         }
-//     }, 0);
-
-//     // Include CSRF token in the form
-//     const csrfField = document.createElement("input");
-//     csrfField.type = "hidden";
-//     csrfField.name = "_token";
-//     csrfField.value = window.csrfToken;
-//     form.appendChild(csrfField);
-
-//     // Show the edit modal
-//     openedModal.style.display = "block";
-// }
-
 
 // Attach click event handler for all edit buttons and handle event delegation
 document.addEventListener("click", function (event) {

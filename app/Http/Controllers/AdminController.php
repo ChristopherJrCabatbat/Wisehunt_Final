@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Http;
 
+use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules;
+use App\Rules\MatchOldPassword;
+
 use App\Models\Product;
 use App\Models\Customer;
 use App\Models\Transaction;
@@ -125,34 +133,69 @@ class AdminController extends Controller
         return $forecasts;
     }
 
-    public function getCurrentEarnings()
-    {
-        // Fetch the current month
-        $currentMonth = now()->format('m');
+    // public function getCurrentEarnings()
+    // {
+    //     // Fetch the current month
+    //     $currentMonth = now()->format('m');
 
-        // Retrieve current month earnings logic
-        $currentMonthEarnings = Transaction::where(DB::raw('MONTH(created_at)'), '=', $currentMonth)
-            ->whereYear('created_at', '=', now()->year)
-            ->sum('total_earned');
+    //     // Retrieve current month earnings logic
+    //     $currentMonthEarnings = Transaction::where(DB::raw('MONTH(created_at)'), '=', $currentMonth)
+    //         ->whereYear('created_at', '=', now()->year)
+    //         ->sum('total_earned');
 
-        return response()->json(['data' => $currentMonthEarnings]);
-    }
+    //     return response()->json(['data' => $currentMonthEarnings]);
+    // }
 
-    public function getForecastEarnings()
-    {
-        // Fetch the current month
-        $currentMonth = now()->format('m');
+    // public function getForecastEarnings()
+    // {
+    //     // Fetch the current month
+    //     $currentMonth = now()->format('m');
 
-        // Retrieve forecast month earnings logic
-        $forecastMonthEarnings = Transaction::where(DB::raw('MONTH(created_at)'), '=', $currentMonth)
-            ->whereYear('created_at', '=', now()->year + 1)
-            ->sum('total_earned');
+    //     // Retrieve forecast month earnings logic
+    //     $forecastMonthEarnings = Transaction::where(DB::raw('MONTH(created_at)'), '=', $currentMonth)
+    //         ->whereYear('created_at', '=', now()->year + 1)
+    //         ->sum('total_earned');
 
-        return response()->json(['data' => $forecastMonthEarnings]);
-    }
+    //     return response()->json(['data' => $forecastMonthEarnings]);
+    // }
+
+   
 
 
     // Dashboard Controller
+    
+    public function getCurrentSales()
+    {
+        // Fetch the current month
+        $currentMonth = now()->format('m');
+
+        // Retrieve current month sales logic
+        $currentMonthSales = Transaction::whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', now()->year)
+            ->sum(DB::raw('qty * unit_price'));
+
+        return response()->json(['data' => $currentMonthSales]);
+    }
+
+    public function getForecastSales()
+    {
+        // Fetch the current month
+        $currentMonth = now()->format('m');
+
+        // Retrieve current month sales logic
+        $currentMonthSales = Transaction::whereMonth('created_at', $currentMonth)
+            ->whereYear('created_at', now()->year)
+            ->sum(DB::raw('qty * unit_price'));
+
+        // Simple growth rate (you can adjust this percentage based on your needs)
+        $growthRate = 0.1; // 10% growth
+
+        // Forecasted sales for the next month
+        $forecastMonthSales = $currentMonthSales * (1 + $growthRate);
+
+        return response()->json(['data' => $forecastMonthSales]);
+    }
+    
     public function dashboard()
     {
         $nm = Session::get('name');
@@ -299,7 +342,7 @@ class AdminController extends Controller
         // }
 
         $nextMonthStartDate = now()->addMonth()->startOfMonth();
-$nextMonthEndDate = now()->addMonth()->endOfMonth();
+        $nextMonthEndDate = now()->addMonth()->endOfMonth();
 
         // Pass both arrays to the view
         return view('navbar.dashboard', $arr, [
@@ -336,22 +379,23 @@ $nextMonthEndDate = now()->addMonth()->endOfMonth();
         return response()->json($forecastData);
     }
 
-    public function forecastSalesForNextMonth() {
+    public function forecastSalesForNextMonth()
+    {
         // Get the current date
         $currentDate = Carbon::now();
-    
+
         // Calculate the start and end date for the next month
         $startDate = $currentDate->copy()->addMonthNoOverflow()->startOfMonth();
         $endDate = $currentDate->copy()->addMonthNoOverflow()->endOfMonth();
-    
+
         // Query the database to get historical sales data for the next month
         $forecastedSales = Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
-    
+
         // You can apply your own forecasting algorithm or adjustments here
-    
+
         return $forecastedSales;
     }
-    
+
 
     // public function dashboard()
     // {
@@ -624,7 +668,6 @@ $nextMonthEndDate = now()->addMonth()->endOfMonth();
 
     public function LineChart()
     {
-        
     }
 
 
@@ -687,7 +730,7 @@ $nextMonthEndDate = now()->addMonth()->endOfMonth();
         ]);
 
         if ($updateValidator->fails()) {
-            return redirect()->route('admin.transaction')->withErrors($updateValidator)->withInput();
+            return redirect()->route('admin.product')->withErrors($updateValidator)->withInput();
         }
 
         $product = Product::find($id);
@@ -1287,7 +1330,6 @@ $nextMonthEndDate = now()->addMonth()->endOfMonth();
 
 
     // Supplier Controllers
-
     public function supplier()
     {
         $nm = Session::get('name');
@@ -1412,6 +1454,194 @@ $nextMonthEndDate = now()->addMonth()->endOfMonth();
     {
         $suppliers = Supplier::findOrFail($id);
         $suppliers->delete();
+        return back();
+    }
+
+
+
+    // User Controllers
+    public function user()
+    {
+        $nm = Session::get('name');
+
+        // Notification arrays
+        $lowQuantityNotifications = [];
+        $bestSellerNotifications = [];
+        $salesForecastNotifications = [];
+
+        // Get forecasts outside the loop to avoid duplication
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Find the best-selling product
+        $bestSeller = Product::select('products.id', 'products.name')
+            ->join('transactions', 'products.name', '=', 'transactions.product_name')
+            ->selectRaw('SUM(transactions.qty) as total_qty')
+            ->groupBy('products.id', 'products.name')
+            ->orderByDesc('total_qty')
+            ->first();
+
+        $productsss = Product::all();
+
+        foreach ($productsss as $product) {
+            // Check if there are forecasts for the customer
+            $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+
+            $forecastMessages = [];
+
+            // Generate forecast messages for the current product
+            foreach ($forecasts as $forecast) {
+                // Customize the following condition based on your criteria
+                if (strpos($forecast, $customerId) !== false) {
+                    $forecastMessages[] = $forecast;
+                }
+            }
+
+            // Create a single message by joining the forecast messages
+            $forecastMessage = implode('<br>', $forecastMessages);
+
+            // If the product quantity is zero, add a specific message
+            if ($product->quantity == 0) {
+                $outOfStockNotification = [
+                    'message' => '<span class="bold-text">OUT OF STOCK!<br> Update: ' . $product->name . '</span> is out of stock. Urgently needs restocking!',
+                    'productId' => $product->id,
+                ];
+
+                $lowQuantityNotifications[] = $outOfStockNotification;
+            } elseif ($product->quantity <= $product->low_quantity_threshold) {
+                // If the quantity is low, add it to low quantity notifications
+                $notification = [
+                    'message' => '<span class="bold-text">LOW STOCK!</span><br> We wish to inform you that your inventory <span class="bold-text">' . $product->name . "</span> is running critically low. Its time for a restock!",
+                    'forecastMessage' => $forecastMessage,
+                    'productId' => $product->id,
+                ];
+
+                $lowQuantityNotifications[] = $notification;
+            }
+
+            // Display the best seller quantity sold in the notification
+            if ($bestSeller && $bestSeller->id == $product->id && $bestSeller->total_qty > 0) {
+                $bestSellerNotification = [
+                    'message' => '<span class="bold-text">' . e($bestSeller->name) . '</span> is your best seller. It might be wise to increase stock levels to meet the high demand and capitalize on its popularity.',
+                    'productId' => $bestSeller->id,
+                ];
+
+                $bestSellerNotifications[] = $bestSellerNotification;
+            }
+        }
+
+        $totalLowQuantityNotifications = count($lowQuantityNotifications);
+        $totalBestSellerNotifications = count($bestSellerNotifications);
+        $totalForecastMessages = count($forecastMessages);
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+        $users = User::paginate(8);
+
+        return view('navbar.user', [
+            'users' => $users, 'salesForecastNotifications' => $salesForecastNotifications, 'lowQuantityNotifications' => $lowQuantityNotifications,
+            'bestSellerNotifications' => $bestSellerNotifications,
+            'totalNotifications' => $totalNotifications,
+        ])->with('username', $nm);
+    }
+
+
+    public function userStore(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'unique:' . User::class],
+            // 'password' => ['required'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required'],
+        ]);
+
+        $users = new User;
+        $users->name = $request->input('name');
+        $users->email = $request->input('email');
+        $users->role = $request->input('role');
+        $users->password = Hash::make($request->input('password')); // Fix this line
+
+        $users->save();
+
+        // return redirect()->route('admin.user');
+        return back();
+    }
+
+    // public function userStore(Request $request): RedirectResponse
+    // {
+    //     $request->validate([
+    //         'name' => ['required', 'string', 'max:255'],
+    //         'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+    //         'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    //     ]);
+
+    //     $user = User::create([
+    //         'name' => $request->name,
+    //         'email' => $request->email,
+    //         'password' => Hash::make($request->password),
+    //         'role' => $request->role,
+    //     ]);
+
+    //     event(new Registered($user));
+
+    //     Auth::login($user);
+
+    //     return redirect()->route('admin.user');
+    //     // return redirect(RouteServiceProvider::HOME);
+    // }
+
+    public function userUpdate(Request $request, string $id)
+    {
+        $request->validate([
+            'name' => ['required'],
+
+            'email' => 'required',
+            // 'email' => ['required','unique:'.User::class],
+
+            'password' => ['required'],
+            'role' => ['required'],
+        ]);
+
+        $users = User::find($id);
+        $users->name = $request->name;
+        $users->email = $request->email;
+        $users->role = $request->role;
+        $users->password = Hash::make($request->password);
+
+        $users->save();
+
+        return redirect()->route('admin.user');
+    }
+
+    // public function userUpdate(Request $request, string $id)
+    // {
+    //     $user = User::find($id);
+
+    //     $request->validate([
+    //         'name' => ['required', 'string', 'max:255'],
+    //         'email' => ['required', 'unique:' . User::class . ',email,' . $id],
+    //         'old_password' => ['required', new MatchOldPassword],
+    //         'new_password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+    //         'role' => ['required'],
+    //     ]);
+
+    //     $user->update([
+    //         'name' => $request->name,
+    //         'email' => $request->email,
+    //         'role' => $request->role,
+    //         'password' => $request->filled('new_password') ? Hash::make($request->new_password) : $user->password,
+    //     ]);
+
+    //     return redirect()->route('admin.user');
+    // }
+
+
+
+    public function userDestroy(string $id)
+    {
+        $users = User::findOrFail($id);
+        $users->delete();
         return back();
     }
 }
