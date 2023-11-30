@@ -147,7 +147,7 @@
     @endforeach
 
     {{-- Report Modal --}}
-    <div id="reportModal" class="reportModal">
+    {{-- <div id="reportModal" class="reportModal">
         <div class="modal-content-report">
             <span class="close">&times;</span>
 
@@ -172,8 +172,47 @@
             </form>
 
         </div>
-    </div>
+    </div> --}}
 
+    {{-- Report Modal --}}
+<div id="reportModal" class="reportModal">
+    <div class="modal-content-report">
+        <span class="close">&times;</span>
+
+        <form class="modal-form" action="{{ route('admin.generateReport') }}" method="POST" target="_blank">
+            @csrf
+            <label class="modal-top" for="">Generate Report</label>
+            <hr>
+            <div class="row-report">
+                <div class="column-report">
+                    <label for="">From Date:</label>
+                    <input type="date" required name="from_date">
+                </div>
+                <div class="column-report">
+                    <label for="">To Date:</label>
+                    <input type="date" required name="to_date">
+                </div>
+            </div>
+
+            <label class="baba-h2 taas-select" for="customer">Customer:</label>
+            <select required name="customer_name"
+                class="select customer">
+                <option value="" disabled selected>-- Select a Customer --</option>
+                @foreach ($customers as $customer)
+                    <option value="{{ $customer->name }}"
+                        {{ old('customer_name') === $customer->name ? 'selected' : '' }}>
+                        {{ $customer->name }}
+                    </option>
+                @endforeach
+            </select>
+            <hr>
+            <div class="buttons-report">
+                <button type="submit">Generate</button>
+            </div>
+        </form>
+
+    </div>
+</div>
 @endsection
 
 @section('side-navbar')
@@ -374,6 +413,14 @@
 @section('script')
     <script src="{{ asset('js/generateReport.js') }}"></script>
 
+    @if(session('forecastedSales') !== null)
+        <script>
+            var forecastedSales = {{ session('forecastedSales') }};
+            alert('Forecasted Sales for the day: ₱' + forecastedSales);
+        </script>
+    @endif
+
+
     {{-- Auto Sorting --}}
     <script>
         // Automatically submit the form when the sorting option changes
@@ -421,52 +468,6 @@
             });
         });
     </script>
-
-    {{-- Luma Auto Contact Number at Unit Price --}}
-    {{-- <script>
-        // Add Modal
-        function updateContactNumber() {
-            var customerSelect = document.getElementById('customer');
-            var contactNumberInput = document.getElementById('contact_num');
-
-            var selectedOption = customerSelect.options[customerSelect.selectedIndex];
-            var contactNumber = selectedOption.getAttribute('data-contact');
-
-            contactNumberInput.value = contactNumber;
-        }
-
-        function updateUnitPrice() {
-            var productSelect = document.getElementById('product_name');
-            var unitPriceInput = document.getElementById('unit_price');
-
-            var selectedPrice = productSelect.options[productSelect.selectedIndex];
-            var unitPrice = selectedPrice.getAttribute('data-unit-price');
-
-            unitPriceInput.value = unitPrice;
-        }
-
-
-        // Edit Modal
-        function editUpdateContactNumber() {
-            var editCustomerSelect = document.getElementById('customer-edit');
-            var editContactNumberInput = document.getElementById('contact_num-edit');
-
-            var editSelectedOption = editCustomerSelect.options[editCustomerSelect.selectedIndex];
-            var editContactNumber = editSelectedOption.getAttribute('data-contact-edit');
-
-            editContactNumberInput.value = editContactNumber;
-        }
-
-        function editUpdateUnitPrice() {
-            var editProductSelect = document.getElementById('product_name-edit');
-            var editUnitPriceInput = document.getElementById('unit_price-edit');
-
-            var editSelectedPrice = editProductSelect.options[editProductSelect.selectedIndex];
-            var editUnitPrice = editSelectedPrice.getAttribute('data-unit-price-edit');
-
-            editUnitPriceInput.value = editUnitPrice;
-        }
-    </script> --}}
 
     <!-- Auto Unit Price Script -->
     <script>

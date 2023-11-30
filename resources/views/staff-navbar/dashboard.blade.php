@@ -89,7 +89,7 @@
 
 @endsection
 
-@if (auth()->user()->role === 'staff')
+@if (auth()->user()->role === 'Staff')
     @section('main-content')
         <div class="content-dashboard">
 

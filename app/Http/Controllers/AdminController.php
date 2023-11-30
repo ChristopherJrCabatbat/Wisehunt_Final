@@ -219,11 +219,15 @@ class AdminController extends Controller
 
         $productsss = Product::all();
 
+        $forecastMessages = null;
+
         foreach ($productsss as $product) {
             // Check if there are forecasts for the customer
             $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
 
-            $forecastMessages = [];
+            // $forecastMessages = [];
+            $forecastMessages = null; // Initialize as null
+
 
             // Generate forecast messages for the current product
             foreach ($forecasts as $forecast) {
@@ -234,7 +238,9 @@ class AdminController extends Controller
             }
 
             // Create a single message by joining the forecast messages
-            $forecastMessage = implode('<br>', $forecastMessages);
+            // $forecastMessage = implode('<br>', $forecastMessages);
+            $forecastMessage = $forecastMessages ? implode('<br>', $forecastMessages) : null; // Check if not null
+
 
             // If the product quantity is zero, add a specific message
             if ($product->quantity == 0) {
@@ -268,7 +274,9 @@ class AdminController extends Controller
 
         $totalLowQuantityNotifications = count($lowQuantityNotifications);
         $totalBestSellerNotifications = count($bestSellerNotifications);
-        $totalForecastMessages = count($forecastMessages);
+        // $totalForecastMessages = count($forecastMessages);
+        $totalForecastMessages = $forecastMessages ? count($forecastMessages) : 0;
+
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
@@ -419,12 +427,13 @@ class AdminController extends Controller
     //         ->first();
 
     //     $productsss = Product::all();
+    //     $forecastMessages = null;
 
     //     foreach ($productsss as $product) {
     //         // Check if there are forecasts for the customer
     //         $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
 
-    //         $forecastMessages = [];
+    //         $forecastMessages = null; // Initialize as null
 
     //         // Generate forecast messages for the current product
     //         foreach ($forecasts as $forecast) {
@@ -435,7 +444,7 @@ class AdminController extends Controller
     //         }
 
     //         // Create a single message by joining the forecast messages
-    //         $forecastMessage = implode('<br>', $forecastMessages);
+    //         $forecastMessage = $forecastMessages ? implode('<br>', $forecastMessages) : null; // Check if not null
 
     //         // If the product quantity is zero, add a specific message
     //         if ($product->quantity == 0) {
@@ -469,7 +478,7 @@ class AdminController extends Controller
 
     //     $totalLowQuantityNotifications = count($lowQuantityNotifications);
     //     $totalBestSellerNotifications = count($bestSellerNotifications);
-    //     $totalForecastMessages = count($forecastMessages);
+    //     $totalForecastMessages = $forecastMessages ? count($forecastMessages) : 0;
 
     //     // Calculate the total number of notifications
     //     $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
@@ -577,12 +586,13 @@ class AdminController extends Controller
             ->first();
 
         $productsss = Product::all();
+        $forecastMessages = null;
 
         foreach ($productsss as $product) {
             // Check if there are forecasts for the customer
             $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
 
-            $forecastMessages = [];
+            $forecastMessages = null; // Initialize as null
 
             // Generate forecast messages for the current product
             foreach ($forecasts as $forecast) {
@@ -593,7 +603,7 @@ class AdminController extends Controller
             }
 
             // Create a single message by joining the forecast messages
-            $forecastMessage = implode('<br>', $forecastMessages);
+            $forecastMessage = $forecastMessages ? implode('<br>', $forecastMessages) : null; // Check if not null
 
             // If the product quantity is zero, add a specific message
             if ($product->quantity == 0) {
@@ -627,7 +637,7 @@ class AdminController extends Controller
 
         $totalLowQuantityNotifications = count($lowQuantityNotifications);
         $totalBestSellerNotifications = count($bestSellerNotifications);
-        $totalForecastMessages = count($forecastMessages);
+        $totalForecastMessages = $forecastMessages ? count($forecastMessages) : 0;
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
@@ -851,12 +861,13 @@ class AdminController extends Controller
             ->first();
 
         $productsss = Product::all();
+        $forecastMessages = null;
 
         foreach ($productsss as $product) {
             // Check if there are forecasts for the customer
             $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
 
-            $forecastMessages = [];
+            $forecastMessages = null; // Initialize as null
 
             // Generate forecast messages for the current product
             foreach ($forecasts as $forecast) {
@@ -867,7 +878,7 @@ class AdminController extends Controller
             }
 
             // Create a single message by joining the forecast messages
-            $forecastMessage = implode('<br>', $forecastMessages);
+            $forecastMessage = $forecastMessages ? implode('<br>', $forecastMessages) : null; // Check if not null
 
             // If the product quantity is zero, add a specific message
             if ($product->quantity == 0) {
@@ -901,7 +912,7 @@ class AdminController extends Controller
 
         $totalLowQuantityNotifications = count($lowQuantityNotifications);
         $totalBestSellerNotifications = count($bestSellerNotifications);
-        $totalForecastMessages = count($forecastMessages);
+        $totalForecastMessages = $forecastMessages ? count($forecastMessages) : 0;
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
@@ -919,6 +930,56 @@ class AdminController extends Controller
             'totalPrice' => $totalPrice,
         ])->with('lowQuantityNotifications', $lowQuantityNotifications)->with('searchQuery', $searchQuery)->with('customers', $customers);
     }
+
+    // public function transactionStore(Request $request)
+    // {
+    //     // Retrieve data from the request
+    //     $productName = $request->input('product_name');
+    //     $unitPrice = $request->input('unit_price');
+    //     $qty = $request->input('qty');
+    //     $customerName = $request->input('customer_name');
+
+    //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
+    //     $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+
+    //     if ($product) {
+    //         // Check if there's enough quantity to subtract
+    //         if ($product->quantity >= $qty) {
+    //             // Calculate total price
+    //             $totalPrice = $unitPrice * $qty;
+
+    //             // Calculate total earned
+    //             $capital = $product->capital;
+    //             $totalEarned = ($unitPrice - $capital) * $qty;
+
+    //             // Create a new Transactions record and save it to the database
+    //             $transaction = new Transaction;
+    //             $transaction->customer_name = $customerName;
+    //             $transaction->product_name = $productName;
+    //             $transaction->qty = $qty;
+    //             $transaction->unit_price = $unitPrice;
+    //             $transaction->total_price = $totalPrice;
+    //             $transaction->total_earned = $totalEarned;
+    //             $transaction->save();
+
+    //             // Update the product quantity by subtracting the sold quantity
+    //             $product->quantity -= $qty;
+    //             $product->save();
+
+    //             return back();
+    //         } else {
+    //             // Handle the case where the quantity is insufficient
+    //             return redirect()->back()
+    //                 ->withInput()
+    //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
+    //         }
+    //     } else {
+    //         // Keep the form data and repopulate the fields
+    //         return redirect()->back()
+    //             ->withInput()
+    //             ->withErrors(['error' => 'Selected product and unit price did not match.']);
+    //     }
+    // }
 
     public function transactionStore(Request $request)
     {
@@ -955,6 +1016,21 @@ class AdminController extends Controller
                 $product->quantity -= $qty;
                 $product->save();
 
+                // Fetch past transactions for the current day
+                $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
+
+                // Perform sales forecasting logic based on the past transactions
+                $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
+
+                // Display alert with forecasted sales
+                if ($forecastedSales !== null) {
+                    // You can customize the alert message based on your requirements
+                    // Here, I'm using the basic alert() function for demonstration purposes
+                    // echo "<script>alert('Forecasted Sales for the day: $forecastedSales');</script>";
+                    return back()->with('forecastedSales', $forecastedSales);
+
+                }
+
                 return back();
             } else {
                 // Handle the case where the quantity is insufficient
@@ -969,6 +1045,44 @@ class AdminController extends Controller
                 ->withErrors(['error' => 'Selected product and unit price did not match.']);
         }
     }
+
+
+    private function calculateForecastedSales($transactions)
+    {
+        // Check if there are enough transactions to calculate forecast
+        if ($transactions->count() < 2) {
+            return 0; // Not enough data for accurate forecasting
+        }
+    
+        // Calculate total sales for the day
+        $totalSales = $transactions->sum(function ($transaction) {
+            return $transaction->qty * $transaction->unit_price;
+        });
+    
+        // Calculate the average sales per transaction
+        $averageSales = $totalSales / $transactions->count();
+    
+        // Calculate forecasted sales by adding a percentage of the average sales
+        $forecastedSales = $totalSales + ($totalSales * 0.18); // You can adjust the factor (0.05) based on your preference
+    
+        return $forecastedSales;
+    }
+    
+    
+
+    
+    
+    
+
+    
+    
+
+
+
+    
+
+
+
 
     public function transactionUpdate(Request $request, string $id)
     {
@@ -1180,24 +1294,45 @@ class AdminController extends Controller
         return back()->withSuccess('Account deleted successfully!');
     }
 
+    // public function generateReport(Request $request)
+    // {
+    //     $fromDate = $request->input('from_date');
+    //     $toDate = $request->input('to_date');
+
+    //     // Increment the toDate by one day to include records on the toDate itself
+    //     $toDate = date('Y-m-d', strtotime($toDate . ' +1 day'));
+
+    //     $transactions = Transaction::whereBetween('created_at', [$fromDate, $toDate])->get();
+    //     return view('navbar.report', [
+    //         'transactions' => $transactions,
+    //         // 'fromDate' => $fromDate, // Pass both from and to dates to the view
+    //         // 'toDate' => $toDate,
+    //         'fromDate' => Carbon::parse($fromDate),
+    //         'toDate' => Carbon::parse($toDate),
+
+    //     ]);
+    // }
+
     public function generateReport(Request $request)
-    {
-        $fromDate = $request->input('from_date');
-        $toDate = $request->input('to_date');
+{
+    $fromDate = $request->input('from_date');
+    $toDate = $request->input('to_date');
+    $customerName = $request->input('customer_name');
 
-        // Increment the toDate by one day to include records on the toDate itself
-        $toDate = date('Y-m-d', strtotime($toDate . ' +1 day'));
+    // Increment the toDate by one day to include records on the toDate itself
+    $toDate = date('Y-m-d', strtotime($toDate . ' +1 day'));
 
-        $transactions = Transaction::whereBetween('created_at', [$fromDate, $toDate])->get();
-        return view('navbar.report', [
-            'transactions' => $transactions,
-            // 'fromDate' => $fromDate, // Pass both from and to dates to the view
-            // 'toDate' => $toDate,
-            'fromDate' => Carbon::parse($fromDate),
-            'toDate' => Carbon::parse($toDate),
+    $transactions = Transaction::where('customer_name', $customerName)
+        ->whereBetween('created_at', [$fromDate, $toDate])
+        ->get();
 
-        ]);
-    }
+    return view('navbar.report', [
+        'transactions' => $transactions,
+        'fromDate' => Carbon::parse($fromDate),
+        'toDate' => Carbon::parse($toDate),
+    ]);
+}
+
 
 
     // Customer Controllers
@@ -1223,12 +1358,13 @@ class AdminController extends Controller
             ->first();
 
         $productsss = Product::all();
+        $forecastMessages = null;
 
         foreach ($productsss as $product) {
             // Check if there are forecasts for the customer
             $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
 
-            $forecastMessages = [];
+            $forecastMessages = null; // Initialize as null
 
             // Generate forecast messages for the current product
             foreach ($forecasts as $forecast) {
@@ -1239,7 +1375,7 @@ class AdminController extends Controller
             }
 
             // Create a single message by joining the forecast messages
-            $forecastMessage = implode('<br>', $forecastMessages);
+            $forecastMessage = $forecastMessages ? implode('<br>', $forecastMessages) : null; // Check if not null
 
             // If the product quantity is zero, add a specific message
             if ($product->quantity == 0) {
@@ -1273,7 +1409,7 @@ class AdminController extends Controller
 
         $totalLowQuantityNotifications = count($lowQuantityNotifications);
         $totalBestSellerNotifications = count($bestSellerNotifications);
-        $totalForecastMessages = count($forecastMessages);
+        $totalForecastMessages = $forecastMessages ? count($forecastMessages) : 0;
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
@@ -1351,12 +1487,13 @@ class AdminController extends Controller
             ->first();
 
         $productsss = Product::all();
+        $forecastMessages = null;
 
         foreach ($productsss as $product) {
             // Check if there are forecasts for the customer
             $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
 
-            $forecastMessages = [];
+            $forecastMessages = null; // Initialize as null
 
             // Generate forecast messages for the current product
             foreach ($forecasts as $forecast) {
@@ -1367,7 +1504,7 @@ class AdminController extends Controller
             }
 
             // Create a single message by joining the forecast messages
-            $forecastMessage = implode('<br>', $forecastMessages);
+            $forecastMessage = $forecastMessages ? implode('<br>', $forecastMessages) : null; // Check if not null
 
             // If the product quantity is zero, add a specific message
             if ($product->quantity == 0) {
@@ -1401,7 +1538,7 @@ class AdminController extends Controller
 
         $totalLowQuantityNotifications = count($lowQuantityNotifications);
         $totalBestSellerNotifications = count($bestSellerNotifications);
-        $totalForecastMessages = count($forecastMessages);
+        $totalForecastMessages = $forecastMessages ? count($forecastMessages) : 0;
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
@@ -1481,12 +1618,13 @@ class AdminController extends Controller
             ->first();
 
         $productsss = Product::all();
+        $forecastMessages = null;
 
         foreach ($productsss as $product) {
             // Check if there are forecasts for the customer
             $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
 
-            $forecastMessages = [];
+            $forecastMessages = null; // Initialize as null
 
             // Generate forecast messages for the current product
             foreach ($forecasts as $forecast) {
@@ -1497,7 +1635,7 @@ class AdminController extends Controller
             }
 
             // Create a single message by joining the forecast messages
-            $forecastMessage = implode('<br>', $forecastMessages);
+            $forecastMessage = $forecastMessages ? implode('<br>', $forecastMessages) : null; // Check if not null
 
             // If the product quantity is zero, add a specific message
             if ($product->quantity == 0) {
@@ -1531,7 +1669,7 @@ class AdminController extends Controller
 
         $totalLowQuantityNotifications = count($lowQuantityNotifications);
         $totalBestSellerNotifications = count($bestSellerNotifications);
-        $totalForecastMessages = count($forecastMessages);
+        $totalForecastMessages = $forecastMessages ? count($forecastMessages) : 0;
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;

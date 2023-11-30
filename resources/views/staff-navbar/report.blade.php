@@ -31,7 +31,7 @@
                 <th>Quantity</th>
                 <th>Unit Price</th>
                 <th>Total Price</th>
-                <th>Total Earned on Item</th>
+                <th>Total Earn</th>
                 <th>Date</th>
             </tr>
             <tbody>

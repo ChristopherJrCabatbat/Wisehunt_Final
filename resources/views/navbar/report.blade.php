@@ -10,10 +10,13 @@
 </head>
 
 <body>
-    <center>
+    {{-- <center>
         <h2>Transactions between {{ $fromDate->format('M. d, Y') }} and {{ $toDate->format('M. d, Y') }}</h2>
+    </center> --}}
+    <center>
+        <h2>Transactions between {{ $fromDate->format('M. d, Y') }} and {{ $toDate->format('M. d, Y') }}
+            for {{ $transactions->isEmpty() ? '' : $transactions[0]->customer_name }}</h2>
     </center>
-
     <center>
         <table>
             @php
@@ -27,11 +30,11 @@
             <tr>
                 <th>No.</th>
                 <th>Customer</th>
-                <th>Product Name</th>
+                <th>Product Sold</th>
                 <th>Quantity</th>
                 <th>Unit Price</th>
                 <th>Total Price</th>
-                <th>Total Earned on Item</th>
+                <th>Total Earn</th>
                 <th>Date</th>
             </tr>
             <tbody>

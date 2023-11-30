@@ -225,7 +225,7 @@ img {
 
 .dropdown-item {
     padding: 12px 35px 12px 16px;
-    text-wrap: nowrap;
+    white-space: nowrap;
     text-decoration: none;
     display: block;
     color: black;
