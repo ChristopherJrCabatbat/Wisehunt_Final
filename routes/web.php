@@ -12,18 +12,6 @@ use App\Http\Controllers\MainController;
 
 Route::get('/', [LoginController::class, 'login'])->name('loginForm');
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-// Route::post('/loginStore', [LoginController::class, 'loginStore'])->name('loginStore');
-// Route::get('/loginForm', [LoginController::class, 'loginForm'])->name('loginForm');
-
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
-
 Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard')->middleware('auth');
 
 
@@ -34,6 +22,68 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+
+// Admin Routes
+Route::group([
+    'prefix' => 'admin', 'as' => 'admin.', 
+    'middleware' => ['auth', 'admin'],
+], function () {
+
+    // Dashboard
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    // Endpoint for current month sales
+    Route::get('/get-current-sales', [AdminController::class, 'getCurrentSales'])->name('getCurrentSales');
+
+    // Endpoint for forecast month sales
+    Route::get('/get-forecast-sales', [AdminController::class, 'getForecastSales'])->name('getForecastSales');
+
+
+
+    // Product Routes
+    Route::get('/product', [AdminController::class, 'product'])->name('product');
+    Route::post('/productStore', [AdminController::class, 'productStore'])->name('productStore');
+    Route::get('/productEdit/{id}', [AdminController::class, 'productEdit'])->name('productEdit');
+    Route::put('/productUpdate/{id}', [AdminController::class, 'productUpdate'])->name('productUpdate');
+    Route::delete('/productDestroy/{id}', [AdminController::class, 'productDestroy'])->name('productDestroy');
+    Route::get('/productSearch', [LiveSearchController::class, 'productSearch'])->name('productSearch');
+
+
+    // Transaction Routes
+    Route::get('/transaction', [AdminController::class, 'transaction'])->name('transaction');
+    Route::post('/transactionStore', [AdminController::class, 'transactionStore'])->name('transactionStore');
+    Route::get('/transactionEdit/{id}', [AdminController::class, 'transactionEdit'])->name('transactionEdit');
+    Route::put('/transactionUpdate/{id}', [AdminController::class, 'transactionUpdate'])->name('transactionUpdate');
+    Route::delete('/transactionDestroy/{id}', [AdminController::class, 'transactionDestroy'])->name('transactionDestroy');
+    Route::get('/transactionSearch', [LiveSearchController::class, 'transactionSearch'])->name('transactionSearch');
+    Route::post('/generateReport', [AdminController::class, 'generateReport'])->name('generateReport');
+
+
+    // Customer Routes
+    Route::get('/customer', [AdminController::class, 'customer'])->name('customer');
+    Route::post('/customerStore', [AdminController::class, 'customerStore'])->name('customerStore');
+    Route::get('/customerEdit/{id}', [AdminController::class, 'customerEdit'])->name('customerEdit');
+    Route::put('/customerUpdate/{id}', [AdminController::class, 'customerUpdate'])->name('customerUpdate');
+    Route::delete('/customerDestroy/{id}', [AdminController::class, 'customerDestroy'])->name('customerDestroy');
+
+
+    // Supplier Routes
+    Route::get('/supplier', [AdminController::class, 'supplier'])->name('supplier');
+    Route::post('/supplierStore', [AdminController::class, 'supplierStore'])->name('supplierStore');
+    Route::get('/supplierEdit/{id}', [AdminController::class, 'supplierEdit'])->name('supplierEdit');
+    Route::put('/supplierUpdate/{id}', [AdminController::class, 'supplierUpdate'])->name('supplierUpdate');
+    Route::delete('/supplierDestroy/{id}', [AdminController::class, 'supplierDestroy'])->name('supplierDestroy');
+
+
+    // User Routes
+    Route::get('/user', [AdminController::class, 'user'])->name('user');
+    Route::post('/userStore', [AdminController::class, 'userStore'])->name('userStore');
+    Route::put('/userUpdate/{id}', [AdminController::class, 'userUpdate'])->name('userUpdate');
+    Route::delete('/userDestroy/{id}', [AdminController::class, 'userDestroy'])->name('userDestroy');
+});
+
+
 
 // Staff Routes
 Route::group([
@@ -61,8 +111,8 @@ Route::group([
     Route::post('/transactionStore', [StaffController::class, 'transactionStore'])->name('transactionStore');
     Route::put('/transactionUpdate/{id}', [StaffController::class, 'transactionUpdate'])->name('transactionUpdate');
     Route::delete('/transactionDestroy/{id}', [StaffController::class, 'transactionDestroy'])->name('transactionDestroy');
-    Route::get('/transactionSearch', [LiveSearchController::class, 'transactionSearch'])->name('transactionSearch');
     Route::post('/generateReport', [StaffController::class, 'generateReport'])->name('generateReport');
+    Route::get('/transactionSearch', [LiveSearchController::class, 'transactionSearch'])->name('transactionSearch');
 
 
     // Customer Routes
@@ -74,61 +124,6 @@ Route::group([
 });
 
 
-// Admin Routes
-Route::group([
-    'prefix' => 'admin', 'as' => 'admin.', 
-    'middleware' => ['auth', 'admin'],
-], function () {
-
-    // Dashboard
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-
-    // Endpoint for current month sales
-    Route::get('/get-current-sales', [AdminController::class, 'getCurrentSales'])->name('getCurrentSales');
-
-    // Endpoint for forecast month sales
-    Route::get('/get-forecast-sales', [AdminController::class, 'getForecastSales'])->name('getForecastSales');
-
-
-
-    // Product Routes
-    Route::get('/product', [AdminController::class, 'product'])->name('product');
-    Route::post('/productStore', [AdminController::class, 'productStore'])->name('productStore');
-    // Route::post('/validateProductStore', [AdminController::class, 'validateProductStore'])->name('validateProductStore');
-    Route::put('/productUpdate/{id}', [AdminController::class, 'productUpdate'])->name('productUpdate');
-    Route::delete('/productDestroy/{id}', [AdminController::class, 'productDestroy'])->name('productDestroy');
-    Route::get('/productSearch', [LiveSearchController::class, 'productSearch'])->name('productSearch');
-
-
-    // Transaction Routes
-    Route::get('/transaction', [AdminController::class, 'transaction'])->name('transaction');
-    Route::post('/transactionStore', [AdminController::class, 'transactionStore'])->name('transactionStore');
-    Route::put('/transactionUpdate/{id}', [AdminController::class, 'transactionUpdate'])->name('transactionUpdate');
-    Route::delete('/transactionDestroy/{id}', [AdminController::class, 'transactionDestroy'])->name('transactionDestroy');
-    Route::get('/transactionSearch', [LiveSearchController::class, 'transactionSearch'])->name('transactionSearch');
-    Route::post('/generateReport', [AdminController::class, 'generateReport'])->name('generateReport');
-
-
-    // Customer Routes
-    Route::get('/customer', [AdminController::class, 'customer'])->name('customer');
-    Route::post('/customerStore', [AdminController::class, 'customerStore'])->name('customerStore');
-    Route::put('/customerUpdate/{id}', [AdminController::class, 'customerUpdate'])->name('customerUpdate');
-    Route::delete('/customerDestroy/{id}', [AdminController::class, 'customerDestroy'])->name('customerDestroy');
-
-
-    // Supplier Routes
-    Route::get('/supplier', [AdminController::class, 'supplier'])->name('supplier');
-    Route::post('/supplierStore', [AdminController::class, 'supplierStore'])->name('supplierStore');
-    Route::put('/supplierUpdate/{id}', [AdminController::class, 'supplierUpdate'])->name('supplierUpdate');
-    Route::delete('/supplierDestroy/{id}', [AdminController::class, 'supplierDestroy'])->name('supplierDestroy');
-
-
-    // User Routes
-    Route::get('/user', [AdminController::class, 'user'])->name('user');
-    Route::post('/userStore', [AdminController::class, 'userStore'])->name('userStore');
-    Route::put('/userUpdate/{id}', [AdminController::class, 'userUpdate'])->name('userUpdate');
-    Route::delete('/userDestroy/{id}', [AdminController::class, 'userDestroy'])->name('userDestroy');
-});
 
 // Route::get('/logout', function () {
 //     Session::forget('account');

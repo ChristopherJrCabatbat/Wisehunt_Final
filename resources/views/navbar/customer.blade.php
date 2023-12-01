@@ -30,9 +30,8 @@
                 <input required type="text" name="contact_person" id="" />
 
                 <label for="">Contact Number:</label>
-                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num" id="" value="">
 
-                    id="" value="">
                 <label for="">Address:</label>
                 <input required type="text" name="address" id="" />
 
@@ -41,45 +40,6 @@
 
         </div>
     </div>
-
-    {{-- Edit Modal --}}
-    @foreach ($customers as $customer)
-        <div id="editModal{{ $customer->id }}" class="modal editModal">
-            <div class="modal-content">
-                <span class="close closeEditModal">&times;</span>
-
-                <form class="edit-modal-form" action="{{ route('admin.customerUpdate', $customer->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <center>
-                        <h2 style="margin: 0%; color:#333;">Edit Customer</h2>
-                    </center>
-
-                    <label class="modal-top" for="">Company Name:</label>
-                    <input required type="text" class="autofocus" name="name" id="" autofocus
-                        value="{{ old('name', $customer->name) }}">
-                    <label for="">Contact Name:</label>
-                    <input required type="text" name="contact_person" id=""
-                        value="{{ old('contact_person', $customer->contact_person) }}">
-
-                    <label for="">Contact Number:</label>
-                    <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
-                        name="contact_num" id="" value="{{ old('contact_num', $customer->contact_num) }}">
-
-                    <label for="">Address:</label>
-                    <input required type="text" name="address" id=""
-                        value="{{ old('address', $customer->address) }}">
-                    {{-- <label for="">Item Sold:</label>
-                    <input required type="text" name="item_sold" id=""
-                        value="{{ old('item_sold', $customer->item_sold) }}"> --}}
-
-                    <input class="add" type="submit" value="Update">
-                </form>
-
-            </div>
-        </div>
-    @endforeach
 
 @endsection
 
@@ -158,7 +118,6 @@
                     <th>Contact Name</th>
                     <th>Contact Number</th>
                     <th>Address</th>
-                    {{-- <th>Item Sold</th> --}}
                     <th>Actions</th>
                 </tr>
 
@@ -175,12 +134,12 @@
                                 <td>{{ $customer->contact_person }}</td>
                                 <td>{{ $customer->contact_num }}</td>
                                 <td>{{ $customer->address }}</td>
-                                {{-- <td>{{ $customer->item_sold }}</td> --}}
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form>
-                                            <button type="button" class="edit editButton" id="edit"
-                                                data-id="{{ $customer->id }}">
+                                        <form action="{{ route('admin.customerEdit', $customer->id) }}" method="POST">
+                                            @csrf
+                                            @method('GET')                                            
+                                            <button type="submit" class="edit editButton" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>

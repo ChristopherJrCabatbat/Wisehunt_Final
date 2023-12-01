@@ -19,6 +19,7 @@ class Staff
         {
             return $next($request);
         }
-        abort(401);
+        return redirect()->back()->with('error','You need to log out log in as staff first.');
+        // abort(401);
     }
 }

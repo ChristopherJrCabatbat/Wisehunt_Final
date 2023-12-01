@@ -61,9 +61,8 @@
                         value="{{ old('contact_person', $customer->contact_person) }}">
 
                     <label for="">Contact Number:</label>
-                    <input required type="text" pattern="{5,15}" title="Enter a valid contact number"
-                        name="contact_num" name="contact_num" id=""
-                        value="{{ old('contact_num', $customer->contact_num) }}">
+                    <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+                        name="contact_num" id="" value="{{ old('contact_num', $customer->contact_num) }}">
 
                     <label for="">Address:</label>
                     <input required type="text" name="address" id=""
@@ -86,26 +85,30 @@
     <ul>
         <li>
             <div class="dashboard-container">
-                <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
-                <a href="{{ route('staff.dashboard') }}" class="sidebar top">DASHBOARD</a>
+                <a class="sidebar top" href="{{ route('staff.dashboard') }}">
+                    <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
+                    DASHBOARD</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
-                <a class="sidebar" href="{{ route('staff.product') }}">PRODUCT</a>
+                <a class="sidebar" href="{{ route('staff.product') }}">
+                    <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
+                    PRODUCT</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
-                <a class="sidebar" href="{{ route('staff.transaction') }}">TRANSACTION</a>
+                <a class="sidebar" href="{{ route('staff.transaction') }}">
+                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                    TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
-                <a class="sidebar active" href="{{ route('staff.customer') }}">CUSTOMER</a>
+                <a class="sidebar active" href="{{ route('staff.customer') }}">
+                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                    CUSTOMER</a>
             </div>
         </li>
     </ul>

@@ -4,21 +4,12 @@
 
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/product-transaction-styles.css') }}">
+    <style>
+
+    </style>
 @endsection
 
 @section('modals')
-
-    {{-- @if ($errors->any())
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                // Open the modal if there are validation errors
-                const newModal = document.getElementById("newModal");
-                const overlay = document.querySelector(".overlay");
-                newModal.style.display = "block";
-                overlay.style.display = "block";
-            });
-        </script>
-    @endif --}}
 
     <div class="overlay editOverlay"></div>
 
@@ -30,16 +21,15 @@
             <hr>
 
             <form class="modal-form" action="{{ route('admin.productStore') }}" enctype="multipart/form-data" method="POST">
-                {{-- <form class="modal-form" action="{{ route('admin.productStore') }}" enctype="multipart/form-data" method="POST" data-validation-url="{{ route('admin.validateProductStore') }}"> --}}
                 @csrf
 
                 <div class="row1">
                     <div class="column">
                         <label class="modal-top" for="">Product code:</label>
-                        <input required autofocus type="text" name="code" pattern="[0-9]{3,11}" class="row1-input"
+                        <input required autofocus type="text" name="code" pattern="{3,11}" class="row1-input"
                             id="autofocus" value="{{ old('code') }}" />
                     </div>
-                    
+
                     <div class="column">
 
                         <label for="">Product Name:</label>
@@ -57,13 +47,13 @@
                         @endif
 
                     </div>
-                   
+
                     <div class="column">
                         <label for="">Brand Name:</label>
                         <input required type="text" name="brand_name" id="" value="{{ old('brand_name') }}"
                             class="row1-input" />
                     </div>
-                   
+
                 </div>
 
                 <div class="row2">
@@ -100,6 +90,12 @@
                             <option value="" disabled selected>-- Select Category --</option>
                             <option value="Paper" {{ old('category') === 'Paper' ? 'selected' : '' }}>Paper
                             </option>
+                            <option value="Tape" {{ old('category') === 'Tape' ? 'selected' : '' }}>Tape
+                            </option>
+                            <option value="Plastic" {{ old('category') === 'Plastic' ? 'selected' : '' }}>Plastic
+                            </option>
+                            <option value="Gloves" {{ old('category') === 'Gloves' ? 'selected' : '' }}>Gloves
+                            </option>
                             <option value="Machine" {{ old('category') === 'Machine' ? 'selected' : '' }}>
                                 Machine</option>
                             <option value="Food Material" {{ old('category') === 'Food Material' ? 'selected' : '' }}>Food
@@ -108,34 +104,36 @@
                         </select>
                     </div>
 
-                    {{-- <div class="column">
-                        <div class="input_container">
-                            <input type="file" id="fileUpload">
-                        </div> --}}
-                        {{-- <label for="Image">Image:</label>
-                        <label for="file-upload" class="custom-file-upload">-- Upload Here --</label>
-                        <input id="file-upload" type="file" name="photo" id="" class="row2-input" /> --}}
-                    {{-- </div> --}}
-
                 </div>
-                
+
                 <div class="row3">
-                    <label for="">Image:</label>
-                    <div class="input_container">
-                        <input type="file" name="photo" id="fileUpload">
+                    <div class="column">
+                        <label for="">Image:</label>
+                        <div class="input_container">
+                            <input type="file" name="photo" id="fileUpload">
+                        </div>
                     </div>
+
+                    <div class="column">
+                        <label for="">Receive Notification when Quantity is:</label>
+                        <div class="input_container_ginaya">
+                            <input type="number" name="low_quantity_threshold" placeholder="Enter threshold"
+                                title="Receive notification when the stock quantity reaches or falls below this value."
+                                value="{{ old('low_quantity_threshold') }}" required />
+                        </div>
+                    </div>
+
                 </div>
                 <div class="row4">
                     <label for="">Product Description:</label>
-                    <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
-                        class="" value="{{ old('description') }}">{{ old('description') }}</textarea>
+                    <textarea required name="description" rows="5" placeholder="Eg. size..." cols="5" class=""
+                        value="{{ old('description') }}">{{ old('description') }}</textarea>
                 </div>
 
                 <hr>
                 <div class="buttons">
                     <input type="submit" id="saveButton" class="add-green save"
                         style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Add" />
-                    {{-- <a href="{{ route('admin.product') }}" class="cancel closeModal">Cancel</a> --}}
                     <button type="button" class="closeModal">Cancel</button>
                 </div>
             </form>
@@ -145,12 +143,11 @@
 
 
     <!-- Edit Modal -->
-    @foreach ($products as $product)
-        <div id="editModal{{ $product->id }}" class="modal editModal">
+        <div id="" class="editModal">
             <div class="edit-modal-content">
                 <p class="taas-new">Edit Product </p>
                 <hr>
-                <form class="edit-modal-form" action="{{ route('admin.productUpdate', $product->id) }}"
+                <form class="edit-modal-form" action="{{ route('admin.productUpdate', $productss->id) }}"
                     enctype="multipart/form-data" method="POST">
                     @csrf
                     @method('PUT')
@@ -158,17 +155,23 @@
                     <div class="row1">
                         <div class="column">
                             <label class="modal-top" for="">Product code:</label>
-                            <input required type="text" name="code" pattern="[0-9]{3,11}" class="row1-input"
-                                value="{{ $product->code }}" />
+                            <input required type="text" name="code" pattern="{3,11}" class="row1-input"
+                                value="{{ old('code', $productss->code) }}" />
                         </div>
                         <div class="column">
                             <label for="">Product Name:</label>
                             <select class="select_product" name="name" class="product_name">
                                 @foreach ($suppliers as $supplier)
-                                    <option value="{{ $supplier->product_name }}"
+                                    {{-- <option value="{{ $supplier->product_name }}"
                                         {{ $product->name === $supplier->product_name ? 'selected' : '' }}>
                                         {{ $supplier->product_name }}
+                                    </option> --}}
+
+                                    <option value="{{ $supplier->product_name }}"
+                                            {{ old('name', $productss->name) === $supplier->product_name ? 'selected' : '' }}>
+                                            {{ $supplier->product_name }}
                                     </option>
+
                                 @endforeach
                             </select>
                             @if ($errors->has('name'))
@@ -178,20 +181,10 @@
 
                         <div class="column">
                             <label for="">Brand Name:</label>
-                            <input required type="text" name="brand_name" id="" value="{{ $product->brand_name }}"
-                                class="row1-input" />
+                            <input required type="text" name="brand_name" id=""
+                                value="{{ old('brand_name', $productss->brand_name) }}" class="row1-input" />
                         </div>
 
-                        {{-- <div class="column">
-                            <label for="">Stock Quantity:</label>
-                            <input required autofocus type="number" name="quantity" class="row2-input autofocus"
-                                value="{{ $product->quantity }}" />
-                            @if ($errors->has('quantity'))
-                                <div class="text-danger">{{ $errors->first('quantity') }}</div>
-                            @endif
-                        </div> --}}
-
-                        
                     </div>
 
                     <div class="row2">
@@ -199,7 +192,7 @@
                         <div class="column">
                             <label for="">Stock Quantity:</label>
                             <input required autofocus type="number" name="quantity" class="row2-input autofocus"
-                                value="{{ $product->quantity }}" />
+                                value="{{ old('quantity', $productss->quantity) }}" />
                             @if ($errors->has('quantity'))
                                 <div class="text-danger">{{ $errors->first('quantity') }}</div>
                             @endif
@@ -208,7 +201,7 @@
                         <div class="column">
                             <label for="">Capital:</label>
                             <input required type="number" name="capital" id=""
-                                value="{{ $product->capital }}" class="row2-input" />
+                                value="{{ old('capital', $productss->capital) }}" class="row2-input" />
                             @if ($errors->has('capital'))
                                 <div class="text-danger">{{ $errors->first('capital') }}</div>
                             @endif
@@ -216,7 +209,7 @@
                         <div class="column">
                             <label for="">Unit Price:</label>
                             <input required type="number" name="unit_price" id=""
-                                value="{{ $product->unit_price }}" class="row2-input" />
+                                value="{{ old('unit_price', $productss->unit_price) }}" class="row2-input" />
                             @if ($errors->has('unit_price'))
                                 <div class="text-danger">{{ $errors->first('unit_price') }}</div>
                             @endif
@@ -224,13 +217,19 @@
                         <div class="column">
                             <label for="">Category:</label>
                             <select name="category" id="" class="row1-input select_categ">
-                                <option value="Paper" {{ $product->category === 'Paper' ? 'selected' : '' }}>Paper
-                                </option>
-                                <option value="Machine" {{ $product->category === 'Machine' ? 'selected' : '' }}>
-                                    Machine</option>
-                                <option value="Food Material"
-                                    {{ $product->category === 'Food Material' ? 'selected' : '' }}>
-                                    Food Material</option>
+
+                                <option value="Paper" {{ old('category', $productss->category) === 'Paper' ? 'selected' : '' }}>Paper</option>
+
+                                <option value="Tape" {{ old('category', $productss->category) === 'Tape' ? 'selected' : '' }}>Tape</option>
+
+                                <option value="Plastic" {{ old('category', $productss->category) === 'Plastic' ? 'selected' : '' }}>Plastic</option>
+
+                                <option value="Gloves" {{ old('category', $productss->category) === 'Gloves' ? 'selected' : '' }}>Gloves</option>
+
+                                <option value="Machine" {{ old('category', $productss->category) === 'Machine' ? 'selected' : '' }}>Machine</option>
+
+                                <option value="Food Material" {{ old('category', $productss->category) === 'Food Material' ? 'selected' : '' }}>Food Material</option>
+
                             </select>
                         </div>
                     </div>
@@ -239,14 +238,22 @@
                         {{-- Image --}}
                         <div class="column">
                             <label for="">Current Image:</label>
-                            <img class="img-edit" src="{{ asset($product->photo) }}" alt="" width="50px"
+                            <img class="img-edit" src="{{ asset($productss->photo) }}" alt="" width="50px"
                                 height="auto">
                         </div>
                         <div class="column">
                             <label for="">Change Image:</label>
-                            {{-- <input required type="file" name="image" id="" class="row2-input" /> --}}
-                            <div class="input_container">
+                            <div class="input_container_edit">
                                 <input type="file" name="photo" id="fileUpload">
+                            </div>
+                        </div>
+                        <div class="column">
+                            <label for="">Receive Notification when Quantity is:</label>
+                            <div class="input_container_ginaya_edit">
+                                <input type="number" name="low_quantity_threshold" placeholder="Enter threshold"
+                                    title="Receive notification when the stock quantity reaches or falls below this value."
+                                    value="{{ old('low_quantity_threshold', $productss->low_quantity_threshold) }}" required />
+                                   
                             </div>
                         </div>
                     </div>
@@ -254,19 +261,20 @@
                     <div class="row4">
                         <label for="">Product Description:</label>
                         <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
-                            class="" value="">{{ $product->description }}</textarea>
+                            class="" value="">{{ old('description', $productss->description) }}</textarea>
                     </div>
 
                     <hr>
                     <div class="buttons">
                         <input type="submit" class="add-green"
                             style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Update" />
-                        <button type="button" class="closeEditModal">Cancel</button>
-                    </div>
                 </form>
+                        <form action="{{ route('admin.product') }}">
+                            <button type="submit" class="closeEditModal">Cancel</button>
+                        </form>
+                    </div>
             </div>
         </div>
-    @endforeach
 
 
 @endsection
@@ -276,32 +284,45 @@
     <ul>
         <li>
             <div class="dashboard-container">
-                <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
-                <a href="{{ route('admin.dashboard') }}" class="sidebar top">DASHBOARD</a>
+                <a class="sidebar top" href="{{ route('admin.dashboard') }}">
+                    <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
+                    DASHBOARD</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
-                <a class="sidebar active" href="{{ route('admin.product') }}">PRODUCT</a>
+                <a class="sidebar active" href="{{ route('admin.product') }}">
+                    <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
+                    PRODUCT</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
-                <a class="sidebar" href="{{ route('admin.transaction') }}">TRANSACTION</a>
+                <a class="sidebar" href="{{ route('admin.transaction') }}">
+                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                    TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
-                <a class="sidebar" href="{{ route('admin.customer') }}">CUSTOMER</a>
+                <a class="sidebar" href="{{ route('admin.customer') }}">
+                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                    CUSTOMER</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/supplier.png') }}" class="supplier-i" alt="">
-                <a class="sidebar" href="{{ route('admin.supplier') }}">SUPPLIER</a>
+                <a class="sidebar" href="{{ route('admin.supplier') }}">
+                    <img src="{{ asset('images/supplier.png') }}" class="supplier-i" alt="">
+                    SUPPLIER</a>
+            </div>
+        </li>
+        <li>
+            <div class="baba-container">
+                <a class="sidebar" href="{{ route('admin.user') }}">
+                    <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
+                    {{-- <img src="{{ asset('images/supplier.png') }}" class="user-i" alt=""> --}}
+                    USERS</a>
             </div>
         </li>
     </ul>
@@ -336,26 +357,20 @@
                             (ascending)
                         </option>
                     </select>
-                    {{-- <button type="submit">Sort</button> --}}
-                    {{-- <a href="{{ route('admin.product') }}" class="reset-sort">Reset sort</a> --}}
+                   
                 </form>
             </div>
 
             {{-- Search --}}
             <div>
-                {{-- <form class="form-search" action="{{ route('admin.productSearch') }}" method="GET"> --}}
                 <div class="searchs">
                     <div class="form-search">
                         <input required type="search" id="search" name="search" placeholder="Search product..."
                             autocomplete="off" class="search-prod" />
                         <i class="fa fa-search search-icon"></i>
-                        {{-- <button class="search" type="submit"> --}}
-                        {{-- <img class="search"src="{{ asset('images/search.png') }}" alt=""> --}}
-                        {{-- </button> --}}
                     </div>
-                    {{-- <a href="{{ route('admin.product') }}" class="cancel-search">Cancel search</a> --}}
+                 
                 </div>
-                {{-- </form> --}}
             </div>
 
         </div>
@@ -393,7 +408,7 @@
                                 <td>{{ $rowNumber++ }}</td>
                                 <td>{{ $product->code }}</td>
                                 <td>{{ $product->name }}</td>
-                                <td>{{ $product->name }}</td>
+                                <td>{{ $product->brand_name }}</td>
                                 <td>{{ $product->description }}</td>
                                 <td>{{ $product->category }}</td>
                                 <td>
@@ -405,11 +420,11 @@
                                 <td>{{ $product->unit_price }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <button type="button" class="edit editButton" id="edit"
-                                            data-id="{{ $product->id }}">
-                                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                        </button>
-
+                                        <form action="{{ route('admin.productEdit', $product->id) }}">
+                                            <button type="submit" class="edit" id="edit">
+                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                            </button>
+                                        </form>
                                         <form action="{{ route('admin.productDestroy', $product->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -431,9 +446,6 @@
         </div>
     </div>
 
-    <input type="hidden" id="showNotification" value="{{ count($lowQuantityNotifications) > 0 ? 'true' : 'false' }}">
-
-
 @endsection
 
 @section('footer')
@@ -452,7 +464,7 @@
 
     {{-- Live Search --}}
     <script type="text/javascript">
-        $('#search').on('input', function() {
+        $('#search').on('keyup', function() {
 
             const contentContainer = $('#content');
             $value = $(this).val();
@@ -474,17 +486,17 @@
                     'search': $value
                 },
                 success: function(data) {
-                        console.log(data);
-                        if (data.trim() === "") {
-                            contentContainer.html(
-                                '<tr><td colspan="11" class="id">No Result Found</td></tr>');
-                        } else {
-                            contentContainer.html(data);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
+                    console.log(data);
+                    if (data.trim() === "") {
+                        contentContainer.html(
+                            '<tr><td colspan="11" class="id">No Result Found</td></tr>');
+                    } else {
+                        contentContainer.html(data);
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
             });
         });
     </script>

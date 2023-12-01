@@ -26,7 +26,7 @@
                         <input required autofocus type="text" name="code" pattern="{3,11}" class="row1-input"
                             id="autofocus" value="{{ old('code') }}" />
                     </div>
-                    
+
                     <div class="column">
 
                         <label for="">Product Name:</label>
@@ -44,13 +44,13 @@
                         @endif
 
                     </div>
-                   
+
                     <div class="column">
                         <label for="">Brand Name:</label>
                         <input required type="text" name="brand_name" id="" value="{{ old('brand_name') }}"
                             class="row1-input" />
                     </div>
-                   
+
                 </div>
 
                 <div class="row2">
@@ -105,13 +105,13 @@
                         <div class="input_container">
                             <input type="file" id="fileUpload">
                         </div> --}}
-                        {{-- <label for="Image">Image:</label>
+                    {{-- <label for="Image">Image:</label>
                         <label for="file-upload" class="custom-file-upload">-- Upload Here --</label>
                         <input id="file-upload" type="file" name="photo" id="" class="row2-input" /> --}}
                     {{-- </div> --}}
 
                 </div>
-                
+
                 <div class="row3">
                     <div class="column">
                         <label for="">Image:</label>
@@ -125,15 +125,15 @@
                         <div class="input_container_ginaya">
                             <input type="number" name="low_quantity_threshold" placeholder="Enter threshold"
                                 title="Receive notification when the stock quantity reaches or falls below this value."
-                                value="{{ old('low_quantity_threshold') }}" required/>
+                                value="{{ old('low_quantity_threshold') }}" required />
                         </div>
                     </div>
 
                 </div>
                 <div class="row4">
                     <label for="">Product Description:</label>
-                    <textarea required name="description" rows="5" placeholder="Eg. size..." cols="5"
-                        class="" value="{{ old('description') }}">{{ old('description') }}</textarea>
+                    <textarea required name="description" rows="5" placeholder="Eg. size..." cols="5" class=""
+                        value="{{ old('description') }}">{{ old('description') }}</textarea>
                 </div>
 
                 <hr>
@@ -183,8 +183,8 @@
 
                         <div class="column">
                             <label for="">Brand Name:</label>
-                            <input required type="text" name="brand_name" id="" value="{{ $product->brand_name }}"
-                                class="row1-input" />
+                            <input required type="text" name="brand_name" id=""
+                                value="{{ $product->brand_name }}" class="row1-input" />
                         </div>
 
                         {{-- <div class="column">
@@ -196,7 +196,7 @@
                             @endif
                         </div> --}}
 
-                        
+
                     </div>
 
                     <div class="row2">
@@ -260,14 +260,14 @@
                                 <input type="file" name="photo" id="fileUpload">
                             </div>
                         </div>
-                          <div class="column">
-                        <label for="">Receive Notification when Quantity is:</label>
-                        <div class="input_container_ginaya_edit">
-                            <input type="number" name="low_quantity_threshold" placeholder="Enter threshold"
-                                title="Receive notification when the stock quantity reaches or falls below this value."
-                                value="{{ $product->low_quantity_threshold }}" required/>
+                        <div class="column">
+                            <label for="">Receive Notification when Quantity is:</label>
+                            <div class="input_container_ginaya_edit">
+                                <input type="number" name="low_quantity_threshold" placeholder="Enter threshold"
+                                    title="Receive notification when the stock quantity reaches or falls below this value."
+                                    value="{{ $product->low_quantity_threshold }}" required />
+                            </div>
                         </div>
-                    </div>
                     </div>
 
                     <div class="row4">
@@ -295,29 +295,32 @@
     <ul>
         <li>
             <div class="dashboard-container">
-                <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
-                <a href="{{ route('staff.dashboard') }}" class="sidebar top">DASHBOARD</a>
+                <a class="sidebar top" href="{{ route('staff.dashboard') }}">
+                    <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
+                    DASHBOARD</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
-                <a class="sidebar active" href="{{ route('staff.product') }}">PRODUCT</a>
+                <a class="sidebar active" href="{{ route('staff.product') }}">
+                    <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
+                    PRODUCT</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
-                <a class="sidebar" href="{{ route('staff.transaction') }}">TRANSACTION</a>
+                <a class="sidebar" href="{{ route('staff.transaction') }}">
+                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                    TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
-                <a class="sidebar" href="{{ route('staff.customer') }}">CUSTOMER</a>
+                <a class="sidebar" href="{{ route('staff.customer') }}">
+                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                    CUSTOMER</a>
             </div>
         </li>
-        
     </ul>
 
 @endsection
@@ -485,17 +488,17 @@
                     'search': $value
                 },
                 success: function(data) {
-                        console.log(data);
-                        if (data.trim() === "") {
-                            contentContainer.html(
-                                '<tr><td colspan="11" class="id">No Result Found</td></tr>');
-                        } else {
-                            contentContainer.html(data);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', status, error);
+                    console.log(data);
+                    if (data.trim() === "") {
+                        contentContainer.html(
+                            '<tr><td colspan="11" class="id">No Result Found</td></tr>');
+                    } else {
+                        contentContainer.html(data);
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
             });
         });
     </script>

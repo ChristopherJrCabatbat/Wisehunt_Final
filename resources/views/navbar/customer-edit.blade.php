@@ -1,44 +1,50 @@
 @extends('../layouts.layout')
 
-@section('title', 'Supplier')
+@section('title', 'Customer')
 
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/product-transaction-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/customer-supplier-styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/supplier-styles.css') }}">
 @endsection
 
 @section('modals')
 
     <div class="overlay editOverlay"></div>
 
-    {{-- Add Modal --}}
-    <div id="newModal" class="modal">
-        <div class="modal-content">
-            <span class="close closeModal">&times;</span>
 
-            <form class="modal-form" action="{{ route('admin.supplierStore') }}" method="POST">
-                @csrf
-                <center>
-                    <h2 style="margin: 0%; color:#333;">Add Supplier</h2>
-                </center>
-                <label class="modal-top" for="">Company Name:</label>
-                <input required autofocus type="text" name="supplier" id="autofocus" />
-                <label for="">Contact Name:</label>
-                <input required type="text" name="contact_person" id="" />
-                <label for="">Contact Number:</label>
-                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number" name="contact_num"
-                    id="" value="">
-                <label for="">Address:</label>
-                <input required type="text" name="address" id="" />
-                <label for="">Product/s:</label>
-                <input required type="text" name="product_name" id="" />
+    {{-- Edit Modal --}}
+        <div id="editModal" class="editModal">
+            <div class="modal-content">
+                <a href="{{ route('admin.customer') }}"><span class="close closeEditModal">&times;</span></a>
 
+                <form class="edit-modal-form" action="{{ route('admin.customerUpdate', $customerss->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
 
-                <input class="add" type="submit" value="Add" />
-            </form>
+                    <center>
+                        <h2 style="margin: 0%; color:#333;">Edit Customer</h2>
+                    </center>
+
+                    <label class="modal-top" for="">Company Name:</label>
+                    <input required type="text" class="autofocus" name="name" id="" autofocus
+                        value="{{ old('name', $customerss->name) }}">
+                    <label for="">Contact Name:</label>
+                    <input required type="text" name="contact_person" id=""
+                        value="{{ old('contact_person', $customerss->contact_person) }}">
+
+                    <label for="">Contact Number:</label>
+                    <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+                        name="contact_num" id="" value="{{ old('contact_num', $customerss->contact_num) }}">
+
+                    <label for="">Address:</label>
+                    <input required type="text" name="address" id=""
+                        value="{{ old('address', $customerss->address) }}">
+
+                    <input class="add" type="submit" value="Update">
+                </form>
+
+            </div>
         </div>
-    </div>
 
 @endsection
 
@@ -68,14 +74,14 @@
         </li>
         <li>
             <div class="baba-container">
-                <a class="sidebar" href="{{ route('admin.customer') }}">
+                <a class="sidebar active" href="{{ route('admin.customer') }}">
                     <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
                     CUSTOMER</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <a class="sidebar active" href="{{ route('admin.supplier') }}">
+                <a class="sidebar" href="{{ route('admin.supplier') }}">
                     <img src="{{ asset('images/supplier.png') }}" class="supplier-i" alt="">
                     SUPPLIER</a>
             </div>
@@ -97,19 +103,18 @@
     <div class="content">
         <div class="taas">
             <form id="addCustomerForm">
-                <button class="add" type="button" id="newButton">Add Supplier</button>
+                <button class="add" type="button" id="newButton">Add Customer</button>
             </form>
         </div>
+
         <div class="table">
             <table>
-
                 <tr>
-                    <th colspan="11" class="table-th">SUPPLIERS</th>
+                    <th colspan="11" class="table-th">CUSTOMER LISTS</th>
                 </tr>
 
                 @php
-                    // Calculate the initial row number based on the current page
-                    $rowNumber = ($suppliers->currentPage() - 1) * $suppliers->perPage() + 1;
+                    $rowNumber = 1 + ($customers->currentPage() - 1) * $customers->perPage();
                 @endphp
 
                 <tr>
@@ -118,36 +123,33 @@
                     <th>Contact Name</th>
                     <th>Contact Number</th>
                     <th>Address</th>
-                    <th>Product/s</th>
+                    {{-- <th>Item Sold</th> --}}
                     <th>Actions</th>
                 </tr>
 
                 <tbody>
-                    @if ($suppliers->isEmpty())
+                    @if ($customers->isEmpty())
                         <tr>
                             <td colspan="7">No data found.</td>
                         </tr>
                     @else
-                        @foreach ($suppliers as $supplier)
+                        @foreach ($customers as $customer)
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
-                                <td>{{ $supplier->supplier }}</td>
-                                <td>{{ $supplier->contact_person }}</td>
-                                <td>{{ $supplier->contact_num }}</td>
-                                <td>{{ $supplier->address }}</td>
-                                <td>{{ $supplier->product_name }}</td>
-
+                                <td>{{ $customer->name }}</td>
+                                <td>{{ $customer->contact_person }}</td>
+                                <td>{{ $customer->contact_num }}</td>
+                                <td>{{ $customer->address }}</td>
+                                {{-- <td>{{ $customer->item_sold }}</td> --}}
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form action="{{ route('admin.supplierEdit', $supplier->id) }}" method="POST">
-                                            @csrf
-                                            @method('GET')  
-                                            <button type="submit" class="edit editButton" id="edit">
+                                        <form>
+                                            <button type="button" class="edit editButton" id="edit"
+                                                data-id="{{ $customer->id }}">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>
-
-                                        <form action="{{ route('admin.supplierDestroy', $supplier->id) }}"
+                                        <form action="{{ route('admin.customerDestroy', $customer->id) }}"
                                             method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -158,7 +160,6 @@
                                         </form>
                                     </div>
                                 </td>
-
                             </tr>
                         @endforeach
                     @endif
@@ -166,10 +167,13 @@
 
             </table>
 
-            <div class="pagination">{{ $suppliers->links('layouts.customPagination') }}</div>
+            <div class="pagination">{{ $customers->links('layouts.customPagination') }}</div>
 
         </div>
+
     </div>
+
+
 @endsection
 
 @section('footer')

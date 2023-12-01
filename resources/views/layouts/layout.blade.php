@@ -27,32 +27,32 @@
 <body>
 
     {{-- @if ($errors->any())
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Check if there are validation errors for the add modal
-            const newModal = document.getElementById("newModal");
-            const overlay = document.querySelector(".overlay");
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // Check if there are validation errors for the add modal
+                const newModal = document.getElementById("newModal");
+                const overlay = document.querySelector(".overlay");
 
-            if (newModal) {
-                newModal.style.display = "block";
-                overlay.style.display = "block";
-            }
+                if (newModal) {
+                    newModal.style.display = "block";
+                    overlay.style.display = "block";
+                }
 
-            // Check if there are validation errors for any of the edit modals
-            @foreach ($users as $user)
-                @if($errors->has('name', 'email', 'password', 'role', "editModal{{$user->id}}"))
-                    const editModal{{ $user->id }} = document.getElementById("editModal{{ $user->id }}");
-                    const editOverlay{{ $user->id }} = document.querySelector(".editOverlay{{ $user->id }}");
+                // Check if there are validation errors for any of the edit modals
+                @foreach ($users as $user)
+                    @if($errors->has('name', 'email', 'password', 'role', "editModal{{$user->id}}"))
+                        const editModal{{ $user->id }} = document.getElementById("editModal{{ $user->id }}");
+                        const editOverlay{{ $user->id }} = document.querySelector(".editOverlay{{ $user->id }}");
 
-                    if (editModal{{ $user->id }}) {
-                        editModal{{ $user->id }}.style.display = "block";
-                        editOverlay{{ $user->id }}.style.display = "block";
-                    }
-                @endif
-            @endforeach
-        });
-    </script>
-@endif --}}
+                        if (editModal{{ $user->id }}) {
+                            editModal{{ $user->id }}.style.display = "block";
+                            editOverlay{{ $user->id }}.style.display = "block";
+                        }
+                    @endif
+                @endforeach
+            });
+        </script>
+    @endif --}}
 
     @if ($errors->any())
         <script>
@@ -60,18 +60,18 @@
                 // Open the modal if there are validation errors
                 const newModal = document.getElementById("newModal");
                 const overlay = document.querySelector(".overlay");
-                const editModals = document.getElementById("editModal");
-                const editOverlays = document.querySelector(".editOverlay");
+                // const editModals = document.getElementById("editModal");
+                // const editOverlays = document.querySelector(".editOverlay");
 
                 if (newModal && overlay) {
                     newModal.style.display = "block";
                     overlay.style.display = "block";
                 }
 
-                if (editModals && editOverlays) {
-                    editModals.style.display = "block";
-                    editOverlays.style.display = "block";
-                }
+                // if (editModals && editOverlays) {
+                //     editModals.style.display = "block";
+                //     editOverlays.style.display = "block";
+                // }
             });
         </script>
     @endif
@@ -103,40 +103,6 @@
                 @endforeach
             </ul>
         </div>
-
-
-        {{-- <!-- Notification -->
-        <div id="notificationPanel" class="notification-panel">
-            <span class="close-notification" onclick="closeNotification()">&times;</span>
-            <h3 class="h3-notif">Notifications</h3>
-            <ul id="notificationList" class="notification-list">
-                <!-- Display low-quantity notifications -->
-                @foreach ($lowQuantityNotifications as $notification)
-                    <li class="notification-item">
-                        {!! $notification['message'] !!}
-                        <span class="dot"></span>
-                    </li>
-        
-                    <!-- Check if there are forecast messages and display them -->
-                    @if (!empty($notification['forecastMessage']))
-                        @foreach (explode('<br>', $notification['forecastMessage']) as $forecast)
-                            <li class="notification-item forecast-message">
-                                {!! $forecast !!}
-                                <span class="dot"></span>
-                            </li>
-                        @endforeach
-                    @endif
-                @endforeach
-        
-                <!-- Display best-seller notifications -->
-                @foreach ($bestSellerNotifications as $notification)
-                    <li class="notification-item best-seller">
-                        {!! $notification['message'] !!}
-                        <span class="dot"></span>
-                    </li>
-                @endforeach
-            </ul>
-        </div> --}}
 
 
         <header>
@@ -173,7 +139,7 @@
                                         alt="" width="100" height="auto">
                                 @endif
                                 @if (auth()->user()->role === 'Staff')
-                                    <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-users.png') }}"
+                                    <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-usersss.png') }}"
                                         alt="" width="100" height="auto">
                                 @endif
                             </label>
@@ -219,7 +185,7 @@
 
     <script src="{{ asset('js/logout.js') }}"></script>
     <script src="{{ asset('js/add.js') }}"></script>
-    <script src="{{ asset('js/edit.js') }}"></script>
+    {{-- <script src="{{ asset('js/edit.js') }}"></script> --}}
     {{-- <script src="{{ asset('js/easyAdd.js') }}"></script> --}}
 
     <script>

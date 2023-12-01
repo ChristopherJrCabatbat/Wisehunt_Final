@@ -12,33 +12,41 @@
 
     <div class="overlay editOverlay"></div>
 
-    {{-- Add Modal --}}
-    <div id="newModal" class="modal">
-        <div class="modal-content">
-            <span class="close closeModal">&times;</span>
+    {{-- Edit Modal --}}
+        <div id="editModal" class="editModal">
+            <div class="modal-content">
+                <a href="{{ route('admin.supplier') }}"><span class="close closeEditModal">&times;</span></a>
 
-            <form class="modal-form" action="{{ route('admin.supplierStore') }}" method="POST">
-                @csrf
-                <center>
-                    <h2 style="margin: 0%; color:#333;">Add Supplier</h2>
-                </center>
-                <label class="modal-top" for="">Company Name:</label>
-                <input required autofocus type="text" name="supplier" id="autofocus" />
-                <label for="">Contact Name:</label>
-                <input required type="text" name="contact_person" id="" />
-                <label for="">Contact Number:</label>
-                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number" name="contact_num"
-                    id="" value="">
-                <label for="">Address:</label>
-                <input required type="text" name="address" id="" />
-                <label for="">Product/s:</label>
-                <input required type="text" name="product_name" id="" />
+                <form class="edit-modal-form" action="{{ route('admin.supplierUpdate', $supplierss->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <center>
+                        <h2 style="margin: 0%; color:#333;">Edit Supplier</h2>
+                    </center>
+                    <label class="modal-top" for="">Company Name:</label>
+                    <input required type="text" class="autofocus" name="supplier" id="" autofocus
+                        value="{{ old('supplier', $supplierss->supplier) }}" />
+                    <label for="">Contact Name:</label>
+                    <input required type="text" name="contact_person" id=""
+                        value="{{ old('contact_person', $supplierss->contact_person) }}" />
+                    <label for="">Contact Number:</label>
+                    <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
+                        name="contact_num" name="contact_num" id=""
+                        value="{{ old('contact_num', $supplierss->contact_num) }}" />
+                    <label for="">Address:</label>
+                    <input required type="text" name="address" id=""
+                        value="{{ old('address', $supplierss->address) }}" />
+                    <label for="">Product/s:</label>
+                    <input required type="text" name="product_name" id=""
+                        value="{{ old('product_name', $supplierss->product_name) }}" />
 
 
-                <input class="add" type="submit" value="Add" />
-            </form>
+                    <input class="add" type="submit" value="Update" />
+                </form>
+            </div>
         </div>
-    </div>
+
 
 @endsection
 
@@ -139,13 +147,10 @@
 
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form action="{{ route('admin.supplierEdit', $supplier->id) }}" method="POST">
-                                            @csrf
-                                            @method('GET')  
-                                            <button type="submit" class="edit editButton" id="edit">
-                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                            </button>
-                                        </form>
+                                        <button type="button" class="edit editButton" id="edit"
+                                            data-id="{{ $supplier->id }}">
+                                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                        </button>
 
                                         <form action="{{ route('admin.supplierDestroy', $supplier->id) }}"
                                             method="POST">
