@@ -366,12 +366,13 @@ select {
 }
 
 table td {
-    padding: 10px;
+    padding: 8px;
 }
 
 .taas {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: flex-start;
+    gap: 19%;
     margin-bottom: 20px;
 }
 

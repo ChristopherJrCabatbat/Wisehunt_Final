@@ -28,6 +28,7 @@
             {{-- <form action="{{ route('loginStore') }}" method="POST"> --}}
             <form method="POST" action="{{ route('login') }}">
                 @csrf
+                
                 <h2>Login</h2>
                 <div class="input-field">
                     <input type="email" class="has-value" name="email" id="email" value="{{ old('email') }}" required>

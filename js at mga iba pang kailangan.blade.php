@@ -629,3 +629,57 @@ return back()->with('message' , 'Password does not match.');
 
                 return $forecastedSales;
                 }
+
+
+
+
+
+ // public function transactionStore(Request $request)
+    // {
+    //     // Retrieve data from the request
+    //     $productName = $request->input('product_name');
+    //     $unitPrice = $request->input('unit_price');
+    //     $qty = $request->input('qty');
+    //     $customerName = $request->input('customer_name');
+
+    //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
+    //     $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+
+    //     if ($product) {
+    //         // Check if there's enough quantity to subtract
+    //         if ($product->quantity >= $qty) {
+    //             // Calculate total price
+    //             $totalPrice = $unitPrice * $qty;
+
+    //             // Calculate total earned
+    //             $capital = $product->capital;
+    //             $totalEarned = ($unitPrice - $capital) * $qty;
+
+    //             // Create a new Transactions record and save it to the database
+    //             $transaction = new Transaction;
+    //             $transaction->customer_name = $customerName;
+    //             $transaction->product_name = $productName;
+    //             $transaction->qty = $qty;
+    //             $transaction->unit_price = $unitPrice;
+    //             $transaction->total_price = $totalPrice;
+    //             $transaction->total_earned = $totalEarned;
+    //             $transaction->save();
+
+    //             // Update the product quantity by subtracting the sold quantity
+    //             $product->quantity -= $qty;
+    //             $product->save();
+
+    //             return back();
+    //         } else {
+    //             // Handle the case where the quantity is insufficient
+    //             return redirect()->back()
+    //                 ->withInput()
+    //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
+    //         }
+    //     } else {
+    //         // Keep the form data and repopulate the fields
+    //         return redirect()->back()
+    //             ->withInput()
+    //             ->withErrors(['error' => 'Selected product and unit price did not match.']);
+    //     }
+    // }

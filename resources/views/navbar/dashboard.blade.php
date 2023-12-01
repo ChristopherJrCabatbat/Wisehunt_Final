@@ -65,9 +65,16 @@
                     ->whereYear('created_at', today()->year)
                     ->sum(DB::raw('qty * unit_price')) ?? 0; ?>;
 
+                var currentMonthSalesLabel = '₱' + currentMonthSales;
+
+
                 if (currentMonthSales > 0) {
-                    data.addRow([month.toLocaleString('default', { month: 'long' }), currentMonthSales, null]);
-                    monthsWithData.push(month.toLocaleString('default', { month: 'long' }));
+                    data.addRow([month.toLocaleString('default', {
+                        month: 'long'
+                    }), currentMonthSales, null]);
+                    monthsWithData.push(month.toLocaleString('default', {
+                        month: 'long'
+                    }));
                     latestMonthWithData = month;
                 }
             @endfor
@@ -76,7 +83,9 @@
             if (latestMonthWithData !== null) {
                 var nextMonth = new Date(latestMonthWithData);
                 nextMonth.setMonth(nextMonth.getMonth() + 1);
-                var nextMonthString = nextMonth.toLocaleString('default', { month: 'long' });
+                var nextMonthString = nextMonth.toLocaleString('default', {
+                    month: 'long'
+                });
 
                 // Check if the next month is not already in the array before adding it
                 if (!monthsWithData.includes(nextMonthString)) {
@@ -90,6 +99,7 @@
 
                     // Calculate forecasted sales using weighted average with dynamic alpha
                     var forecastedSales = calculateWeightedAverageDynamic(data, data.getNumberOfRows() - 1, dynamicAlpha);
+                    var forecastedSalesLabel = '₱' + forecastedSales;
 
                     // Add the data for the next month
                     data.addRow([nextMonthString, null, forecastedSales]);
@@ -126,6 +136,10 @@
                         lineWidth: 2
                     },
                 },
+                vAxis: {
+                    format: 'currency', // Format vertical axis labels as currency
+                    prefix: '₱' // Set the currency symbol
+                }
             };
 
             try {
@@ -286,7 +300,7 @@
         <div class="graph">
             <div class="line-graph">
                 <div id="curve_chart" style="height: 500px;"></div>
-                <div class="chart-label chart-y-label">Earnings</div>
+                <div class="sales">Sales</div>
             </div>
 
             <div class="bar-graph">

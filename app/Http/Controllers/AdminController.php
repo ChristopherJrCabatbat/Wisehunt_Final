@@ -931,6 +931,7 @@ class AdminController extends Controller
         ])->with('lowQuantityNotifications', $lowQuantityNotifications)->with('searchQuery', $searchQuery)->with('customers', $customers);
     }
 
+
     // public function transactionStore(Request $request)
     // {
     //     // Retrieve data from the request
@@ -966,6 +967,21 @@ class AdminController extends Controller
     //             $product->quantity -= $qty;
     //             $product->save();
 
+    //             // Fetch past transactions for the current day
+    //             $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
+
+    //             // Perform sales forecasting logic based on the past transactions
+    //             $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
+
+    //             // Display alert with forecasted sales
+    //             if ($forecastedSales !== null) {
+    //                 // You can customize the alert message based on your requirements
+    //                 // Here, I'm using the basic alert() function for demonstration purposes
+    //                 // echo "<script>alert('Forecasted Sales for the day: $forecastedSales');</script>";
+    //                 return back()->with('forecastedSales', $forecastedSales);
+
+    //             }
+
     //             return back();
     //         } else {
     //             // Handle the case where the quantity is insufficient
@@ -982,69 +998,72 @@ class AdminController extends Controller
     // }
 
     public function transactionStore(Request $request)
-    {
-        // Retrieve data from the request
-        $productName = $request->input('product_name');
-        $unitPrice = $request->input('unit_price');
-        $qty = $request->input('qty');
-        $customerName = $request->input('customer_name');
+{
+    // Retrieve data from the request
+    $productName = $request->input('product_name');
+    $unitPrice = $request->input('unit_price');
+    $qty = $request->input('qty');
+    $customerName = $request->input('customer_name');
 
-        // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-        $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+    // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
+    $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
 
-        if ($product) {
-            // Check if there's enough quantity to subtract
-            if ($product->quantity >= $qty) {
-                // Calculate total price
-                $totalPrice = $unitPrice * $qty;
+    if ($product) {
+        // Check if there's enough quantity to subtract
+        if ($product->quantity >= $qty) {
+            // Calculate total price
+            $totalPrice = $unitPrice * $qty;
 
-                // Calculate total earned
-                $capital = $product->capital;
-                $totalEarned = ($unitPrice - $capital) * $qty;
+            // Calculate total earned
+            $capital = $product->capital;
+            $totalEarned = ($unitPrice - $capital) * $qty;
 
-                // Create a new Transactions record and save it to the database
-                $transaction = new Transaction;
-                $transaction->customer_name = $customerName;
-                $transaction->product_name = $productName;
-                $transaction->qty = $qty;
-                $transaction->unit_price = $unitPrice;
-                $transaction->total_price = $totalPrice;
-                $transaction->total_earned = $totalEarned;
-                $transaction->save();
+            // Create a new Transactions record and save it to the database
+            $transaction = new Transaction;
+            $transaction->customer_name = $customerName;
+            $transaction->product_name = $productName;
+            $transaction->qty = $qty;
+            $transaction->unit_price = $unitPrice;
+            $transaction->total_price = $totalPrice;
+            $transaction->total_earned = $totalEarned;
+            $transaction->save();
 
-                // Update the product quantity by subtracting the sold quantity
-                $product->quantity -= $qty;
-                $product->save();
+            // Update the product quantity by subtracting the sold quantity
+            $product->quantity -= $qty;
+            $product->save();
 
-                // Fetch past transactions for the current day
-                $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
+            // Fetch past transactions for the current day
+            $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
 
-                // Perform sales forecasting logic based on the past transactions
-                $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
+            // Perform sales forecasting logic based on the past transactions
+            $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
 
-                // Display alert with forecasted sales
-                if ($forecastedSales !== null) {
-                    // You can customize the alert message based on your requirements
-                    // Here, I'm using the basic alert() function for demonstration purposes
-                    // echo "<script>alert('Forecasted Sales for the day: $forecastedSales');</script>";
-                    return back()->with('forecastedSales', $forecastedSales);
+            // Increment the transaction count in the session
+            $transactionCount = session('transactionCount', 0) + 1;
+            session(['transactionCount' => $transactionCount]);
 
-                }
-
-                return back();
-            } else {
-                // Handle the case where the quantity is insufficient
-                return redirect()->back()
-                    ->withInput()
-                    ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
+            // Display alert with forecasted sales after every two transactions
+            if ($forecastedSales !== null && $transactionCount % 2 === 0) {
+                // You can customize the alert message based on your requirements
+                // Here, I'm using the basic alert() function for demonstration purposes
+                echo "<script>alert('Forecasted Sales for the day: ₱$forecastedSales');</script>";
             }
+
+            return back();
         } else {
-            // Keep the form data and repopulate the fields
+            // Handle the case where the quantity is insufficient
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error' => 'Selected product and unit price did not match.']);
+                ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
         }
+    } else {
+        // Keep the form data and repopulate the fields
+        return redirect()->back()
+            ->withInput()
+            ->withErrors(['error' => 'Selected product and unit price did not match.']);
     }
+}
+
 
 
     private function calculateForecastedSales($transactions)

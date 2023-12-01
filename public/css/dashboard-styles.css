@@ -88,19 +88,58 @@ label {
     min-width: 834px;
     max-height: 400px;
 } */
+
 .line-graph {
-    margin-left: -110px;
+    /* margin-left: -110px; */
     background-color: transparent;
-    margin-right: 0;
-    margin-top: -10px;
+    /* margin-right: 0; */
+    /* margin-top: 110px; */
     /* min-width: 100%; */
-    margin-bottom: 15px;
+    overflow: hidden;
+    overflow-x: hidden; /* Hide horizontal overflow */
+
+    margin-bottom: 585px;
+    padding: 0;
 }
+
 #curve_chart {
-    min-width:1224px;
+    position: absolute;
+    top: 190px;
+    left: 85px;
+    overflow: hidden;
+    overflow-x: hidden; /* Hide horizontal overflow */
+    min-width: 1240px;
     min-height: 600px;
 }
 
+.sales {
+    position: absolute;
+    top: 66%;
+    left: 194px;
+    transform: translateY(-50%) rotate(-90deg);
+    font-size: 15px;
+    color: #414141;
+    white-space: nowrap;
+    font-family: Arial, Helvetica, sans-serif;
+    -webkit-user-select: none;
+    user-select: none; /* Add this line */
+}
+
+div div div div div svg rect {
+    width: 1250px;
+}
+
+div.graph div.line-graph div#curve_chart div div div svg g g g text {
+    font-size: 14px;
+}
+
+/* div div div div div svg  {
+    width: 900px;
+} */
+
+/* div.graph div.line-graph div#curve_chart div div div svg g {
+    width: 1200px;
+} */
 
 .pie-graph {
     /* min-height: 368px;
@@ -119,7 +158,7 @@ label {
     max-height: 260px;
 } */
 
-#piechart{
+#piechart {
     background-color: transparent;
     color: transparent;
     margin-left: 100px;
@@ -127,12 +166,11 @@ label {
     /* margin-bottom: 100px; */
     min-width: 900px;
     min-height: 430px;
-
 }
 
 /* Labels Text */
 g g g text {
-    font-size: 17px; 
+    font-size: 17px;
 }
 
 .gitna-boxbaba {
@@ -141,7 +179,6 @@ g g g text {
     border: 1px solid #afafaf;
     background-color: white;
     /* padding: 3px; */
-
 }
 
 .chart-container {
@@ -161,16 +198,14 @@ g g g text {
     user-select: none; /* Add this line */
 }
 
-
-
-.demand {
+/* .demand {
     display: flex;
     justify-content: center;
     font-family: Arial, Helvetica, sans-serif;
     white-space: nowrap;
     color: #414141;
     margin-top: 20px;
-}
+} */
 
 select {
     margin-top: 10px;
@@ -193,7 +228,6 @@ table {
 svg g g rect {
     margin-right: 52px;
 }
-
 
 /* Dinagdag */
 .dashboard-container {

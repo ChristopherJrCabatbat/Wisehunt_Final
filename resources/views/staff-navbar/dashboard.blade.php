@@ -4,8 +4,143 @@
 
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/dashboard-styles.css') }}">
-
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    {{-- // Line Chart --}}
+    <script type="text/javascript">
+        google.charts.load('current', {
+            'packages': ['corechart']
+        });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function calculateWeightedAverage(data, currentIndex, alpha) {
+            var weightedTotal = 0;
+            var weightSum = 0;
+
+            for (var i = currentIndex; i >= 0; i--) {
+                var weight = Math.pow(alpha, currentIndex - i);
+                weightedTotal += weight * data.getValue(i, 1);
+                weightSum += weight;
+            }
+
+            return weightedTotal / weightSum;
+        }
+
+        function calculateWeightedAverageDynamic(data, currentIndex, alpha) {
+            var weightedTotal = 0;
+            var weightSum = 0;
+
+            for (var i = currentIndex; i >= 0; i--) {
+                var weight = Math.pow(alpha, currentIndex - i);
+                weightedTotal += weight * data.getValue(i, 1);
+                weightSum += weight;
+            }
+
+            return weightedTotal / weightSum;
+        }
+
+        function calculateDynamicAlpha(data, currentIndex, baseAlpha, sensitivity) {
+            // If there's not enough data points to calculate the trend, use the base alpha
+            if (currentIndex < 2) {
+                return baseAlpha;
+            }
+
+            var recentTrend = data.getValue(currentIndex, 1) - data.getValue(currentIndex - 1, 1);
+            var alpha = baseAlpha * (1 + sensitivity * recentTrend);
+            return Math.max(0, Math.min(1, alpha)); // Ensure alpha is between 0 and 1
+        }
+
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Month');
+            data.addColumn('number', 'Current Sales');
+            data.addColumn('number', 'Forecasted Sales');
+
+            var monthsWithData = [];
+            var latestMonthWithData = null;
+
+            @for ($i = 1; $i <= 12; $i++)
+                var month = new Date('{{ date('Y-m', mktime(0, 0, 0, $i, 1)) }}');
+                var currentMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
+                    ->whereYear('created_at', today()->year)
+                    ->sum(DB::raw('qty * unit_price')) ?? 0; ?>;
+
+                if (currentMonthSales > 0) {
+                    data.addRow([month.toLocaleString('default', { month: 'long' }), currentMonthSales, null]);
+                    monthsWithData.push(month.toLocaleString('default', { month: 'long' }));
+                    latestMonthWithData = month;
+                }
+            @endfor
+
+            // Include the next month after the latest month with data
+            if (latestMonthWithData !== null) {
+                var nextMonth = new Date(latestMonthWithData);
+                nextMonth.setMonth(nextMonth.getMonth() + 1);
+                var nextMonthString = nextMonth.toLocaleString('default', { month: 'long' });
+
+                // Check if the next month is not already in the array before adding it
+                if (!monthsWithData.includes(nextMonthString)) {
+                    monthsWithData.push(nextMonthString);
+
+                    // Set the base alpha parameter for weighted average
+                    var baseAlpha = 0.2; // You can adjust this value
+
+                    // Calculate dynamic alpha based on recent trend
+                    var dynamicAlpha = calculateDynamicAlpha(data, data.getNumberOfRows() - 1, baseAlpha, 0.1);
+
+                    // Calculate forecasted sales using weighted average with dynamic alpha
+                    var forecastedSales = calculateWeightedAverageDynamic(data, data.getNumberOfRows() - 1, dynamicAlpha);
+
+                    // Add the data for the next month
+                    data.addRow([nextMonthString, null, forecastedSales]);
+                }
+            }
+
+            // Add the weighted average for the Future Sales line
+            for (var i = 0; i < data.getNumberOfRows(); i++) {
+                var weightedAverage = calculateWeightedAverage(data, i, baseAlpha);
+                data.setValue(i, 2, weightedAverage);
+            }
+
+            var options = {
+                title: 'Sales Forecasting',
+                titleTextStyle: {
+                    color: '#414141',
+                    fontSize: 28,
+                    bold: true,
+                    fontFamily: 'Arial, Helvetica, sans-serif',
+                },
+                curveType: 'function',
+                legend: {
+                    position: 'bottom'
+                },
+                series: {
+                    0: {
+                        pointShape: 'circle',
+                        pointSize: 5,
+                        lineWidth: 2
+                    },
+                    1: {
+                        pointShape: 'circle',
+                        pointSize: 5,
+                        lineWidth: 2
+                    },
+                },
+            };
+
+            try {
+                var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                chart.draw(data, options);
+            } catch (error) {
+                console.error('Error drawing the chart:', error);
+            }
+        }
+    </script>
+
+
+
+
+    // {{-- Pie Chart --}}
     <script type="text/javascript">
         google.charts.load('current', {
             'packages': ['corechart']
@@ -55,6 +190,7 @@
             chart.draw(data, options);
         }
     </script>
+
 @endsection
 
 @section('side-navbar')
@@ -130,6 +266,10 @@
 
             {{-- Graph --}}
             <div class="graph">
+                <div class="line-graph">
+                    <div id="curve_chart" style="height: 500px;"></div>
+                    <div class="chart-label chart-y-label">Earnings</div>
+                </div>
 
                 <div class="bar-graph">
                     <div class="chart-container">

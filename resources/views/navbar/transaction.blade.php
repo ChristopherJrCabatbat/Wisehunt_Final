@@ -23,7 +23,7 @@
                 </center>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                <select required name="customer_name" id="customer" onchange="updateContactNumber()"
+                <select required name="customer_name" id="customer"
                     class="select customer">
                     <option value="" disabled selected>-- Select a Customer --</option>
                     @foreach ($customers as $customer)
@@ -33,11 +33,6 @@
                         </option>
                     @endforeach
                 </select>
-
-                {{-- <label for="contact_num">Contact Number:</label>
-                    <input required readonly name="contact_num" id="contact_num" pattern="[0-9]{5,11}"
-                        title="Enter a valid contact number" type="text" value="{{ old('contact_num') }}"
-                        class="contact_num"> --}}
 
                 <label for="product_name" class="taas-select">Product:</label>
                 <select required name="product_name" id="product_name" class="select product_name product-select"
@@ -52,10 +47,6 @@
                 </select>
 
                 <div class="text-danger">{{ $errors->first('error') }}</div> <!-- Display the error message here -->
-
-                {{-- <label for="">Amount Tendered:</label>
-                    <input required name="amount_tendered" type="number" value="{{ old('amount_tendered') }}">
-                    <div class="text-danger">{{ $errors->first('error_change') }}</div> --}}
 
                 <label for="">Quantity:</label>
                 <input required name="qty" class="qty" type="number" id="qty" value="{{ old('qty') }}">
@@ -92,8 +83,7 @@
                     </center>
 
                     <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                    <select class="select autofocus" name="customer_name" id="customer-edit"
-                        onchange="editUpdateContactNumber()">
+                    <select class="select autofocus" name="customer_name" id="customer-edit">
 
                         @foreach ($customers as $customer)
                             <option value="{{ $customer->name }}" data-contact-edit="{{ $customer->contact_num }}"
@@ -102,12 +92,6 @@
                             </option>
                         @endforeach
                     </select>
-
-                    {{-- <label for="contact_num">Contact Number:</label>
-                    <input required readonly name="contact_num" id="contact_num-edit" pattern="[0-9]{5,11}"
-                        title="Enter a valid contact number" type="text"
-                        value="{{ old('contact_num', $transaction->contact_num) }}"> --}}
-
 
                     <label for="product_name" class="taas-select">Product:</label>
                     <select class="select product-select" name="product_name" id="product_name-edit"
@@ -134,45 +118,12 @@
                     <input readonly name="total_price" id="total_price_edit" type="number"
                         value="{{ $transaction->total_price }}" class="total_price">
 
-                    {{-- <label for="">Amount Tendered:</label>
-                    <input required name="amount_tendered" type="number"
-                        value="{{ old('amount_tendered', $transaction->amount_tendered) }}">
-                    <div class="text-danger">{{ $errors->first('error_change') }}</div> --}}
-
                     <input type="submit" id="button-transac" value="Update">
                 </form>
             </div>
 
         </div>
     @endforeach
-
-    {{-- Report Modal --}}
-    {{-- <div id="reportModal" class="reportModal">
-        <div class="modal-content-report">
-            <span class="close">&times;</span>
-
-            <form class="modal-form" action="{{ route('admin.generateReport') }}" method="POST" target="_blank">
-                @csrf
-                <label class="modal-top" for="">Generate Report</label>
-                <hr>
-                <div class="row-report">
-                    <div class="column-report">
-                        <label for="">From Date:</label>
-                        <input type="date" required name="from_date">
-                    </div>
-                    <div class="column-report">
-                        <label for="">To Date:</label>
-                        <input type="date" required name="to_date">
-                    </div>
-                </div>
-                <hr>
-                <div class="buttons-report">
-                    <button type="submit">Generate</button>
-                </div>
-            </form>
-
-        </div>
-    </div> --}}
 
     {{-- Report Modal --}}
 <div id="reportModal" class="reportModal">
@@ -257,7 +208,6 @@
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
-                    {{-- <img src="{{ asset('images/supplier.png') }}" class="user-i" alt=""> --}}
                     USERS</a>
             </div>
         </li>
@@ -270,7 +220,6 @@
         <div class="taas">
 
             <div class="new-generate">
-                {{-- <form action="{{ route('admin.newTransaction', ['sort' => request('sort')]) }}"> --}}
                 <button type="button" id="newButton">New Transaction</button>
 
                 <form action="" id="generateReportForm">
@@ -310,20 +259,15 @@
 
             {{-- Search --}}
 
-            {{-- <form class="form-search" action="{{ route('admin.searchTransaction') }}" method="GET"> --}}
-            {{-- <form class="form-search" action="#" method="GET"> --}}
+           
             <div>
                 <div class="searchs">
                     <div class="form-search">
                         <input type="text" name="search" id="search" required class="search-prod"
                             placeholder="Search product..." value="{{ $searchQuery }}" />
                         <i class="fa fa-search search-icon"></i>
-                        {{-- <button class="search" type="submit"><img class="search"
-                                src="{{ asset('images/search.png') }}" alt=""></button> --}}
                     </div>
-                    {{-- <a href="{{ route('admin.transaction') }}" class="cancel-search">Cancel search</a> --}}
                 </div>
-                {{-- </form> --}}
             </div>
 
         </div>
