@@ -10,7 +10,7 @@
 
 @section('modals')
 
-    <div class="overlay editOverlay"></div>
+    <div class="editOverlay"></div>
 
     {{-- Edit Modal --}}
         <div id="editModal" class="editModal">

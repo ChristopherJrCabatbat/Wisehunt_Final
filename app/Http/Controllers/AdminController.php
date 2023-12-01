@@ -1184,6 +1184,36 @@ class AdminController extends Controller
         ] + $notifications);
     }
 
+    public function userEdit(Request $request, $id)
+    {
+        $nm = Session::get('name');
+
+        // Assuming you retrieve $productsss and $forecasts here or from another method
+        $productsss = Product::all();
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Call the method to generate notifications
+        $notifications = $this->generateNotifications($productsss, $forecasts);
+    
+        // Extract total counts from the generated notifications
+        $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+        $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+        $totalForecastMessages = $notifications['totalForecastMessages'];
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+        
+        $userss = User::find($id);
+        $users = User::paginate(8);
+
+        return view('navbar.user-edit', [
+            'users' => $users, 
+            'userss' => $userss, 
+            'totalNotifications' => $totalNotifications,
+            'username' => $nm,
+        ] + $notifications);
+    }
+
 
     public function userStore(Request $request)
     {
@@ -1234,11 +1264,9 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => ['required'],
-
-            'email' => 'required',
+            'email' => ['required', 'email', 'unique:users,email,' . $id],
             // 'email' => ['required','unique:'.User::class],
-
-            'password' => ['required'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required'],
         ]);
 

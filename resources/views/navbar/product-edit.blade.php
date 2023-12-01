@@ -11,7 +11,7 @@
 
 @section('modals')
 
-    <div class="overlay editOverlay"></div>
+    <div class="editOverlay"></div>
 
     {{-- Add Modal --}}
     <div id="newModal" class="modal">

@@ -124,11 +124,11 @@
                         {{-- <div class="username">{{ $username }}</div> --}}
 
                         @if (auth()->user()->role === 'Admin')
-                            <div class="username">admin</div>
+                            <div class="username">Admin</div>
                         @endif
 
                         @if (auth()->user()->role === 'Staff')
-                            <div class="username" style="margin-left: 12px; margin-right: 12px">staff</div>
+                            <div class="username" style="margin-left: 12px; margin-right: 12px">Staff</div>
                         @endif
 
                         <!-- Log out -->

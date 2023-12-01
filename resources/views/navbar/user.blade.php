@@ -10,7 +10,7 @@
 
 @section('modals')
 
-    <div class="overlay editOverlay"></div>
+    <div class="overlay"></div>
 
     {{-- Add Modal --}}
     <div id="newModal" class="modal">
@@ -51,56 +51,6 @@
             </form>
         </div>
     </div>
-
-    {{-- Edit Modal --}}
-    @foreach ($users as $user)
-        <div id="editModal{{ $user->id }}" class="modal editModal">
-            <div class="modal-content">
-                <span class="close closeEditModal">&times;</span>
-
-                <form class="edit-modal-form" action="{{ route('admin.userUpdate', $user->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <center>
-                        <h2 style="margin: 0%; color:#333;">Edit User</h2>
-                    </center>
-
-                    <label class="modal-top" for="name">Name:</label>
-                    <input required autofocus type="text" name="name" id="name"
-                        value="{{ old('name', $user->name) }}" />
-
-                    <label for="email">Email:</label>
-                    <input required type="email" name="email" id="email"
-                        value="{{ old('email', $user->email) }}" />
-                    @if ($errors->has('email'))
-                        <div class="user-text-danger">{{ $errors->first('email') }}</div>
-                    @endif
-                    {{-- <label for="old_password">Old Password:</label>
-                    <input required type="password" name="old_password" id="old_password" /> --}}
-
-                    <label for="password">New Password:</label>
-                    <input required type="password" name="password" id="password" />
-                    @if ($errors->has('password'))
-                        <div class="user-text-danger">{{ $errors->first('password') }}</div>
-                    @endif
-                    <label for="password_confirmation">Confirm New Password:</label>
-                    <input required type="password" name="password_confirmation" id="password_confirmation" />
-
-                    <label for="role">Role:</label>
-                    <select required name="role" id="role">
-                        <option disabled selected value="">-- Select Role --</option>
-                        <option value="Admin" {{ $user->role === 'Admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="Staff" {{ $user->role === 'Staff' ? 'selected' : '' }}>Staff</option>
-                    </select>
-
-                    <input class="add" type="submit" value="Update" />
-                </form>
-            </div>
-        </div>
-    @endforeach
-
-
 
 @endsection
 
@@ -198,10 +148,13 @@
 
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <button type="button" class="edit editButton" id="edit"
-                                            data-id="{{ $user->id }}">
-                                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                        </button>
+                                        <form action="{{ route('admin.userEdit', $user->id) }}" method="POST">
+                                            @csrf
+                                            @method('GET')  
+                                            <button type="submit" class="edit editButton" id="edit">
+                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                            </button>
+                                        </form>
 
                                         <form action="{{ route('admin.userDestroy', $user->id) }}" method="POST">
                                             @csrf

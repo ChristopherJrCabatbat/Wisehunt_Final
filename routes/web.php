@@ -75,10 +75,11 @@ Route::group([
     Route::put('/supplierUpdate/{id}', [AdminController::class, 'supplierUpdate'])->name('supplierUpdate');
     Route::delete('/supplierDestroy/{id}', [AdminController::class, 'supplierDestroy'])->name('supplierDestroy');
 
-
+    
     // User Routes
     Route::get('/user', [AdminController::class, 'user'])->name('user');
     Route::post('/userStore', [AdminController::class, 'userStore'])->name('userStore');
+    Route::get('/userEdit/{id}', [AdminController::class, 'userEdit'])->name('userEdit');
     Route::put('/userUpdate/{id}', [AdminController::class, 'userUpdate'])->name('userUpdate');
     Route::delete('/userDestroy/{id}', [AdminController::class, 'userDestroy'])->name('userDestroy');
 });
