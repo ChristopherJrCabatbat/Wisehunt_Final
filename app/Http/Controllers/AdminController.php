@@ -131,10 +131,10 @@ class AdminController extends Controller
         }
 
         return $forecasts;
-    }   
+    }
 
 
-    
+
     public function getCurrentSales()
     {
         // Fetch the current month
@@ -166,7 +166,7 @@ class AdminController extends Controller
 
         return response()->json(['data' => $forecastMonthSales]);
     }
-    
+
     private function generateNotifications($productsss, $forecasts)
     {
         // Notification arrays
@@ -250,49 +250,49 @@ class AdminController extends Controller
 
 
     // Dashboard Controller
-    
+
     public function dashboard()
     {
         $nm = Session::get('name');
         $acc = Session::get('acc');
-    
+
         // Count the total quantity sold for the day
         $totalSalesQty = Transaction::selectRaw('SUM(qty) as total_qty')
             ->whereDate('created_at', today()) // Change this to match your date format
             ->value('total_qty') ?? 0;
-    
+
         $productCount = Product::count();
         $transactionCount = Transaction::count();
         $totalEarnings = Transaction::sum('total_earned');
-    
+
         // Bar Chart/Graph
         $currentYear = date('Y');
-    
+
         $earnings = Transaction::selectRaw('MONTH(created_at) as month, SUM(total_earned) as total_earned')
             ->whereYear('created_at', $currentYear)
             ->groupBy('month')
             ->orderBy('month')
             ->get();
-    
+
         $labels = [];
         $data = [];
         $colors = ['#2c5c78', '#2dc0d0', '#6c6c6c', '#2c5c78', '#2dc0d0', '#6c6c6c', '#2c5c78', '#2dc0d0', '#6c6c6c', '#2c5c78', '#2dc0d0', '#6c6c6c'];
-    
+
         for ($i = 1; $i <= 12; $i++) {
             $month = date('F', mktime(0, 0, 0, $i, 1));
             $earningsPerMonth = 0;
-    
+
             foreach ($earnings as $earning) {
                 if ($earning->month == $i) {
                     $earningsPerMonth = $earning->total_earned;
                     break;
                 }
             }
-    
+
             array_push($labels, $month);
             array_push($data, $earningsPerMonth);
         }
-    
+
         $datasets = [
             [
                 'label' => 'Monthly earnings (' . $currentYear . ')',
@@ -300,7 +300,7 @@ class AdminController extends Controller
                 'backgroundColor' => $colors,
             ]
         ];
-    
+
         // Pie Chart Logic
         $highDemandProducts = DB::table('transactions')
             ->select('product_name', DB::raw('SUM(qty) as total_qty'))
@@ -308,24 +308,24 @@ class AdminController extends Controller
             ->orderByDesc('total_qty')
             ->limit(5)
             ->get();
-    
+
         $pieChartData = "";
         foreach ($highDemandProducts as $product) {
             $pieChartData .= "['" . $product->product_name . "', " . $product->total_qty . "],";
         }
-    
+
         $arr['pieChartData'] = rtrim($pieChartData, ",");
-    
+
         $nextMonthStartDate = now()->addMonth()->startOfMonth();
         $nextMonthEndDate = now()->addMonth()->endOfMonth();
-    
-         // Assuming you retrieve $productsss and $forecasts here or from another method
+
+        // Assuming you retrieve $productsss and $forecasts here or from another method
         $productsss = Product::all();
         $forecasts = $this->forecastSalesForAllCustomers();
 
         // Call the method to generate notifications
         $notifications = $this->generateNotifications($productsss, $forecasts);
-    
+
         // Extract total counts from the generated notifications
         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
@@ -380,7 +380,7 @@ class AdminController extends Controller
         return $forecastedSales;
     }
 
-   public function product(Request $request)
+    public function product(Request $request)
     {
         $nm = Session::get('name');
         $query = Product::query();
@@ -391,7 +391,7 @@ class AdminController extends Controller
 
         // Call the method to generate notifications
         $notifications = $this->generateNotifications($productsss, $forecasts);
-    
+
         // Extract total counts from the generated notifications
         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
@@ -426,14 +426,8 @@ class AdminController extends Controller
             'products' => $products,
             'suppliers' => $suppliers,
             'totalNotifications' => $totalNotifications,
-        ]+ $notifications);
+        ] + $notifications);
     }
-
-
-    public function LineChart()
-    {
-    }
-
 
     public function productStore(Request $request)
     {
@@ -488,7 +482,7 @@ class AdminController extends Controller
 
         // Call the method to generate notifications
         $notifications = $this->generateNotifications($productsss, $forecasts);
-    
+
         // Extract total counts from the generated notifications
         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
@@ -509,7 +503,7 @@ class AdminController extends Controller
             'productss' => $productss,
             'suppliers' => $suppliers,
             'totalNotifications' => $totalNotifications,
-        ]+ $notifications);
+        ] + $notifications);
     }
 
     public function productUpdate(Request $request, string $id)
@@ -633,20 +627,20 @@ class AdminController extends Controller
         $totalPrice = $unitPrice * $qty;
 
 
-         // Assuming you retrieve $productsss and $forecasts here or from another method
-         $productsss = Product::all();
-         $forecasts = $this->forecastSalesForAllCustomers();
- 
-         // Call the method to generate notifications
-         $notifications = $this->generateNotifications($productsss, $forecasts);
-     
-         // Extract total counts from the generated notifications
-         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
-         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
-         $totalForecastMessages = $notifications['totalForecastMessages'];
- 
-         // Calculate the total number of notifications
-         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+        // Assuming you retrieve $productsss and $forecasts here or from another method
+        $productsss = Product::all();
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Call the method to generate notifications
+        $notifications = $this->generateNotifications($productsss, $forecasts);
+
+        // Extract total counts from the generated notifications
+        $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+        $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+        $totalForecastMessages = $notifications['totalForecastMessages'];
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
         $products = Product::all();
         $customers = Customer::all();
@@ -654,8 +648,8 @@ class AdminController extends Controller
         $transactions = $query->paginate(8);
 
         return view('navbar.transaction', [
-            'transactions' => $transactions, 
-            'username' => $nm, 
+            'transactions' => $transactions,
+            'username' => $nm,
             'products' => $products,
             'totalNotifications' => $totalNotifications,
             'totalPrice' => $totalPrice,
@@ -675,7 +669,7 @@ class AdminController extends Controller
 
         // Call the method to generate notifications
         $notifications = $this->generateNotifications($productsss, $forecasts);
-    
+
         // Extract total counts from the generated notifications
         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
@@ -683,7 +677,7 @@ class AdminController extends Controller
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
-        
+
         $unitPrice = $request->input('unit_price');
         $qty = $request->input('qty');
         $totalPrice = $unitPrice * $qty;
@@ -695,9 +689,9 @@ class AdminController extends Controller
         $transactionss = Transaction::find($id);
 
         return view('navbar.transaction-edit', [
-            'transactions' => $transactions, 
-            'transactionss' => $transactionss, 
-            'username' => $nm, 
+            'transactions' => $transactions,
+            'transactionss' => $transactionss,
+            'username' => $nm,
             'products' => $products,
             'totalNotifications' => $totalNotifications,
             'totalPrice' => $totalPrice,
@@ -708,136 +702,168 @@ class AdminController extends Controller
 
 
     // public function transactionStore(Request $request)
-    // {
-    //     // Retrieve data from the request
-    //     $productName = $request->input('product_name');
-    //     $unitPrice = $request->input('unit_price');
-    //     $qty = $request->input('qty');
-    //     $customerName = $request->input('customer_name');
+        // {
+        //     // Retrieve data from the request
+        //     $productName = $request->input('product_name');
+        //     $unitPrice = $request->input('unit_price');
+        //     $qty = $request->input('qty');
+        //     $customerName = $request->input('customer_name');
 
-    //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-    //     $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+        //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
+        //     $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
 
-    //     if ($product) {
-    //         // Check if there's enough quantity to subtract
-    //         if ($product->quantity >= $qty) {
-    //             // Calculate total price
-    //             $totalPrice = $unitPrice * $qty;
+        //     if ($product) {
+        //         // Check if there's enough quantity to subtract
+        //         if ($product->quantity >= $qty) {
+        //             // Calculate total price
+        //             $totalPrice = $unitPrice * $qty;
 
-    //             // Calculate total earned
-    //             $capital = $product->capital;
-    //             $totalEarned = ($unitPrice - $capital) * $qty;
+        //             // Calculate total earned
+        //             $capital = $product->capital;
+        //             $totalEarned = ($unitPrice - $capital) * $qty;
 
-    //             // Create a new Transactions record and save it to the database
-    //             $transaction = new Transaction;
-    //             $transaction->customer_name = $customerName;
-    //             $transaction->product_name = $productName;
-    //             $transaction->qty = $qty;
-    //             $transaction->unit_price = $unitPrice;
-    //             $transaction->total_price = $totalPrice;
-    //             $transaction->total_earned = $totalEarned;
-    //             $transaction->save();
+        //             // Create a new Transactions record and save it to the database
+        //             $transaction = new Transaction;
+        //             $transaction->customer_name = $customerName;
+        //             $transaction->product_name = $productName;
+        //             $transaction->qty = $qty;
+        //             $transaction->unit_price = $unitPrice;
+        //             $transaction->total_price = $totalPrice;
+        //             $transaction->total_earned = $totalEarned;
+        //             $transaction->save();
 
-    //             // Update the product quantity by subtracting the sold quantity
-    //             $product->quantity -= $qty;
-    //             $product->save();
+        //             // Update the product quantity by subtracting the sold quantity
+        //             $product->quantity -= $qty;
+        //             $product->save();
 
-    //             // Fetch past transactions for the current day
-    //             $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
+        //             // Fetch past transactions for the current day
+        //             $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
 
-    //             // Perform sales forecasting logic based on the past transactions
-    //             $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
+        //             // Perform sales forecasting logic based on the past transactions
+        //             $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
 
-    //             // Display alert with forecasted sales
-    //             if ($forecastedSales !== null) {
-    //                 // You can customize the alert message based on your requirements
-    //                 // Here, I'm using the basic alert() function for demonstration purposes
-    //                 // echo "<script>alert('Forecasted Sales for the day: $forecastedSales');</script>";
-    //                 return back()->with('forecastedSales', $forecastedSales);
+        //             // Display alert with forecasted sales
+        //             if ($forecastedSales !== null) {
+        //                 // You can customize the alert message based on your requirements
+        //                 // Here, I'm using the basic alert() function for demonstration purposes
+        //                 // echo "<script>alert('Forecasted Sales for the day: $forecastedSales');</script>";
+        //                 return back()->with('forecastedSales', $forecastedSales);
 
-    //             }
+        //             }
 
-    //             return back();
-    //         } else {
-    //             // Handle the case where the quantity is insufficient
-    //             return redirect()->back()
-    //                 ->withInput()
-    //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
-    //         }
-    //     } else {
-    //         // Keep the form data and repopulate the fields
-    //         return redirect()->back()
-    //             ->withInput()
-    //             ->withErrors(['error' => 'Selected product and unit price did not match.']);
-    //     }
-    // }
+        //             return back();
+        //         } else {
+        //             // Handle the case where the quantity is insufficient
+        //             return redirect()->back()
+        //                 ->withInput()
+        //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
+        //         }
+        //     } else {
+        //         // Keep the form data and repopulate the fields
+        //         return redirect()->back()
+        //             ->withInput()
+        //             ->withErrors(['error' => 'Selected product and unit price did not match.']);
+        //     }
+        // }
+
 
     public function transactionStore(Request $request)
-{
-    // Retrieve data from the request
-    $productName = $request->input('product_name');
-    $unitPrice = $request->input('unit_price');
-    $qty = $request->input('qty');
-    $customerName = $request->input('customer_name');
+    {
+        // Validation rules
+        $rules = [
+            'product_name' => 'required|string',
+            'unit_price' => 'required|numeric|min:0',
+            'qty' => 'required|integer|min:1',
+            'customer_name' => 'required|string',
+        ];
 
-    // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-    $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+        // Custom error messages
+        $messages = [
+            'qty.min' => 'The quantity must be at least :min.',
+        ];
 
-    if ($product) {
-        // Check if there's enough quantity to subtract
-        if ($product->quantity >= $qty) {
-            // Calculate total price
-            $totalPrice = $unitPrice * $qty;
+        // Validate the request
+        $request->validate($rules, $messages);
 
-            // Calculate total earned
-            $capital = $product->capital;
-            $totalEarned = ($unitPrice - $capital) * $qty;
+        // Retrieve data from the request
+        $productName = $request->input('product_name');
+        $unitPrice = $request->input('unit_price');
+        $qty = $request->input('qty');
+        $customerName = $request->input('customer_name');
 
-            // Create a new Transactions record and save it to the database
-            $transaction = new Transaction;
-            $transaction->customer_name = $customerName;
-            $transaction->product_name = $productName;
-            $transaction->qty = $qty;
-            $transaction->unit_price = $unitPrice;
-            $transaction->total_price = $totalPrice;
-            $transaction->total_earned = $totalEarned;
-            $transaction->save();
+        // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
+        $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
 
-            // Update the product quantity by subtracting the sold quantity
-            $product->quantity -= $qty;
-            $product->save();
+        if ($product) {
+            // Check if there's enough quantity to subtract
+            if ($product->quantity >= $qty) {
+                // Calculate total price
+                $totalPrice = $unitPrice * $qty;
 
-            // Fetch past transactions for the current day
-            $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
+                // Calculate total earned
+                $capital = $product->capital;
+                $totalEarned = ($unitPrice - $capital) * $qty;
 
-            // Perform sales forecasting logic based on the past transactions
-            $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
+                // Create a new Transactions record and save it to the database
+                $transaction = new Transaction;
+                $transaction->customer_name = $customerName;
+                $transaction->product_name = $productName;
+                $transaction->qty = $qty;
+                $transaction->unit_price = $unitPrice;
+                $transaction->total_price = $totalPrice;
+                $transaction->total_earned = $totalEarned;
+                $transaction->save();
 
-            // Increment the transaction count in the session
-            $transactionCount = session('transactionCount', 0) + 1;
-            session(['transactionCount' => $transactionCount]);
+                // Update the product quantity by subtracting the sold quantity
+                $product->quantity -= $qty;
+                $product->save();
 
-            // Display alert with forecasted sales after every two transactions
-            if ($forecastedSales !== null && $transactionCount % 2 === 0) {
-                // You can customize the alert message based on your requirements
-                // Here, I'm using the basic alert() function for demonstration purposes
-                echo "<script>alert('Forecasted Sales for the day: ₱$forecastedSales');</script>";
+                // Fetch past transactions for the current day
+                $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
+
+                // Perform sales forecasting logic based on the past transactions
+                $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
+
+                $transactionCount = session('transactionCount', 0) + 1;
+                session(['transactionCount' => $transactionCount]);
+
+                // Increment the monthly transaction count in the session
+                $monthlyTransactionCount = session('monthlyTransactionCount', 0) + 1;
+                session(['monthlyTransactionCount' => $monthlyTransactionCount]);
+
+                // Display alert with forecasted sales after every five transactions
+                if ($forecastedSales !== null && $transactionCount % 2 === 0) {
+                    $message = "Forecasted Sales for the day: ₱" . number_format($forecastedSales, 2);
+                    session()->flash('forecastedSalesAlert', $message);
+                }
+
+                // Display alert with forecasted sales after every 5 transactions for monthly forecasting
+                if ($forecastedSales !== null && $monthlyTransactionCount % 5 === 0) {
+                    // Fetch all transactions for the current month
+                    $allTransactions = Transaction::whereYear('created_at', now()->year)
+                        ->whereMonth('created_at', now()->month)
+                        ->get();
+
+                    $monthlyForecastedSales = $this->calculateMonthlyForecastedSales($allTransactions);
+                    $monthlyMessage = "Forecasted Sales for the month: ₱" . number_format($monthlyForecastedSales, 2);
+                    session()->flash('monthlyForecastedSalesAlert', $monthlyMessage);
+                }
+
+                return back();
+            } else {
+                // Handle the case where the quantity is insufficient
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
             }
-
-            return back();
         } else {
-            // Handle the case where the quantity is insufficient
+            // Keep the form data and repopulate the fields
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
+                ->withErrors(['error' => 'Selected product and unit price did not match.']);
         }
-    } else {
-        // Keep the form data and repopulate the fields
-        return redirect()->back()
-            ->withInput()
-            ->withErrors(['error' => 'Selected product and unit price did not match.']);
     }
-}
+
 
     private function calculateForecastedSales($transactions)
     {
@@ -845,24 +871,61 @@ class AdminController extends Controller
         if ($transactions->count() < 2) {
             return 0; // Not enough data for accurate forecasting
         }
-    
+
         // Calculate total sales for the day
         $totalSales = $transactions->sum(function ($transaction) {
             return $transaction->qty * $transaction->unit_price;
         });
-    
+
         // Calculate the average sales per transaction
         $averageSales = $totalSales / $transactions->count();
-    
+
         // Calculate forecasted sales by adding a percentage of the average sales
         $forecastedSales = $totalSales + ($totalSales * 0.18); // You can adjust the factor (0.05) based on your preference
-    
+
         return $forecastedSales;
     }
-    
+
+    private function calculateMonthlyForecastedSales($allTransactions)
+    {
+        // Check if there are enough transactions to calculate forecast
+        if ($allTransactions->count() < 5) {
+            return 0; // Not enough data for accurate forecasting
+        }
+
+        // Calculate total sales for the month
+        $totalSales = $allTransactions->sum(function ($transaction) {
+            return $transaction->qty * $transaction->unit_price;
+        });
+
+        // Calculate the average sales per transaction
+        $averageSales = $totalSales / $allTransactions->count();
+
+        // Calculate forecasted sales by adding a percentage of the average sales
+        $monthlyForecastedSales = $totalSales + ($totalSales * 0.18); // You can adjust the factor (0.18) based on your preference
+
+        return $monthlyForecastedSales;
+    }
+
 
     public function transactionUpdate(Request $request, string $id)
     {
+        // Validation rules
+        $rules = [
+            'product_name' => 'required|string',
+            'unit_price' => 'required|numeric|min:0',
+            'qty' => 'required|integer|min:1',
+            'customer_name' => 'required|string',
+        ];
+
+        // Custom error messages
+        $messages = [
+            'qty.min' => 'The quantity must be at least :min.',
+        ];
+
+        // Validate the request
+        $request->validate($rules, $messages);
+
         // Retrieve the existing transaction record by its ID
         $transaction = Transaction::find($id);
 
@@ -930,24 +993,24 @@ class AdminController extends Controller
     }
 
     public function generateReport(Request $request)
-{
-    $fromDate = $request->input('from_date');
-    $toDate = $request->input('to_date');
-    $customerName = $request->input('customer_name');
+    {
+        $fromDate = $request->input('from_date');
+        $toDate = $request->input('to_date');
+        $customerName = $request->input('customer_name');
 
-    // Increment the toDate by one day to include records on the toDate itself
-    $toDate = date('Y-m-d', strtotime($toDate . ' +1 day'));
+        // Increment the toDate by one day to include records on the toDate itself
+        $toDate = date('Y-m-d', strtotime($toDate . ' +1 day'));
 
-    $transactions = Transaction::where('customer_name', $customerName)
-        ->whereBetween('created_at', [$fromDate, $toDate])
-        ->get();
+        $transactions = Transaction::where('customer_name', $customerName)
+            ->whereBetween('created_at', [$fromDate, $toDate])
+            ->get();
 
-    return view('navbar.report', [
-        'transactions' => $transactions,
-        'fromDate' => Carbon::parse($fromDate),
-        'toDate' => Carbon::parse($toDate),
-    ]);
-}
+        return view('navbar.report', [
+            'transactions' => $transactions,
+            'fromDate' => Carbon::parse($fromDate),
+            'toDate' => Carbon::parse($toDate),
+        ]);
+    }
 
 
 
@@ -963,7 +1026,7 @@ class AdminController extends Controller
 
         // Call the method to generate notifications
         $notifications = $this->generateNotifications($productsss, $forecasts);
-    
+
         // Extract total counts from the generated notifications
         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
@@ -974,12 +1037,12 @@ class AdminController extends Controller
         $customers = Customer::paginate(7);
 
         return view('navbar.customer', [
-            'customers' => $customers, 
-            'username' => $nm, 
+            'customers' => $customers,
+            'username' => $nm,
             'totalNotifications' => $totalNotifications,
         ] + $notifications);
     }
-    
+
     public function customerEdit(Request $request, $id)
     {
         $nm = Session::get('name');
@@ -990,7 +1053,7 @@ class AdminController extends Controller
 
         // Call the method to generate notifications
         $notifications = $this->generateNotifications($productsss, $forecasts);
-    
+
         // Extract total counts from the generated notifications
         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
@@ -998,13 +1061,13 @@ class AdminController extends Controller
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
-        
+
         $customerss = Customer::find($id);
         $customers = Customer::paginate(7);
 
         return view('navbar.customer-edit', [
-            'customers' => $customers, 
-            'username' => $nm, 
+            'customers' => $customers,
+            'username' => $nm,
             'totalNotifications' => $totalNotifications,
             'customerss' => $customerss,
         ] + $notifications);
@@ -1031,7 +1094,7 @@ class AdminController extends Controller
         return redirect()->route('admin.customer')->with("message", "Customer added successfully!");
     }
 
-    
+
 
     public function customerUpdate(Request $request, string $id)
     {
@@ -1058,29 +1121,29 @@ class AdminController extends Controller
     {
         $nm = Session::get('name');
 
-         // Assuming you retrieve $productsss and $forecasts here or from another method
-         $productsss = Product::all();
-         $forecasts = $this->forecastSalesForAllCustomers();
- 
-         // Call the method to generate notifications
-         $notifications = $this->generateNotifications($productsss, $forecasts);
-     
-         // Extract total counts from the generated notifications
-         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
-         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
-         $totalForecastMessages = $notifications['totalForecastMessages'];
- 
-         // Calculate the total number of notifications
-         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+        // Assuming you retrieve $productsss and $forecasts here or from another method
+        $productsss = Product::all();
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Call the method to generate notifications
+        $notifications = $this->generateNotifications($productsss, $forecasts);
+
+        // Extract total counts from the generated notifications
+        $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+        $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+        $totalForecastMessages = $notifications['totalForecastMessages'];
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
         $suppliers = Supplier::paginate(8);
 
         return view('navbar.supplier', [
-            'suppliers' => $suppliers, 
+            'suppliers' => $suppliers,
             'totalNotifications' => $totalNotifications,
             'username' => $nm,
         ] + $notifications);
     }
-    
+
     public function supplierEdit(Request $request, $id)
     {
         $nm = Session::get('name');
@@ -1091,7 +1154,7 @@ class AdminController extends Controller
 
         // Call the method to generate notifications
         $notifications = $this->generateNotifications($productsss, $forecasts);
-    
+
         // Extract total counts from the generated notifications
         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
@@ -1099,13 +1162,13 @@ class AdminController extends Controller
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
-        
+
         $supplierss = Supplier::find($id);
         $suppliers = Supplier::paginate(8);
 
         return view('navbar.supplier-edit', [
-            'suppliers' => $suppliers, 
-            'supplierss' => $supplierss, 
+            'suppliers' => $suppliers,
+            'supplierss' => $supplierss,
             'totalNotifications' => $totalNotifications,
             'username' => $nm,
         ] + $notifications);
@@ -1160,25 +1223,25 @@ class AdminController extends Controller
     {
         $nm = Session::get('name');
 
-         // Assuming you retrieve $productsss and $forecasts here or from another method
-         $productsss = Product::all();
-         $forecasts = $this->forecastSalesForAllCustomers();
- 
-         // Call the method to generate notifications
-         $notifications = $this->generateNotifications($productsss, $forecasts);
-     
-         // Extract total counts from the generated notifications
-         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
-         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
-         $totalForecastMessages = $notifications['totalForecastMessages'];
- 
-         // Calculate the total number of notifications
-         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+        // Assuming you retrieve $productsss and $forecasts here or from another method
+        $productsss = Product::all();
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Call the method to generate notifications
+        $notifications = $this->generateNotifications($productsss, $forecasts);
+
+        // Extract total counts from the generated notifications
+        $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+        $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+        $totalForecastMessages = $notifications['totalForecastMessages'];
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
         $users = User::paginate(8);
 
         return view('navbar.user', [
-            'users' => $users, 
+            'users' => $users,
             'totalNotifications' => $totalNotifications,
             'username' => $nm,
         ] + $notifications);
@@ -1194,7 +1257,7 @@ class AdminController extends Controller
 
         // Call the method to generate notifications
         $notifications = $this->generateNotifications($productsss, $forecasts);
-    
+
         // Extract total counts from the generated notifications
         $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
         $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
@@ -1202,13 +1265,13 @@ class AdminController extends Controller
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
-        
+
         $userss = User::find($id);
         $users = User::paginate(8);
 
         return view('navbar.user-edit', [
-            'users' => $users, 
-            'userss' => $userss, 
+            'users' => $users,
+            'userss' => $userss,
             'totalNotifications' => $totalNotifications,
             'username' => $nm,
         ] + $notifications);
@@ -1229,7 +1292,7 @@ class AdminController extends Controller
         $users->name = $request->input('name');
         $users->email = $request->input('email');
         $users->role = $request->input('role');
-        $users->password = Hash::make($request->input('password')); 
+        $users->password = Hash::make($request->input('password'));
 
         $users->save();
 

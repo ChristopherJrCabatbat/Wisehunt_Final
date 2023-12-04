@@ -8,6 +8,7 @@
 
     {{-- // Line Chart --}}
     <script type="text/javascript">
+    
         google.charts.load('current', {
             'packages': ['corechart']
         });
@@ -137,8 +138,7 @@
                     },
                 },
                 vAxis: {
-                    format: 'currency', // Format vertical axis labels as currency
-                    prefix: '₱' // Set the currency symbol
+                    format: '₱ ', // Format vertical axis labels as currency
                 }
             };
 

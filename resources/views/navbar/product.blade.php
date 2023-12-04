@@ -13,7 +13,7 @@
     {{-- Add Modal --}}
     <div id="newModal" class="modal">
         <div class="modal-content">
-            <p class="taas-new">Add New Product</p>
+            <p class="taas-new">Add Product</p>
 
             <hr>
 
@@ -198,7 +198,7 @@
     <div class="content">
 
         <div class="taas">
-            <button type="button" id="newButton">Add New Product</button>
+            <button type="button" id="newButton">Add Product</button>
             <div class="sort-by">
                 {{-- <form action="#" method="GET"> --}}
                 <form id="sortForm" action="#" method="GET">
@@ -280,8 +280,8 @@
                                         height="50px" style="background-color: transparent">
                                 </td>
                                 <td>{{ $product->quantity }}</td>
-                                <td>{{ $product->capital }}</td>
-                                <td>{{ $product->unit_price }}</td>
+                                <td>₱ {{ $product->capital }}</td>
+                                <td>₱ {{ $product->unit_price }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
                                         <form action="{{ route('admin.productEdit', $product->id) }}" method="POST">

@@ -77,7 +77,7 @@
 
 
     {{-- Edit Modal --}}
-    @foreach ($transactions as $transaction)
+    {{-- @foreach ($transactions as $transaction)
         <div id="editModal{{ $transaction->id }}" class="modal editModal">
             <div class="modal-content">
                 <a class="close closeEditModal">&times;</a>
@@ -102,12 +102,6 @@
                             </option>
                         @endforeach
                     </select>
-
-                    {{-- <label for="contact_num">Contact Number:</label>
-                    <input required readonly name="contact_num" id="contact_num-edit" pattern="[0-9]{5,11}"
-                        title="Enter a valid contact number" type="text"
-                        value="{{ old('contact_num', $transaction->contact_num) }}"> --}}
-
 
                     <label for="product_name" class="taas-select">Product:</label>
                     <select class="select product-select" name="product_name" id="product_name-edit"
@@ -134,17 +128,12 @@
                     <input readonly name="total_price" id="total_price_edit" type="number"
                         value="{{ $transaction->total_price }}" class="total_price">
 
-                    {{-- <label for="">Amount Tendered:</label>
-                    <input required name="amount_tendered" type="number"
-                        value="{{ old('amount_tendered', $transaction->amount_tendered) }}">
-                    <div class="text-danger">{{ $errors->first('error_change') }}</div> --}}
-
                     <input type="submit" id="button-transac" value="Update">
                 </form>
             </div>
 
         </div>
-    @endforeach
+    @endforeach --}}
 
     {{-- Report Modal --}}
     <div id="reportModal" class="reportModal">

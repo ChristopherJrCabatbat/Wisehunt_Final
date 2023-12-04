@@ -51,8 +51,15 @@
                     <label for="">Quantity:</label>
                     <input required id="qty-edit" class="qty" name="qty" type="number"
                         value="{{ old('qty', $transactionss->qty) }}">
-                    <div class="text-danger">{{ $errors->first('error_stock') }}</div>
-
+                        <div class="text-danger">{{ $errors->first('qty') }}</div>
+   <!-- Display error for insufficient quantity in stock -->
+                @if ($errors->has('error_stock'))
+                    <div class="text-danger-stock">{{ $errors->first('error_stock') }}</div>
+                @endif
+                       <!-- Display error for insufficient quantity in stock -->
+                @if ($errors->has('error_stock'))
+                <div class="text-danger-stock">{{ $errors->first('error_stock') }}</div>
+            @endif
                     <label for="unit_price">Unit Price:</label>
                     <input readonly required name="unit_price" class="unit_price" id="unit_price-edit" type="number"
                         value="{{ old('unit_price', $transactionss->unit_price) }}">
@@ -124,7 +131,7 @@
         <div class="taas">
 
             <div class="new-generate">
-                <button type="button" id="newButton">New Transaction</button>
+                <button type="button" id="newButton">Add Transaction</button>
 
                 <form action="" id="generateReportForm">
                     <button type="button" id="generateReportBtn">Generate Report</button>
@@ -209,9 +216,9 @@
                                 <td>{{ $transaction->customer_name }}</td>
                                 <td>{{ $transaction->product_name }}</td>
                                 <td>{{ $transaction->qty }}</td>
-                                <td>{{ $transaction->unit_price }}</td>
-                                <td>{{ $transaction->total_price }}</td>
-                                <td>{{ $transaction->total_earned }}</td>
+                                <td>₱ {{ $transaction->unit_price }}</td>
+                                <td>₱ {{ $transaction->total_price }}</td>
+                                <td>₱ {{ $transaction->total_earned }}</td>
                                 <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                                 <td class="actions">
                                     <div class="actions-container">

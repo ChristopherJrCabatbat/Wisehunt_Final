@@ -23,8 +23,7 @@
                 </center>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                <select required name="customer_name" id="customer"
-                    class="select customer">
+                <select required name="customer_name" id="autofocus" class="select customer">
                     <option value="" disabled selected>-- Select a Customer --</option>
                     @foreach ($customers as $customer)
                         <option value="{{ $customer->name }}" data-contact="{{ $customer->contact_num }}"
@@ -46,11 +45,20 @@
                     @endforeach
                 </select>
 
-                <div class="text-danger">{{ $errors->first('error') }}</div> <!-- Display the error message here -->
+                <!-- Display validation error for product_name -->
+                <div class="text-danger">{{ $errors->first('product_name') }}</div>
 
                 <label for="">Quantity:</label>
                 <input required name="qty" class="qty" type="number" id="qty" value="{{ old('qty') }}">
-                <div class="text-danger">{{ $errors->first('error_stock') }}</div>
+
+                <!-- Display validation error for qty -->
+                <div class="text-danger">{{ $errors->first('qty') }}</div>
+
+                <!-- Display error for insufficient quantity in stock -->
+                @if ($errors->has('error_stock'))
+                    <div class="text-danger-stock">{{ $errors->first('error_stock') }}</div>
+                @endif
+
 
                 <label for="unit_price">Unit Price:</label>
                 <input readonly required name="unit_price" id="unit_price" type="number" value="{{ old('unit_price') }}"
@@ -63,11 +71,11 @@
                 <input type="submit" value="Add" id="button-transac">
             </form>
         </div>
-
     </div>
 
 
-  
+
+
     {{-- Report Modal --}}
     <div id="reportModal" class="reportModal">
         <div class="modal-content-report">
@@ -89,8 +97,7 @@
                 </div>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                <select required name="customer_name"
-                    class="select customer">
+                <select required name="customer_name" class="select customer">
                     <option value="" disabled selected>-- Select a Customer --</option>
                     @foreach ($customers as $customer)
                         <option value="{{ $customer->name }}"
@@ -163,7 +170,7 @@
         <div class="taas">
 
             <div class="new-generate">
-                <button type="button" id="newButton">New Transaction</button>
+                <button type="button" id="newButton">Add Transaction</button>
 
                 <form action="" id="generateReportForm">
                     <button type="button" id="generateReportBtn">Generate Report</button>
@@ -201,8 +208,6 @@
             </div>
 
             {{-- Search --}}
-
-           
             <div>
                 <div class="searchs">
                     <div class="form-search">
@@ -227,13 +232,10 @@
                 <tr>
                     <th>No.</th>
                     <th>Customer</th>
-                    {{-- <th>Contact Number</th> --}}
                     <th>Product</th>
                     <th>Quantity</th>
                     <th>Unit Price</th>
                     <th>Total Price</th>
-                    {{-- <th>Amount Tendered</th> --}}
-                    {{-- <th>Change Due</th> --}}
                     <th>Total Earn</th>
                     <th>Date</th>
                     <th>Actions</th>
@@ -251,13 +253,14 @@
                                 <td>{{ $transaction->customer_name }}</td>
                                 <td>{{ $transaction->product_name }}</td>
                                 <td>{{ $transaction->qty }}</td>
-                                <td>{{ $transaction->unit_price }}</td>
-                                <td>{{ $transaction->total_price }}</td>
-                                <td>{{ $transaction->total_earned }}</td>
+                                <td>₱ {{ $transaction->unit_price }}</td>
+                                <td>₱ {{ $transaction->total_price }}</td>
+                                <td>₱ {{ $transaction->total_earned }}</td>
                                 <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form action="{{ route('admin.transactionEdit', $transaction->id) }}" method="POST">
+                                        <form action="{{ route('admin.transactionEdit', $transaction->id) }}"
+                                            method="POST">
                                             @csrf
                                             @method('GET')
                                             <button type="submit" class="edit" id="edit">
@@ -298,13 +301,19 @@
 @section('script')
     <script src="{{ asset('js/generateReport.js') }}"></script>
 
-    @if(session('forecastedSales') !== null)
+    @if (session('forecastedSalesAlert'))
         <script>
-            var forecastedSales = {{ session('forecastedSales') }};
-            alert('Forecasted Sales for the day: ₱' + forecastedSales);
+            var forecastedSales = {!! json_encode(session('forecastedSalesAlert'), JSON_HEX_TAG) !!};
+            alert(forecastedSales);
         </script>
     @endif
 
+    @if (session('monthlyForecastedSalesAlert'))
+        <script>
+            var monthlyForecastedSales = {!! json_encode(session('monthlyForecastedSalesAlert'), JSON_HEX_TAG) !!};
+            alert(monthlyForecastedSales);
+        </script>
+    @endif
 
     {{-- Auto Sorting --}}
     <script>

@@ -150,7 +150,7 @@
 
 
     <!-- Edit Modal -->
-    @foreach ($products as $product)
+    {{-- @foreach ($products as $product)
         <div id="editModal{{ $product->id }}" class="modal editModal">
             <div class="edit-modal-content">
                 <p class="taas-new">Edit Product </p>
@@ -186,16 +186,6 @@
                             <input required type="text" name="brand_name" id=""
                                 value="{{ $product->brand_name }}" class="row1-input" />
                         </div>
-
-                        {{-- <div class="column">
-                            <label for="">Stock Quantity:</label>
-                            <input required autofocus type="number" name="quantity" class="row2-input autofocus"
-                                value="{{ $product->quantity }}" />
-                            @if ($errors->has('quantity'))
-                                <div class="text-danger">{{ $errors->first('quantity') }}</div>
-                            @endif
-                        </div> --}}
-
 
                     </div>
 
@@ -247,7 +237,6 @@
                     </div>
 
                     <div class="row3-edit">
-                        {{-- Image --}}
                         <div class="column">
                             <label for="">Current Image:</label>
                             <img class="img-edit" src="{{ asset($product->photo) }}" alt="" width="50px"
@@ -255,7 +244,6 @@
                         </div>
                         <div class="column">
                             <label for="">Change Image:</label>
-                            {{-- <input required type="file" name="image" id="" class="row2-input" /> --}}
                             <div class="input_container_edit">
                                 <input type="file" name="photo" id="fileUpload">
                             </div>
@@ -285,7 +273,7 @@
                 </form>
             </div>
         </div>
-    @endforeach
+    @endforeach --}}
 
 
 @endsection

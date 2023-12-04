@@ -40,7 +40,7 @@
     </div>
 
     {{-- Edit Modal --}}
-    @foreach ($customers as $customer)
+    {{-- @foreach ($customers as $customer)
         <div id="editModal{{ $customer->id }}" class="modal editModal">
             <div class="modal-content">
                 <span class="close closeEditModal">&times;</span>
@@ -67,16 +67,14 @@
                     <label for="">Address:</label>
                     <input required type="text" name="address" id=""
                         value="{{ old('address', $customer->address) }}">
-                    {{-- <label for="">Item Sold:</label>
-                    <input required type="text" name="item_sold" id=""
-                        value="{{ old('item_sold', $customer->item_sold) }}"> --}}
+                   
 
                     <input class="add" type="submit" value="Update">
                 </form>
 
             </div>
         </div>
-    @endforeach
+    @endforeach --}}
 
 @endsection
 

@@ -11,12 +11,12 @@
 .reportModal {
     display: none;
     position: fixed;
-    z-index: 5;
+    z-index: 20;
     left: 0;
     top: 0;
     width: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 .taas {
@@ -176,4 +176,9 @@ select {
     font-size: 14px;
     margin-top: 15px;
     margin-bottom: -8px;
+}
+
+.text-danger-stock {
+    color: red;
+    font-size: 14px;
 }
