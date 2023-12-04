@@ -54,6 +54,21 @@
         </script>
     @endif --}}
 
+    @if (session('staff'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ session('staff') }}");
+            });
+        </script>
+    @endif
+    @if (session('admin'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ session('admin') }}");
+            });
+        </script>
+    @endif
+
     @if ($errors->any())
         <script>
             document.addEventListener("DOMContentLoaded", function() {

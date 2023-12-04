@@ -8,6 +8,7 @@
 .taas-content {
     display: flex;
     gap: 12px;
+    z-index: 5;
 }
 
 label {
@@ -97,14 +98,13 @@ label {
     /* min-width: 100%; */
     overflow: hidden;
     overflow-x: hidden; /* Hide horizontal overflow */
-
-    margin-bottom: 585px;
+    margin-bottom: 530px;
     padding: 0;
 }
 
 #curve_chart {
     position: absolute;
-    top: 190px;
+    top: 160px;
     left: 85px;
     overflow: hidden;
     overflow-x: hidden; /* Hide horizontal overflow */

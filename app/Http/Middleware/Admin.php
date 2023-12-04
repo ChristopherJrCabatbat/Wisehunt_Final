@@ -43,8 +43,7 @@ class Admin
         {
             return $next($request);
         }
-        abort(401);
-
-        // return $next($request);
+        return back()->with('admin','Unauthorized! Admin access required.');
+        // abort(401);
     }
 }

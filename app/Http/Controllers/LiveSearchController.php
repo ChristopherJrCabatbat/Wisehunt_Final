@@ -37,9 +37,13 @@ class LiveSearchController extends Controller
                     <td> ' . $product->unit_price . ' </td>
                     <td class="actions">
                         <div class="actions-container">
-                            <button type="button" class="edit editButton" id="edit" data-id="' . $product->id . '">
+                            <form action="' . route('admin.productEdit', $product->id) . '" method="POST">
+                                ' . csrf_field() . '
+                                ' . method_field('GET') . '
+                                <button type="submit" class="edit editButton" id="edit">
                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                             </button>
+                            </form>
                             <form action="' . route('admin.productDestroy', $product->id) . '" method="POST">
                                 ' . csrf_field() . '
                                 ' . method_field('DELETE') . '
@@ -81,9 +85,13 @@ class LiveSearchController extends Controller
 
             <td class="actions">
                 <div class="actions-container">
-                        <button type="button" class="edit editButton" id="edit" data-id="'.$transaction->id.'">
+                        <form action="'. route('admin.transactionEdit', $transaction->id) .'" method="POST">
+                        ' . csrf_field() . '
+                        ' . method_field('GET') . '
+                        <button type="submit" class="edit editButton" id="edit" data-id="'.$transaction->id.'">
                             <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                         </button>
+                    </form>
                     <form action="'. route('admin.productDestroy', $transaction->id) .'" method="POST">
                         ' . csrf_field() . '
                         ' . method_field('DELETE') . '
