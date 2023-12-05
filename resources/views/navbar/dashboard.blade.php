@@ -289,7 +289,7 @@
             <div class="taasbox-dashboard">
                 <img src="{{ asset('images/earning.png') }}" class="product earn" alt="" />
                 <div class="loob-box">
-                    <div class="zero">₱ {{ $totalEarnings }}</div>
+                    <div class="zero">₱ {{ number_format($totalEarnings) }}</div>
                     <div class="item-stock">Total Earnings Till Date</div>
                     <div class="baba-taasbox">All-Time Total Earnings</div>
                 </div>
@@ -342,6 +342,10 @@
                         <th>Total Earned</th>
                     </tr>
                 </thead>
+                <?php
+                    $dayTotalEarned = App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->sum('total_earned');
+                ?>
+
                 <tbody>
                     <tr>
                         <td>{{ now()->format('F j, Y') }}</td>
@@ -349,7 +353,7 @@
                         </td>
                         <td> {{ App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->count() }}
                         </td>
-                        <td>{{ App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->sum('total_earned') }}
+                        <td>₱ {{ number_format($dayTotalEarned) }}
                         </td>
                     </tr>
                 </tbody>
@@ -387,7 +391,7 @@
                             {{ now()->endOfWeek()->format('F j, Y') }}</td>
                         <td>{{ $weekQtySold }}</td>
                         <td>{{ $weekTotalTransactions }}</td>
-                        <td>{{ $weekTotalEarned }}</td>
+                        <td>₱ {{ number_format($weekTotalEarned) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -423,7 +427,7 @@
                         <td>{{ now()->startOfMonth()->format('F, Y') }}</td>
                         <td>{{ $monthQtySold }}</td>
                         <td>{{ $monthTotalTransactions }}</td>
-                        <td>{{ $monthTotalEarned }}</td>
+                        <td>₱ {{ number_format($monthTotalEarned) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -459,7 +463,7 @@
                         <td>{{ now()->year }}</td>
                         <td>{{ $yearQtySold }}</td>
                         <td>{{ $yearTotalTransactions }}</td>
-                        <td>{{ $yearTotalEarned }}</td>
+                        <td>₱ {{ number_format($yearTotalEarned) }}</td>
                     </tr>
                 </tbody>
             </table>

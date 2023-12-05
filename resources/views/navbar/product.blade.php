@@ -4,6 +4,12 @@
 
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/product-transaction-styles.css') }}">
+    <!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- Bootstrap JS (Popper.js included) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+
 @endsection
 
 @section('modals')
@@ -138,6 +144,37 @@
         </div>
     </div>
 
+    {{-- Category Modal --}}
+    {{-- <div class="fade" id="categoryModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Select Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="categoryForm">
+                        <label for="category">Category:</label>
+                        <select required name="category" id="category" class="form-control">
+                            <option value="" disabled selected>-- Select Category --</option>
+                            <option value="Paper">Paper</option>
+                            <option value="Tape">Tape</option>
+                            <option value="Plastic">Plastic</option>
+                            <option value="Gloves">Gloves</option>
+                            <option value="Machine">Machine</option>
+                            <option value="Food Material">Food Material</option>
+                        </select>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="applyCategoryFilter()">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div> --}}
 
 
 
@@ -185,7 +222,6 @@
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
-                    {{-- <img src="{{ asset('images/supplier.png') }}" class="user-i" alt=""> --}}
                     USERS</a>
             </div>
         </li>
@@ -199,13 +235,13 @@
 
         <div class="taas">
             <button type="button" id="newButton">Add Product</button>
-            <div class="sort-by">
-                {{-- <form action="#" method="GET"> --}}
+
+            {{-- <div class="sort-by">
                 <form id="sortForm" action="#" method="GET">
                     <input type="hidden" name="sort" id="sortInput" value="{{ request('sort') }}">
-
+            
                     <label for="sort">Sort by:</label>
-                    <select name="sort" id="sortSelect">
+                    <select name="sort" id="sortSelect" onchange="handleSortChange()">
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
                             Default Sorting --</option>
                         <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product
@@ -221,7 +257,40 @@
                             (ascending)
                         </option>
                     </select>
-                   
+                </form>
+            </div> --}}
+
+            <div class="sort-by">
+                <form id="sortForm" action="#" method="GET">
+                    <input type="hidden" name="sort" id="sortInput" value="{{ request('sort') }}">
+
+                    <label for="sort">Sort by:</label>
+                    {{-- <select name="sort" id="sortSelect" onchange="handleSortChange()">
+                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
+                            Default Sorting --</option>
+                        <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product
+                            Name (A-Z)</option>
+                        <option value="category_asc" data-toggle="modal" data-target="#categoryModal"
+                            {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category
+                        </option>
+                        <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Stock Quantity (ascending)</option>
+                        <option value="capital_asc" {{ request('sort') === 'capital_asc' ? 'selected' : '' }}>
+                            Capital (ascending)</option>
+                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit
+                            Price
+                            (ascending)
+                        </option>
+                    </select> --}}
+                    <select name="sort" id="sortSelect" onchange="handleSortChange()">
+                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>-- Default Sorting --</option>
+                        <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product Name</option>
+                        <option value="category_asc" data-toggle="modal" data-target="#categoryModal"
+                            {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category</option>
+                        <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Stock Quantity</option>
+                        <option value="capital_asc" {{ request('sort') === 'capital_asc' ? 'selected' : '' }}>Capital</option>
+                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit Price</option>
+                    </select>
+                    
                 </form>
             </div>
 
@@ -233,7 +302,7 @@
                             autocomplete="off" class="search-prod" />
                         <i class="fa fa-search search-icon"></i>
                     </div>
-                 
+
                 </div>
             </div>
 
@@ -248,6 +317,7 @@
                     // Calculate the initial row number based on the current page
                     $rowNumber = ($products->currentPage() - 1) * $products->perPage() + 1;
                 @endphp
+
                 <tr>
                     <th>No.</th>
                     <th>Product Code</th>
@@ -280,14 +350,14 @@
                                         height="50px" style="background-color: transparent">
                                 </td>
                                 <td>{{ $product->quantity }}</td>
-                                <td>₱ {{ $product->capital }}</td>
-                                <td>₱ {{ $product->unit_price }}</td>
+                                <td>₱ {{ number_format($product->capital) }}</td>
+                                <td>₱ {{ number_format($product->unit_price) }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
                                         <form action="{{ route('admin.productEdit', $product->id) }}" method="POST">
                                             @csrf
                                             @method('GET')
-                                            
+
                                             <button type="submit" class="edit" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
@@ -321,17 +391,10 @@
 
 @section('script')
 
-    {{-- Auto Sorting --}}
-    <script>
-        // Automatically submit the form when the sorting option changes
-        document.getElementById('sortSelect').addEventListener('change', function() {
-            document.getElementById('sortForm').submit();
-        });
-    </script>
 
     {{-- Live Search --}}
     <script type="text/javascript">
-        $('#search').on('keyup', function() {
+        $('#search').on('input', function() {
 
             const contentContainer = $('#content');
             $value = $(this).val();
@@ -367,5 +430,45 @@
             });
         });
     </script>
+
+    {{-- Auto Sorting --}}
+    <script>
+        // Automatically submit the form when the sorting option changes
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            document.getElementById('sortForm').submit();
+        });
+    </script>
+
+    {{-- <script>
+        function handleSortChange() {
+            console.log('handleSortChange called');
+    
+            var selectedSort = document.getElementById('sortSelect').value;
+    
+            // Check if the selected sort is 'category_asc'
+            if (selectedSort === 'category_asc') {
+                // Use jQuery to show the modal
+                $('#categoryModal').modal('show');
+            } else {
+                // Submit the form for other sorting options
+                document.getElementById('sortForm').submit();
+            }
+        }
+    </script> --}}
+    
+    
+
+    <script>
+        function applyCategoryFilter() {
+            var selectedCategory = document.getElementById('category').value;
+            // You can use AJAX to fetch and update the table based on the selected category
+            // For simplicity, let's assume you have a route that returns the filtered products
+            var url = '/products/filter/' + encodeURIComponent(selectedCategory);
+
+            // Redirect to the filtered products route
+            window.location.href = url;
+        }
+    </script>
+
 
 @endsection

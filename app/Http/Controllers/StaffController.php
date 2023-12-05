@@ -64,7 +64,6 @@ class StaffController extends Controller
     }
 
 
-
     public function getCurrentSales()
     {
         // Fetch the current month
@@ -178,6 +177,7 @@ class StaffController extends Controller
         ];
     }
 
+    
 
     // Dashboard Controller
 
@@ -193,7 +193,8 @@ class StaffController extends Controller
 
         $productCount = Product::count();
         $transactionCount = Transaction::count();
-        $totalEarnings = Transaction::sum('total_earned');
+        // $totalEarnings = Transaction::sum('total_earned');
+        $totalEarnings = Transaction::sum(DB::raw('qty * unit_price'));
 
         // Bar Chart/Graph
         $currentYear = date('Y');

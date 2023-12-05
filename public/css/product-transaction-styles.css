@@ -38,6 +38,11 @@ table {
     background-color: rgba(0, 0, 0, 0.7);
 }
 
+#categoryModal {
+    position: fixed;
+    display: none;
+}
+
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto;
@@ -154,6 +159,14 @@ select.select_categ {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+}
+
+.taas {
+    display: flex;
+    justify-content: flex-start;
+    gap: 23%;
+    margin-bottom: 20px;
+    height: 33px;
 }
 
 .taas-new {
@@ -301,46 +314,6 @@ a.cancel-search {
   }
 
 
-/* Search */
-
-/* .cancel-search {
-    background-color: #006181;
-    text-decoration: none;
-    font-size: 13.3px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: white;
-    max-height: 29px;
-    padding: 5px;
-    padding-top: 7px;
-}
-
-button.search {
-    position: absolute;
-    z-index: 1;
-    background-color: transparent;
-    top: 86px;
-    padding: 5px 8px;
-    right: 217px;
-    border-top-right-radius: 1px;
-    border-bottom-right-radius: 1px;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
-
-button.search:hover {
-    background-color: #a3a3a3;
-}
-
-input:focus + .search {
-    top: 87px;
-    right: 218px;
-    padding: 4px 7px;
-}
-
-img.search {
-    max-height: 16px;
-} */
-
 input.search-prod {
     border-radius: 3px;
     border: solid 1px #b8b7b7;
@@ -378,13 +351,6 @@ select {
 
 table td {
     padding: 8px;
-}
-
-.taas {
-    display: flex;
-    justify-content: flex-start;
-    gap: 19%;
-    margin-bottom: 20px;
 }
 
 input.search-prod,

@@ -8,6 +8,7 @@
 
     {{-- // Line Chart --}}
     <script type="text/javascript">
+    
         google.charts.load('current', {
             'packages': ['corechart']
         });
@@ -65,9 +66,16 @@
                     ->whereYear('created_at', today()->year)
                     ->sum(DB::raw('qty * unit_price')) ?? 0; ?>;
 
+                var currentMonthSalesLabel = '₱' + currentMonthSales;
+
+
                 if (currentMonthSales > 0) {
-                    data.addRow([month.toLocaleString('default', { month: 'long' }), currentMonthSales, null]);
-                    monthsWithData.push(month.toLocaleString('default', { month: 'long' }));
+                    data.addRow([month.toLocaleString('default', {
+                        month: 'long'
+                    }), currentMonthSales, null]);
+                    monthsWithData.push(month.toLocaleString('default', {
+                        month: 'long'
+                    }));
                     latestMonthWithData = month;
                 }
             @endfor
@@ -76,7 +84,9 @@
             if (latestMonthWithData !== null) {
                 var nextMonth = new Date(latestMonthWithData);
                 nextMonth.setMonth(nextMonth.getMonth() + 1);
-                var nextMonthString = nextMonth.toLocaleString('default', { month: 'long' });
+                var nextMonthString = nextMonth.toLocaleString('default', {
+                    month: 'long'
+                });
 
                 // Check if the next month is not already in the array before adding it
                 if (!monthsWithData.includes(nextMonthString)) {
@@ -90,6 +100,7 @@
 
                     // Calculate forecasted sales using weighted average with dynamic alpha
                     var forecastedSales = calculateWeightedAverageDynamic(data, data.getNumberOfRows() - 1, dynamicAlpha);
+                    var forecastedSalesLabel = '₱' + forecastedSales;
 
                     // Add the data for the next month
                     data.addRow([nextMonthString, null, forecastedSales]);
@@ -126,6 +137,9 @@
                         lineWidth: 2
                     },
                 },
+                vAxis: {
+                    format: '₱ ', // Format vertical axis labels as currency
+                }
             };
 
             try {
@@ -228,215 +242,215 @@
 
 @endsection
 
-@if (auth()->user()->role === 'Staff')
-    @section('main-content')
-        <div class="content-dashboard">
+@section('main-content')
 
-            <div class="taas-content">
-                <div class="taasbox-dashboard">
-                    <img src="{{ asset('images/product-xxlss.png') }}" class="product" alt="" />
-                    <div class="loob-box">
-                        <div class="zero">{{ $productCount }}</div>
-                        <div class="item-stock">Items in Stock</div>
-                        <div class="baba-taasbox">Total Items in Stock</div>
-                    </div>
-                </div>
-                <div class="taasbox-dashboard">
-                    <img src="{{ asset('images/sales.png') }}" class="product" alt="" />
-                    <div class="loob-box">
-                        <div class="zero">{{ $totalSalesQty }}</div>
-                        <div class="item-stock">Today's Total Sales</div>
-                        <div class="baba-taasbox">Number of Items Sold Today</div>
-                    </div>
-                </div>
-                <div class="taasbox-dashboard">
-                    <img src="{{ asset('images/transactions.png') }}" class="product" alt="" />
-                    <div class="loob-box">
-                        <div class="zero">{{ $transactionCount }}</div>
-                        <div class="item-stock">Total Transactions</div>
-                        <div class="baba-taasbox">All-Time Total Transactions</div>
-                    </div>
-                </div>
-                <div class="taasbox-dashboard">
-                    <img src="{{ asset('images/earning.png') }}" class="product earn" alt="" />
-                    <div class="loob-box">
-                        <div class="zero">₱ {{ $totalEarnings }}</div>
-                        <div class="item-stock">Sales</div>
-                        <div class="baba-taasbox">All-Time Total Sales</div>
-                    </div>
+    <div class="content-dashboard">
+
+        <div class="taas-content">
+            <div class="taasbox-dashboard">
+                <img src="{{ asset('images/product-xxlss.png') }}" class="product" alt="" />
+                <div class="loob-box">
+                    <div class="zero">{{ $productCount }}</div>
+                    <div class="item-stock">Items in Stock</div>
+                    <div class="baba-taasbox">Total Items in Stock</div>
                 </div>
             </div>
+            <div class="taasbox-dashboard">
+                <img src="{{ asset('images/sales.png') }}" class="product" alt="" />
+                <div class="loob-box">
+                    <div class="zero">{{ $totalSalesQty }}</div>
+                    <div class="item-stock">Today's Total Sales</div>
+                    <div class="baba-taasbox">Number of Items Sold Today</div>
+                </div>
+            </div>
+            <div class="taasbox-dashboard">
+                <img src="{{ asset('images/transactions.png') }}" class="product" alt="" />
+                <div class="loob-box">
+                    <div class="zero">{{ $transactionCount }}</div>
+                    <div class="item-stock">Total Transactions</div>
+                    <div class="baba-taasbox">All-Time Total Transactions</div>
+                </div>
+            </div>
+            <div class="taasbox-dashboard">
+                <img src="{{ asset('images/earning.png') }}" class="product earn" alt="" />
+                <div class="loob-box">
+                    <div class="zero">₱ {{ number_format($totalEarnings) }}</div>
+                    <div class="item-stock">Sales</div>
+                    <div class="baba-taasbox">All-Time Total Sales</div>
+                </div>
+            </div>
+        </div>
 
-            {{-- Graph --}}
-            <div class="graph">
-                <div class="line-graph">
-                    <div id="curve_chart" style="height: 500px;"></div>
+        {{-- Graph --}}
+        <div class="graph">
+            <div class="line-graph">
+                <div id="curve_chart" style="height: 500px;"></div>
+                <div class="sales">Sales</div>
+            </div>
+
+            <div class="bar-graph">
+                <div class="chart-container">
+                    <canvas id="chart" width="1100" height="400"></canvas>
                     <div class="chart-label chart-y-label">Earnings</div>
                 </div>
-
-                <div class="bar-graph">
-                    <div class="chart-container">
-                        <canvas id="chart" width="1100" height="400"></canvas>
-                        {{-- <canvas id="chart" width="834" height="400"></canvas> --}}
-                        <div class="chart-label chart-y-label">Sales</div>
-                    </div>
-                </div>
-
-                <div class="pie-graph">
-                    <div id="piechart" style="width: 700px; height: 700px;"></div>
-
-                    {{-- <canvas id="pieChart" width="800" height="750"></canvas> --}}
-                    {{-- <canvas id="pieChart" width="260px" height="260px"></canvas> --}}
-                    {{-- <div class="demand">High in Demand Products</div> --}}
-                </div>
-
             </div>
 
+            <div class="pie-graph">
+                <div id="piechart" style="width: 700px; height: 700px;"></div>
+            </div>
 
-            <div class="box-pinakababa">
-                <select name="transactions" id="transactions">
-                    <option value="daily-transactions">Daily Transaction</option>
-                    <option value="weekly-transactions">Transaction by Weeks</option>
-                    <option value="monthly-transactions">Transaction by Months</option>
-                    <option value="yearly-transactions">Transaction by Year</option>
-                </select>
+        </div>
 
-                <table class="daily-transactions">
-                    <thead>
-                        <tr>
-                            <th colspan="4" class="th">Daily Transactions</th>
-                        </tr>
-                        <tr>
-                            <th>Date</th>
-                            <th>Quantity Sold</th>
-                            <th>Total Transactions</th>
-                            <th>Total Sales</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ now()->format('F j, Y') }}</td>
-                            <td>{{ App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->sum('qty') }}
-                            </td>
-                            <td>{{ App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->count() }}</td>
-                            <td>{{ App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->sum(DB::raw('qty * unit_price')) }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
 
-                <table class="weekly-transactions">
-                    <thead>
-                        <tr>
-                            <th colspan="4" class="th">Transaction by Weeks</th>
-                        </tr>
-                        <tr>
-                            <th>Date</th>
-                            <th>Quantity Sold</th>
-                            <th>Total Transactions</th>
-                            <th>Total Sales</th>
-                        </tr>
-                    </thead>
-                    <?php
-                    // Calculate the start and end date for the current week
-                    $startDate = now()
-                        ->startOfWeek()
-                        ->startOfDay()
-                        ->format('Y-m-d H:i:s');
-                    $endDate = now()
-                        ->endOfWeek()
-                        ->endOfDay()
-                        ->format('Y-m-d H:i:s');
-                    
-                    // Query the database to get data for the current week
-                    $weekQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
-                    $weekTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
-                    $weekTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('qty * unit_price'));
-                    ?>
+        <div class="box-pinakababa">
+            <select name="transactions" id="transactions">
+                <option value="daily-transactions">Daily Transaction</option>
+                <option value="weekly-transactions">Transaction by Weeks</option>
+                <option value="monthly-transactions">Transaction by Months</option>
+                <option value="yearly-transactions">Transaction by Year</option>
+            </select>
+
+            <table class="daily-transactions">
+                <thead>
                     <tr>
-                        <td>{{ now()->startOfWeek()->format('F j, Y') }} - {{ now()->endOfWeek()->format('F j, Y') }}</td>
+                        <th colspan="4" class="th">Daily Transactions</th>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <th>Quantity Sold</th>
+                        <th>Total Transactions</th>
+                        <th>Total Sales</th>
+                    </tr>
+                </thead>
+                <?php
+    $dayTotalSales = App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->sum(DB::raw('qty * unit_price'));
+                ?>
+                <tbody>
+                    <tr>
+                        <td>{{ now()->format('F j, Y') }}</td>
+                        <td> {{ App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->sum('qty') }}
+                        </td>
+                        <td> {{ App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->count() }}
+                        </td>
+                        <td>₱ {{ number_format($dayTotalSales) }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="weekly-transactions">
+                <thead>
+                    <tr>
+                        <th colspan="4" class="th">Transaction by Weeks</th>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <th>Quantity Sold</th>
+                        <th>Total Transactions</th>
+                        <th>Total Sales</th>
+                    </tr>
+                </thead>
+                <?php
+                // Calculate the start and end date for the current week
+                $startDate = now()
+                    ->startOfWeek()
+                    ->format('Y-m-d');
+                $endDate = now()
+                    ->endOfWeek()
+                    ->format('Y-m-d');
+                
+                // Query the database to get data for the current week
+                $weekQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
+                $weekTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
+                $weekTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('qty * unit_price'));
+                ?>
+                <tbody>
+                    <tr>
+                        <td>{{ now()->startOfWeek()->format('F j, Y') }} -
+                            {{ now()->endOfWeek()->format('F j, Y') }}</td>
                         <td>{{ $weekQtySold }}</td>
                         <td>{{ $weekTotalTransactions }}</td>
-                        <td>{{ $weekTotalSales }}</td>
+                        <td>₱ {{ number_format($weekTotalSales) }}</td>
                     </tr>
+                </tbody>
+            </table>
 
-                    </tbody>
-                </table>
-
-                <table class="monthly-transactions">
-                    <thead>
-                        <tr>
-                            <th colspan="4" class="th">Transaction by Months</th>
-                        </tr>
-                        <tr>
-                            <th>Date</th>
-                            <th>Quantity Sold</th>
-                            <th>Total Transactions</th>
-                            <th>Total Sales</th>
-                        </tr>
-                    </thead>
-                    <?php
-                    // Calculate the start and end date for the current month
-                    $startDate = now()
-                        ->startOfMonth()
-                        ->format('Y-m-d');
-                    $endDate = now()
-                        ->endOfMonth()
-                        ->format('Y-m-d');
-                    
-                    // Query the database to get data for the current month
-                    $monthQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
-                    $monthTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
-                    $monthTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('qty * unit_price'));
-                    ?>
+            <table class="monthly-transactions">
+                <thead>
+                    <tr>
+                        <th colspan="4" class="th">Transaction by Months</th>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <th>Quantity Sold</th>
+                        <th>Total Transactions</th>
+                        <th>Total Sales</th>
+                    </tr>
+                </thead>
+                <?php
+                // Calculate the start and end date for the current month
+                $startDate = now()
+                    ->startOfMonth()
+                    ->format('Y-m-d');
+                $endDate = now()
+                    ->endOfMonth()
+                    ->format('Y-m-d');
+                
+                // Query the database to get data for the current month
+                $monthQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
+                $monthTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
+                $monthTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('qty * unit_price'));
+                ?>
+                <tbody>
                     <tr>
                         <td>{{ now()->startOfMonth()->format('F, Y') }}</td>
                         <td>{{ $monthQtySold }}</td>
                         <td>{{ $monthTotalTransactions }}</td>
-                        <td>{{ $monthTotalSales }}</td>
+                        <td>₱ {{ number_format($monthTotalSales) }}</td>
                     </tr>
-                    </tbody>
-                </table>
+                </tbody>
+            </table>
 
-                <table class="yearly-transactions">
-                    <thead>
-                        <tr>
-                            <th colspan="4" class="th">Transaction by Year</th>
-                        </tr>
-                        <tr>
-                            <th>Year</th>
-                            <th>Quantity Sold</th>
-                            <th>Total Transactions</th>
-                            <th>Total Sales</th>
-                        </tr>
-                    </thead>
-                    <?php
-                    // Calculate the start and end date for the current year
-                    $startDate = now()
-                        ->startOfYear()
-                        ->format('Y-m-d');
-                    $endDate = now()
-                        ->endOfYear()
-                        ->format('Y-m-d');
-                    
-                    // Query the database to get data for the current year
-                    $yearQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
-                    $yearTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
-                    $yearTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('qty * unit_price'));
-                    ?>
+            <table class="yearly-transactions">
+                <thead>
+                    <tr>
+                        <th colspan="4" class="th">Transaction by Year</th>
+                    </tr>
+                    <tr>
+                        <th>Year</th>
+                        <th>Quantity Sold</th>
+                        <th>Total Transactions</th>
+                        <th>Total Sales</th>
+                    </tr>
+                </thead>
+                <?php
+                // Calculate the start and end date for the current year
+                $startDate = now()
+                    ->startOfYear()
+                    ->format('Y-m-d');
+                $endDate = now()
+                    ->endOfYear()
+                    ->format('Y-m-d');
+                
+                // Query the database to get data for the current year
+                $yearQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
+                $yearTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
+                $yearTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('qty * unit_price'));
+                ?>
+                <tbody>
                     <tr>
                         <td>{{ now()->year }}</td>
                         <td>{{ $yearQtySold }}</td>
                         <td>{{ $yearTotalTransactions }}</td>
-                        <td>{{ $yearTotalSales }}</td>
+                        <td>₱ {{ number_format($yearTotalSales) }}</td>
                     </tr>
-                    </tbody>
-                </table>
-            </div>
-
+                </tbody>
+            </table>
         </div>
-    @endsection
-@endif
+
+    </div>
+
+@endsection
 
 @section('footer')
 
@@ -444,8 +458,6 @@
 
 
 @section('script')
-    {{-- var productLabels = {!! json_encode($productLabels) !!};
-     var productDatasets = {!! json_encode($productDatasets) !!}; --}}
 
     <script>
         var labels = {!! json_encode($labels) !!};

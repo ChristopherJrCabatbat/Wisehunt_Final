@@ -8,12 +8,12 @@
 
 @section('modals')
 
-    <div class="overlay editOverlay"></div>
+    <div class="overlay"></div>
 
     {{-- Add Modal --}}
     <div id="newModal" class="modal">
         <div class="modal-content">
-            <p class="taas-new">Add New Product</p>
+            <p class="taas-new">Add Product</p>
 
             <hr>
 
@@ -101,15 +101,6 @@
                         </select>
                     </div>
 
-                    {{-- <div class="column">
-                        <div class="input_container">
-                            <input type="file" id="fileUpload">
-                        </div> --}}
-                    {{-- <label for="Image">Image:</label>
-                        <label for="file-upload" class="custom-file-upload">-- Upload Here --</label>
-                        <input id="file-upload" type="file" name="photo" id="" class="row2-input" /> --}}
-                    {{-- </div> --}}
-
                 </div>
 
                 <div class="row3">
@@ -140,7 +131,6 @@
                 <div class="buttons">
                     <input type="submit" id="saveButton" class="add-green save"
                         style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Add" />
-                    {{-- <a href="{{ route('staff.product') }}" class="cancel closeModal">Cancel</a> --}}
                     <button type="button" class="closeModal">Cancel</button>
                 </div>
             </form>
@@ -149,131 +139,6 @@
     </div>
 
 
-    <!-- Edit Modal -->
-    {{-- @foreach ($products as $product)
-        <div id="editModal{{ $product->id }}" class="modal editModal">
-            <div class="edit-modal-content">
-                <p class="taas-new">Edit Product </p>
-                <hr>
-                <form class="edit-modal-form" action="{{ route('staff.productUpdate', $product->id) }}"
-                    enctype="multipart/form-data" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="row1">
-                        <div class="column">
-                            <label class="modal-top" for="">Product code:</label>
-                            <input required type="text" name="code" pattern="{3,11}" class="row1-input"
-                                value="{{ $product->code }}" />
-                        </div>
-                        <div class="column">
-                            <label for="">Product Name:</label>
-                            <select class="select_product" name="name" class="product_name">
-                                @foreach ($suppliers as $supplier)
-                                    <option value="{{ $supplier->product_name }}"
-                                        {{ $product->name === $supplier->product_name ? 'selected' : '' }}>
-                                        {{ $supplier->product_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @if ($errors->has('name'))
-                                <div class="text-danger">{{ $errors->first('name') }}</div>
-                            @endif
-                        </div>
-
-                        <div class="column">
-                            <label for="">Brand Name:</label>
-                            <input required type="text" name="brand_name" id=""
-                                value="{{ $product->brand_name }}" class="row1-input" />
-                        </div>
-
-                    </div>
-
-                    <div class="row2">
-
-                        <div class="column">
-                            <label for="">Stock Quantity:</label>
-                            <input required autofocus type="number" name="quantity" class="row2-input autofocus"
-                                value="{{ $product->quantity }}" />
-                            @if ($errors->has('quantity'))
-                                <div class="text-danger">{{ $errors->first('quantity') }}</div>
-                            @endif
-                        </div>
-
-                        <div class="column">
-                            <label for="">Capital:</label>
-                            <input required type="number" name="capital" id=""
-                                value="{{ $product->capital }}" class="row2-input" />
-                            @if ($errors->has('capital'))
-                                <div class="text-danger">{{ $errors->first('capital') }}</div>
-                            @endif
-                        </div>
-                        <div class="column">
-                            <label for="">Unit Price:</label>
-                            <input required type="number" name="unit_price" id=""
-                                value="{{ $product->unit_price }}" class="row2-input" />
-                            @if ($errors->has('unit_price'))
-                                <div class="text-danger">{{ $errors->first('unit_price') }}</div>
-                            @endif
-                        </div>
-                        <div class="column">
-                            <label for="">Category:</label>
-                            <select name="category" id="" class="row1-input select_categ">
-                                <option value="Paper" {{ $product->category === 'Paper' ? 'selected' : '' }}>Paper
-                                </option>
-                                <option value="Tape" {{ $product->category === 'Tape' ? 'selected' : '' }}>Tape
-                                </option>
-                                <option value="Plastic" {{ $product->category === 'Plastic' ? 'selected' : '' }}>Plastic
-                                </option>
-                                <option value="Gloves" {{ $product->category === 'Gloves' ? 'selected' : '' }}>Gloves
-                                </option>
-                                <option value="Machine" {{ $product->category === 'Machine' ? 'selected' : '' }}>
-                                    Machine</option>
-                                <option value="Food Material"
-                                    {{ $product->category === 'Food Material' ? 'selected' : '' }}>
-                                    Food Material</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row3-edit">
-                        <div class="column">
-                            <label for="">Current Image:</label>
-                            <img class="img-edit" src="{{ asset($product->photo) }}" alt="" width="50px"
-                                height="auto">
-                        </div>
-                        <div class="column">
-                            <label for="">Change Image:</label>
-                            <div class="input_container_edit">
-                                <input type="file" name="photo" id="fileUpload">
-                            </div>
-                        </div>
-                        <div class="column">
-                            <label for="">Receive Notification when Quantity is:</label>
-                            <div class="input_container_ginaya_edit">
-                                <input type="number" name="low_quantity_threshold" placeholder="Enter threshold"
-                                    title="Receive notification when the stock quantity reaches or falls below this value."
-                                    value="{{ $product->low_quantity_threshold }}" required />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row4">
-                        <label for="">Product Description:</label>
-                        <textarea required name="description" rows="5" placeholder="Eg. brand of the product" cols="5"
-                            class="" value="">{{ $product->description }}</textarea>
-                    </div>
-
-                    <hr>
-                    <div class="buttons">
-                        <input type="submit" class="add-green"
-                            style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Update" />
-                        <button type="button" class="closeEditModal">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    @endforeach --}}
 
 
 @endsection
@@ -318,7 +183,7 @@
     <div class="content">
 
         <div class="taas">
-            <button type="button" id="newButton">Add New Product</button>
+            <button type="button" id="newButton">Add Product</button>
             <div class="sort-by">
                 {{-- <form action="#" method="GET"> --}}
                 <form id="sortForm" action="#" method="GET">
@@ -341,26 +206,20 @@
                             (ascending)
                         </option>
                     </select>
-                    {{-- <button type="submit">Sort</button> --}}
-                    {{-- <a href="{{ route('staff.product') }}" class="reset-sort">Reset sort</a> --}}
+                   
                 </form>
             </div>
 
             {{-- Search --}}
             <div>
-                {{-- <form class="form-search" action="{{ route('staff.productSearch') }}" method="GET"> --}}
                 <div class="searchs">
                     <div class="form-search">
                         <input required type="search" id="search" name="search" placeholder="Search product..."
                             autocomplete="off" class="search-prod" />
                         <i class="fa fa-search search-icon"></i>
-                        {{-- <button class="search" type="submit"> --}}
-                        {{-- <img class="search"src="{{ asset('images/search.png') }}" alt=""> --}}
-                        {{-- </button> --}}
                     </div>
-                    {{-- <a href="{{ route('staff.product') }}" class="cancel-search">Cancel search</a> --}}
+                 
                 </div>
-                {{-- </form> --}}
             </div>
 
         </div>
@@ -406,15 +265,18 @@
                                         height="50px" style="background-color: transparent">
                                 </td>
                                 <td>{{ $product->quantity }}</td>
-                                <td>{{ $product->capital }}</td>
-                                <td>{{ $product->unit_price }}</td>
+                                <td class="nowrap">₱ {{ number_format($product->capital) }}</td>
+                                <td class="nowrap">₱ {{ number_format($product->unit_price) }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <button type="button" class="edit editButton" id="edit"
-                                            data-id="{{ $product->id }}">
-                                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                        </button>
-
+                                        <form action="{{ route('staff.productEdit', $product->id) }}" method="POST">
+                                            @csrf
+                                            @method('GET')
+                                            
+                                            <button type="submit" class="edit" id="edit">
+                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                            </button>
+                                        </form>
                                         <form action="{{ route('staff.productDestroy', $product->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -454,7 +316,7 @@
 
     {{-- Live Search --}}
     <script type="text/javascript">
-        $('#search').on('keyup', function() {
+        $('#search').on('input', function() {
 
             const contentContainer = $('#content');
             $value = $(this).val();

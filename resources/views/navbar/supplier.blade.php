@@ -84,7 +84,6 @@
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
-                    {{-- <img src="{{ asset('images/supplier.png') }}" class="user-i" alt=""> --}}
                     USERS</a>
             </div>
         </li>
@@ -96,11 +95,67 @@
 
     <div class="content">
         <div class="taas">
-            <form id="addCustomerForm">
-                <button class="add" type="button" id="newButton">Add Supplier</button>
-            </form>
+            <button class="add" type="button" id="newButton">Add Supplier</button>
+
+
+
+            <div class="sort-by">
+                <form id="sortForm" action="#" method="GET">
+                    <input type="hidden" name="sort" id="sortInput" value="{{ request('sort') }}">
+
+                    <label for="sort">Sort by:</label>
+                    <select name="sort" id="sortSelect">
+                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
+                            Default Sorting --</option>
+                        <option value="supplier_asc" {{ request('sort') === 'supplier_asc' ? 'selected' : '' }}>
+                            Company Name</option>
+                        <option value="contact_person_asc"
+                            {{ request('sort') === 'contact_person_asc' ? 'selected' : '' }}>
+                            Contact Name</option>
+                        <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
+                        </option>
+                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                           Product/s
+                        </option>
+
+                    </select>
+                </form>
+            </div>
+
+            {{-- <div class="sort-by">
+                <form id="sortForm" action="#" method="GET">
+                    <input type="hidden" name="sort_hidden" value="{{ request('sort') }}">
+                    <label for="sort">Sort by:</label>
+                    <select name="sort" id="sortSelect">
+                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>-- Default Sorting
+                            --</option>
+                        <option value="supplier_asc" {{ request('sort') === 'supplier_asc' ? 'selected' : '' }}>Company
+                            Name</option>
+                        <option value="contact_person_asc"
+                            {{ request('sort') === 'contact_person_asc' ? 'selected' : '' }}>Contact Name</option>
+                        <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
+                        </option>
+                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                            Product/s</option>
+                    </select>
+                </form>
+
+            </div> --}}
+
+            {{-- Search --}}
+            <div>
+                <div class="searchs">
+                    <div class="form-search">
+                        <input required type="search" id="search" name="search" placeholder="Search supplier..."
+                            autocomplete="off" class="search-prod" />
+                        <i class="fa fa-search search-icon"></i>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
-        <div class="table">
+        <div class="table" id="search-results">
             <table>
 
                 <tr>
@@ -122,7 +177,7 @@
                     <th>Actions</th>
                 </tr>
 
-                <tbody>
+                <tbody class="all-data">
                     @if ($suppliers->isEmpty())
                         <tr>
                             <td colspan="7">No data found.</td>
@@ -141,7 +196,7 @@
                                     <div class="actions-container">
                                         <form action="{{ route('admin.supplierEdit', $supplier->id) }}" method="POST">
                                             @csrf
-                                            @method('GET')  
+                                            @method('GET')
                                             <button type="submit" class="edit editButton" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
@@ -163,10 +218,15 @@
                         @endforeach
                     @endif
                 </tbody>
+                <tbody id="content" class="search-data"></tbody>
 
             </table>
 
-            <div class="pagination">{{ $suppliers->links('layouts.customPagination') }}</div>
+            <div class="pagination">
+                {{ $suppliers->appends(['sort' => request('sort')])->links('layouts.customPagination') }}
+            </div>
+
+            {{-- <div class="pagination">{{ $suppliers->links('layouts.customPagination') }}</div> --}}
 
         </div>
     </div>
@@ -177,5 +237,51 @@
 @endsection
 
 @section('script')
+    {{-- Auto Sorting --}}
+    <script>
+        // Automatically submit the form when the sorting option changes
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            document.getElementById('sortForm').submit();
+        });
+    </script>
+
+    {{-- Live Search --}}
+    <script type="text/javascript">
+        $('#search').on('input', function() {
+
+            const contentContainer = $('#content');
+            $value = $(this).val();
+
+            if ($value) {
+                $('.all-data').hide();
+                $('.search-data').show();
+            } else {
+                $('.all-data').show();
+                $('.search-data').hide();
+            }
+
+            contentContainer.html('');
+
+            $.ajax({
+                type: 'get',
+                url: '{{ route('admin.supplierSearch') }}',
+                data: {
+                    'search': $value
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data.trim() === "") {
+                        contentContainer.html(
+                            '<tr><td colspan="11" class="id">No Result Found</td></tr>');
+                    } else {
+                        contentContainer.html(data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        });
+    </script>
 
 @endsection

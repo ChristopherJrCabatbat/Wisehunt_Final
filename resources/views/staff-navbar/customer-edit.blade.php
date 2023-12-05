@@ -11,31 +11,35 @@
 
     <div class="overlay"></div>
 
-    {{-- Add Modal --}}
-    <div id="newModal" class="modal">
+      {{-- Edit Modal --}}
+      <div id="editModal" class="editModal">
         <div class="modal-content">
-            <span class="closeModal close">&times;</span>
+            <a href="{{ route('staff.customer') }}"><span class="close closeEditModal">&times;</span></a>
 
-            <form class="modal-form" action="{{ route('staff.customerStore') }}" method="POST">
+            <form class="edit-modal-form" action="{{ route('staff.customerUpdate', $customerss->id) }}" method="POST">
                 @csrf
+                @method('PUT')
 
                 <center>
-                    <h2 style="margin: 0%; color:#333;">Add Customer</h2>
+                    <h2 style="margin: 0%; color:#333;">Edit Customer</h2>
                 </center>
-                
-                <label class="modal-top" for="">Company Name:</label>
-                <input required autofocus type="text" name="name" id="autofocus" />
 
+                <label class="modal-top" for="">Company Name:</label>
+                <input required type="text" class="autofocus" name="name" id="" autofocus
+                    value="{{ old('name', $customerss->name) }}">
                 <label for="">Contact Name:</label>
-                <input required type="text" name="contact_person" id="" />
+                <input required type="text" name="contact_person" id=""
+                    value="{{ old('contact_person', $customerss->contact_person) }}">
 
                 <label for="">Contact Number:</label>
-                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num" id="" value="">
+                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+                    name="contact_num" id="" value="{{ old('contact_num', $customerss->contact_num) }}">
 
                 <label for="">Address:</label>
-                <input required type="text" name="address" id="" />
+                <input required type="text" name="address" id=""
+                    value="{{ old('address', $customerss->address) }}">
 
-                <input class="add" type="submit" value="Add" />
+                <input class="add" type="submit" value="Update">
             </form>
 
         </div>

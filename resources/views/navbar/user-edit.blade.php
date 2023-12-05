@@ -10,55 +10,53 @@
 
 @section('modals')
 
-    <div class="editOverlay"></div>
+    <div class="overlay"></div>
 
     {{-- Edit Modal --}}
-        <div id="editModal" class="editModal">
-            <div class="modal-content">
-                <a href="{{ route('admin.user') }}"><span class="close closeEditModal">&times;</span></a>
+    <div id="editModal" class="editModal">
+        <div class="modal-content">
+            <a href="{{ route('admin.user') }}"><span class="close closeEditModal">&times;</span></a>
 
-                <form class="edit-modal-form" action="{{ route('admin.userUpdate', $userss->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
+            <form class="edit-modal-form" action="{{ route('admin.userUpdate', $userss->id) }}" method="POST">
+                @csrf
+                @method('PUT')
 
-                    <center>
-                        <h2 style="margin: 0%; color:#333;">Edit User</h2>
-                    </center>
+                <center>
+                    <h2 style="margin: 0%; color:#333;">Edit User</h2>
+                </center>
 
-                    <label class="modal-top" for="name">Name:</label>
-                    <input required autofocus type="text" name="name" id="name"
-                        value="{{ old('name', $userss->name) }}" />
+                <label class="modal-top" for="name">Name:</label>
+                <input required autofocus type="text" name="name" id="name"
+                    value="{{ old('name', $userss->name) }}" />
 
-                    <label for="email">Email:</label>
-                    <input required type="email" name="email" id="email"
-                        value="{{ old('email', $userss->email) }}" />
-                    @if ($errors->has('email'))
-                        <div class="user-text-danger">{{ $errors->first('email') }}</div>
-                    @endif
-                    {{-- <label for="old_password">Old Password:</label>
-                    <input required type="password" name="old_password" id="old_password" /> --}}
+                <label for="email">Email:</label>
+                <input required type="email" name="email" id="email"
+                    value="{{ old('email', $userss->email) }}" />
+                @if ($errors->has('email'))
+                    <div class="user-text-danger">{{ $errors->first('email') }}</div>
+                @endif
+                {{-- <label for="old_password">Old Password:</label>
+                <input required type="password" name="old_password" id="old_password" /> --}}
 
-                    <label for="password">New Password:</label>
-                    <input required type="password" name="password" id="password" />
-                    @if ($errors->has('password'))
-                        <div class="user-text-danger">{{ $errors->first('password') }}</div>
-                    @endif
-                    <label for="password_confirmation">Confirm New Password:</label>
-                    <input required type="password" name="password_confirmation" id="password_confirmation" />
+                <label for="password">New Password:</label>
+                <input required type="password" name="password" id="password" />
+                @if ($errors->has('password'))
+                    <div class="user-text-danger">{{ $errors->first('password') }}</div>
+                @endif
+                <label for="password_confirmation">Confirm New Password:</label>
+                <input required type="password" name="password_confirmation" id="password_confirmation" />
 
-                    <label for="role">Role:</label>
-                    <select required name="role" id="role">
-                        <option disabled selected value="">-- Select Role --</option>
-                        <option value="Admin" {{ $userss->role === 'Admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="Staff" {{ $userss->role === 'Staff' ? 'selected' : '' }}>Staff</option>
-                    </select>
+                <label for="role">Role:</label>
+                <select required name="role" id="role">
+                    <option disabled selected value="">-- Select Role --</option>
+                    <option value="Admin" {{ $userss->role === 'Admin' ? 'selected' : '' }}>Admin</option>
+                    <option value="Staff" {{ $userss->role === 'Staff' ? 'selected' : '' }}>Staff</option>
+                </select>
 
-                    <input class="add" type="submit" value="Update" />
-                </form>
-            </div>
+                <input class="add" type="submit" value="Update" />
+            </form>
         </div>
-
-
+    </div>  
 
 @endsection
 
@@ -156,10 +154,13 @@
 
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <button type="button" class="edit editButton" id="edit"
-                                            data-id="{{ $user->id }}">
-                                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                        </button>
+                                        <form action="{{ route('admin.userEdit', $user->id) }}" method="POST">
+                                            @csrf
+                                            @method('GET')  
+                                            <button type="submit" class="edit editButton" id="edit">
+                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                            </button>
+                                        </form>
 
                                         <form action="{{ route('admin.userDestroy', $user->id) }}" method="POST">
                                             @csrf

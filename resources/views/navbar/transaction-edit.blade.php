@@ -9,72 +9,112 @@
 
 @section('modals')
 
-    <div class="editOverlay"></div>
+    <div class="overlay"></div>
 
     {{-- Edit Modal --}}
-        <div id="editModal" class="editModal">
-            <div class="modal-content">
-                <a class="close closeModal" href="{{ route('admin.transaction') }}">&times;</a>
+    <div id="editModal" class="editModal">
+        <div class="modal-content">
+            <a class="close closeModal" href="{{ route('admin.transaction') }}">&times;</a>
 
-                    <form class="modal-form" action="{{ route('admin.transactionUpdate', $transactionss->id) }}" method="POST">
-                        @csrf
-                        @method('PUT')
+                <form class="modal-form" action="{{ route('admin.transactionUpdate', $transactionss->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
 
-                    <center>
-                        <h2 style="margin: 0%; color:#333;">Edit Transaction</h2>
-                    </center>
+                <center>
+                    <h2 style="margin: 0%; color:#333;">Edit Transaction</h2>
+                </center>
 
-                    <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                    <select class="select autofocus" name="customer_name" id="customer-edit">
+                <label class="baba-h2 taas-select" for="customer">Customer:</label>
+                <select class="select autofocus" name="customer_name" id="customer-edit">
 
-                        @foreach ($customers as $customer)
-                            <option value="{{ $customer->name }}" data-contact="{{ $customer->contact_num }}"
-                                {{ old('customer_name', $transactionss->customer_name) === $customer->name ? 'selected' : '' }}>
-                                {{ $customer->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                    @foreach ($customers as $customer)
+                        <option value="{{ $customer->name }}" data-contact="{{ $customer->contact_num }}"
+                            {{ old('customer_name', $transactionss->customer_name) === $customer->name ? 'selected' : '' }}>
+                            {{ $customer->name }}
+                        </option>
+                    @endforeach
+                </select>
 
-                    <label for="product_name" class="taas-select">Product:</label>
-                    <select class="select product-select" name="product_name" id="product_name-edit"
-                        {{-- onchange="updateUnitPrice('editModal{{ $transactions->id }}')"> --}}
-                        onchange="updateUnitPrice('editModal')">
-                        @foreach ($products as $product)
-                            <option value="{{ $product->name }}" data-unit-price="{{ $product->unit_price }}"
-                                {{ old('product_name', $transactionss->product_name) === $product->name ? 'selected' : '' }}>
-                                {{ $product->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <div class="text-danger">{{ $errors->first('error') }}</div>
+                <label for="product_name" class="taas-select">Product:</label>
+                <select class="select product-select" name="product_name" id="product_name-edit"
+                    {{-- onchange="updateUnitPrice('editModal{{ $transactions->id }}')"> --}}
+                    onchange="updateUnitPrice('editModal')">
+                    @foreach ($products as $product)
+                        <option value="{{ $product->name }}" data-unit-price="{{ $product->unit_price }}"
+                            {{ old('product_name', $transactionss->product_name) === $product->name ? 'selected' : '' }}>
+                            {{ $product->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <div class="text-danger">{{ $errors->first('error') }}</div>
 
-                    <label for="">Quantity:</label>
-                    <input required id="qty-edit" class="qty" name="qty" type="number"
-                        value="{{ old('qty', $transactionss->qty) }}">
-                        <div class="text-danger">{{ $errors->first('qty') }}</div>
-   <!-- Display error for insufficient quantity in stock -->
-                @if ($errors->has('error_stock'))
-                    <div class="text-danger-stock">{{ $errors->first('error_stock') }}</div>
-                @endif
-                       <!-- Display error for insufficient quantity in stock -->
-                @if ($errors->has('error_stock'))
+                <label for="">Quantity:</label>
+                <input required id="qty-edit" class="qty" name="qty" type="number"
+                    value="{{ old('qty', $transactionss->qty) }}">
+                    <div class="text-danger">{{ $errors->first('qty') }}</div>
+        <!-- Display error for insufficient quantity in stock -->
+            @if ($errors->has('error_stock'))
                 <div class="text-danger-stock">{{ $errors->first('error_stock') }}</div>
             @endif
-                    <label for="unit_price">Unit Price:</label>
-                    <input readonly required name="unit_price" class="unit_price" id="unit_price-edit" type="number"
-                        value="{{ old('unit_price', $transactionss->unit_price) }}">
+                   <!-- Display error for insufficient quantity in stock -->
+            @if ($errors->has('error_stock'))
+            <div class="text-danger-stock">{{ $errors->first('error_stock') }}</div>
+        @endif
+                <label for="unit_price">Unit Price:</label>
+                <input readonly required name="unit_price" class="unit_price" id="unit_price-edit" type="number"
+                    value="{{ old('unit_price', $transactionss->unit_price) }}">
 
-                    <label for="total_price">Total Price:</label>
-                    <input readonly name="total_price" id="total_price_edit" type="number"
-                        value="{{ old('total_price', $transactionss->total_price) }}" class="total_price">
+                <label for="total_price">Total Price:</label>
+                <input readonly name="total_price" id="total_price_edit" type="number"
+                    value="{{ old('total_price', $transactionss->total_price) }}" class="total_price">
 
-                    <input type="submit" id="button-transac" value="Update">
-                </form>
-            </div>
-
+                <input type="submit" id="button-transac" value="Update">
+            </form>
         </div>
 
- 
+    </div>
+
+
+
+
+    {{-- Report Modal --}}
+    <div id="reportModal" class="reportModal">
+        <div class="modal-content-report">
+            <span class="close">&times;</span>
+
+            <form class="modal-form" action="{{ route('admin.generateReport') }}" method="POST" target="_blank">
+                @csrf
+                <label class="modal-top" for="">Generate Report</label>
+                <hr>
+                <div class="row-report">
+                    <div class="column-report">
+                        <label for="">From Date:</label>
+                        <input type="date" required name="from_date">
+                    </div>
+                    <div class="column-report">
+                        <label for="">To Date:</label>
+                        <input type="date" required name="to_date">
+                    </div>
+                </div>
+
+                <label class="baba-h2 taas-select" for="customer">Customer:</label>
+                <select required name="customer_name" class="select customer">
+                    <option value="" disabled selected>-- Select a Customer --</option>
+                    @foreach ($customers as $customer)
+                        <option value="{{ $customer->name }}"
+                            {{ old('customer_name') === $customer->name ? 'selected' : '' }}>
+                            {{ $customer->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <hr>
+                <div class="buttons-report">
+                    <button type="submit">Generate</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
 @endsection
 
 @section('side-navbar')
@@ -147,6 +187,21 @@
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
                             Default Sorting --</option>
                         <option value="customer_name_asc" {{ request('sort') === 'customer_name_asc' ? 'selected' : '' }}>
+                            Customer</option>
+                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                            Product Name</option>
+                        <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity</option>
+                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit Price
+                        </option>
+                        <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
+                            Total Price</option>
+                        <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
+                            Total Earned on Item</option>
+                    </select>
+                    {{-- <select name="sort" id="sortSelect">
+                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
+                            Default Sorting --</option>
+                        <option value="customer_name_asc" {{ request('sort') === 'customer_name_asc' ? 'selected' : '' }}>
                             Customer
                             (A-Z)</option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
@@ -164,13 +219,11 @@
                         <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
                             Total Earned on Item
                             (descending)</option>
-                    </select>
+                    </select> --}}
                 </form>
             </div>
 
             {{-- Search --}}
-
-           
             <div>
                 <div class="searchs">
                     <div class="form-search">
@@ -216,15 +269,17 @@
                                 <td>{{ $transaction->customer_name }}</td>
                                 <td>{{ $transaction->product_name }}</td>
                                 <td>{{ $transaction->qty }}</td>
-                                <td>₱ {{ $transaction->unit_price }}</td>
-                                <td>₱ {{ $transaction->total_price }}</td>
-                                <td>₱ {{ $transaction->total_earned }}</td>
+                                <td class="nowrap">₱ {{ number_format($transaction->unit_price) }}</td>
+                                <td class="nowrap">₱ {{ number_format($transaction->total_price) }}</td>
+                                <td class="nowrap">₱ {{ number_format($transaction->total_earned) }}</td>
                                 <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form>
-                                            <button type="button" class="edit editButton" id="edit"
-                                                data-id="{{ $transaction->id }}">
+                                        <form action="{{ route('admin.transactionEdit', $transaction->id) }}"
+                                            method="POST">
+                                            @csrf
+                                            @method('GET')
+                                            <button type="submit" class="edit" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>
@@ -262,13 +317,67 @@
 @section('script')
     <script src="{{ asset('js/generateReport.js') }}"></script>
 
-    @if(session('forecastedSales') !== null)
+    @if (session('forecastedSalesAlert'))
         <script>
-            var forecastedSales = {{ session('forecastedSales') }};
-            alert('Forecasted Sales for the day: ₱' + forecastedSales);
+            var forecastedSales = {!! json_encode(session('forecastedSalesAlert'), JSON_HEX_TAG) !!};
+            alert(forecastedSales);
         </script>
     @endif
 
+    @if (session('monthlyForecastedSalesAlert'))
+        <script>
+            var monthlyForecastedSales = {!! json_encode(session('monthlyForecastedSalesAlert'), JSON_HEX_TAG) !!};
+            alert(monthlyForecastedSales);
+        </script>
+    @endif
+
+    {{-- Auto Sorting --}}
+    <script>
+        // Automatically submit the form when the sorting option changes
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            document.getElementById('sortForm').submit();
+        });
+    </script>
+
+    {{-- Live Search --}}
+    <script type="text/javascript">
+        $('#search').on('input', function() {
+
+            const contentContainer = $('#content');
+            $value = $(this).val();
+
+            if ($value) {
+                $('.all-data').hide();
+                $('.search-data').show();
+            } else {
+                $('.all-data').show();
+                $('.search-data').hide();
+            }
+
+            // Clear the existing results instantly
+            contentContainer.html('');
+
+            $.ajax({
+                type: 'get',
+                url: '{{ route('admin.transactionSearch') }}',
+                data: {
+                    'search': $value
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data.trim() === "") {
+                        contentContainer.html(
+                            '<tr><td colspan="11" class="id">No Result Found</td></tr>');
+                    } else {
+                        contentContainer.html(data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        });
+    </script>
 
     <!-- Auto Unit Price Script -->
     <script>

@@ -428,6 +428,41 @@ class AdminController extends Controller
             'totalNotifications' => $totalNotifications,
         ] + $notifications);
     }
+    
+    public function filterProductsByCategory($category)
+    {
+        $nm = Session::get('name');
+        $query = Product::query();
+
+        // Add additional filters as needed
+        $query->where('category', $category);
+
+        // Assuming you retrieve $productsss and $forecasts here or from another method
+        $productsss = Product::all();
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Call the method to generate notifications
+        $notifications = $this->generateNotifications($productsss, $forecasts);
+
+        // Extract total counts from the generated notifications
+        $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+        $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+        $totalForecastMessages = $notifications['totalForecastMessages'];
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+        $suppliers = Supplier::all();
+        $products = $query->paginate(5);
+
+        return view('navbar.product', [
+            'username' => $nm,
+            'products' => $products,
+            'suppliers' => $suppliers,
+            'totalNotifications' => $totalNotifications,
+        ] + $notifications);
+    }
+
 
     public function productStore(Request $request)
     {
@@ -1117,9 +1152,23 @@ class AdminController extends Controller
 
 
     // Supplier Controllers
-    public function supplier()
+    public function supplier(Request $request)
     {
         $nm = Session::get('name');
+
+        $sortOption = $request->input('sort');
+
+        $query = Supplier::query();
+
+        if ($sortOption === 'supplier_asc') {
+            $query->orderBy('supplier', 'asc');
+        } elseif ($sortOption === 'contact_person_asc') {
+            $query->orderBy('contact_person', 'asc');
+        } elseif ($sortOption === 'address_asc') {
+            $query->orderBy('address', 'asc');
+        } elseif ($sortOption === 'product_name_asc') {
+            $query->orderBy('product_name', 'asc');
+        }
 
         // Assuming you retrieve $productsss and $forecasts here or from another method
         $productsss = Product::all();
@@ -1135,7 +1184,8 @@ class AdminController extends Controller
 
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
-        $suppliers = Supplier::paginate(8);
+        $suppliers = $query->paginate(8);
+        // $suppliers = Supplier::paginate(8);
 
         return view('navbar.supplier', [
             'suppliers' => $suppliers,

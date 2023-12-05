@@ -186,6 +186,21 @@
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
                             Default Sorting --</option>
                         <option value="customer_name_asc" {{ request('sort') === 'customer_name_asc' ? 'selected' : '' }}>
+                            Customer</option>
+                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                            Product Name</option>
+                        <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity</option>
+                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit Price
+                        </option>
+                        <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
+                            Total Price</option>
+                        <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
+                            Total Earned on Item</option>
+                    </select>
+                    {{-- <select name="sort" id="sortSelect">
+                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
+                            Default Sorting --</option>
+                        <option value="customer_name_asc" {{ request('sort') === 'customer_name_asc' ? 'selected' : '' }}>
                             Customer
                             (A-Z)</option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
@@ -203,7 +218,7 @@
                         <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
                             Total Earned on Item
                             (descending)</option>
-                    </select>
+                    </select> --}}
                 </form>
             </div>
 
@@ -212,7 +227,7 @@
                 <div class="searchs">
                     <div class="form-search">
                         <input type="text" name="search" id="search" required class="search-prod"
-                            placeholder="Search product..." value="{{ $searchQuery }}" />
+                            placeholder="Search transactions..." value="{{ $searchQuery }}" />
                         <i class="fa fa-search search-icon"></i>
                     </div>
                 </div>
@@ -253,9 +268,9 @@
                                 <td>{{ $transaction->customer_name }}</td>
                                 <td>{{ $transaction->product_name }}</td>
                                 <td>{{ $transaction->qty }}</td>
-                                <td>₱ {{ $transaction->unit_price }}</td>
-                                <td>₱ {{ $transaction->total_price }}</td>
-                                <td>₱ {{ $transaction->total_earned }}</td>
+                                <td class="nowrap">₱ {{ number_format($transaction->unit_price) }}</td>
+                                <td class="nowrap">₱ {{ number_format($transaction->total_price) }}</td>
+                                <td class="nowrap">₱ {{ number_format($transaction->total_earned) }}</td>
                                 <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                                 <td class="actions">
                                     <div class="actions-container">

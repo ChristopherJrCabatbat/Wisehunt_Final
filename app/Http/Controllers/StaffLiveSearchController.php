@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Transaction;
-use App\Models\Supplier;
 
-class LiveSearchController extends Controller
+class StaffLiveSearchController extends Controller
 {
     public function productSearch(Request $request)
     {
@@ -37,14 +36,14 @@ class LiveSearchController extends Controller
                     <td class="nowrap"> ₱ ' . number_format($product->unit_price) . ' </td>
                     <td class="actions">
                         <div class="actions-container">
-                            <form action="' . route('admin.productEdit', $product->id) . '" method="POST">
+                            <form action="' . route('staff.productEdit', $product->id) . '" method="POST">
                                 ' . csrf_field() . '
                                 ' . method_field('GET') . '
                                 <button type="submit" class="edit editButton" id="edit">
                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                             </button>
                             </form>
-                            <form action="' . route('admin.productDestroy', $product->id) . '" method="POST">
+                            <form action="' . route('staff.productDestroy', $product->id) . '" method="POST">
                                 ' . csrf_field() . '
                                 ' . method_field('DELETE') . '
                                 <button onclick="return confirm(\'Are you sure you want to delete this?\')" type="submit" class="delete" id="delete">
@@ -85,14 +84,14 @@ class LiveSearchController extends Controller
 
             <td class="actions">
                 <div class="actions-container">
-                        <form action="'. route('admin.transactionEdit', $transaction->id) .'" method="POST">
+                        <form action="'. route('staff.transactionEdit', $transaction->id) .'" method="POST">
                         ' . csrf_field() . '
                         ' . method_field('GET') . '
                         <button type="submit" class="edit editButton" id="edit" data-id="'.$transaction->id.'">
                             <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                         </button>
                     </form>
-                    <form action="'. route('admin.transactionDestroy', $transaction->id) .'" method="POST">
+                    <form action="'. route('staff.productDestroy', $transaction->id) .'" method="POST">
                         ' . csrf_field() . '
                         ' . method_field('DELETE') . '
                         <button onclick="return confirm(\'Are you sure you want to delete this?\')" type="submit" class="delete" id="delete">
@@ -109,39 +108,40 @@ class LiveSearchController extends Controller
         return response($output ?: '');
     }
     
-    public function supplierSearch(Request $request)
+    public function customerSearch(Request $request)
     {
         $rowNumber = 1;
         $output="";
 
-        $suppliers = Supplier::where('supplier', 'Like', '%' . $request->search . '%')
-        ->orWhere('contact_person', 'LIKE', '%' . $request->search . '%')
+        $transactions = Transaction::where('customer_name', 'Like', '%' . $request->search . '%')
         ->orWhere('product_name', 'LIKE', '%' . $request->search . '%')
         ->get();
 
-        foreach ($suppliers as $supplier) 
+        foreach ($transactions as $transaction) 
         {
             $output.=
 
             '<tr>
 
             <td>' . $rowNumber++ . '</td>
-            <td> '.$supplier->supplier.' </td>
-            <td> '.$supplier->contact_person.' </td>
-            <td> '.$supplier->contact_num.' </td>
-            <td> '.$supplier->address.' </td>
-            <td> '.$supplier->product_name.' </td>
+            <td> '.$transaction->customer_name.' </td>
+            <td> '.$transaction->product_name.' </td>
+            <td> '.$transaction->qty.' </td>
+            <td> ₱ '.$transaction->unit_price.' </td>
+            <td> ₱ '.number_format($transaction->total_price).' </td>
+            <td> ₱ '.number_format($transaction->total_earned).' </td>
+            <td> '.$transaction->created_at->format('M. d, Y').' </td>
 
             <td class="actions">
                 <div class="actions-container">
-                        <form action="'. route('admin.supplierEdit', $supplier->id) .'" method="POST">
+                        <form action="'. route('staff.transactionEdit', $transaction->id) .'" method="POST">
                         ' . csrf_field() . '
                         ' . method_field('GET') . '
-                        <button type="submit" class="edit editButton" id="edit" data-id="'.$supplier->id.'">
+                        <button type="submit" class="edit editButton" id="edit" data-id="'.$transaction->id.'">
                             <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                         </button>
                     </form>
-                    <form action="'. route('admin.supplierDestroy', $supplier->id) .'" method="POST">
+                    <form action="'. route('staff.productDestroy', $transaction->id) .'" method="POST">
                         ' . csrf_field() . '
                         ' . method_field('DELETE') . '
                         <button onclick="return confirm(\'Are you sure you want to delete this?\')" type="submit" class="delete" id="delete">
@@ -158,3 +158,4 @@ class LiveSearchController extends Controller
         return response($output ?: '');
     }
 }
+

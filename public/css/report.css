@@ -3,6 +3,10 @@ table {
     width: 100%;
 }
 
+th {
+    font-weight: bold;
+}
+
 th,
 td {
     border: 1px solid black;

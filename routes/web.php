@@ -8,9 +8,11 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\LiveSearchController;
+use App\Http\Controllers\StaffLiveSearchController;
 use App\Http\Controllers\MainController;
 
-Route::get('/', [LoginController::class, 'login'])->name('loginForm');
+// Route::get('/', [LoginController::class, 'login'])->name('loginForm');
+Route::get('/', [LoginController::class, 'login'])->name('login');
 
 Route::get('/dashboard', [MainController::class, 'dashboard'])->name('dashboard')->middleware('auth');
 
@@ -43,6 +45,7 @@ Route::group([
 
     // Product Routes
     Route::get('/product', [AdminController::class, 'product'])->name('product');
+    Route::get('/products/filter/{category}', [AdminController::class, 'filterProductsByCategory'])->name('filterProductsByCategory');
     Route::post('/productStore', [AdminController::class, 'productStore'])->name('productStore');
     Route::get('/productEdit/{id}', [AdminController::class, 'productEdit'])->name('productEdit');
     Route::put('/productUpdate/{id}', [AdminController::class, 'productUpdate'])->name('productUpdate');
@@ -74,6 +77,7 @@ Route::group([
     Route::get('/supplierEdit/{id}', [AdminController::class, 'supplierEdit'])->name('supplierEdit');
     Route::put('/supplierUpdate/{id}', [AdminController::class, 'supplierUpdate'])->name('supplierUpdate');
     Route::delete('/supplierDestroy/{id}', [AdminController::class, 'supplierDestroy'])->name('supplierDestroy');
+    Route::get('/supplierSearch', [LiveSearchController::class, 'supplierSearch'])->name('supplierSearch');
 
     
     // User Routes
@@ -96,31 +100,33 @@ Route::group([
     // Dashboard
     Route::get('/dashboard', [StaffController::class, 'dashboard'])->name('dashboard');
     
-    // Route::get('/dashboard', [StaffController::class, 'dashboard'])->name('dashboard');
 
     // Product Routes
     Route::get('/product', [StaffController::class, 'product'])->name('product');
     Route::post('/productStore', [StaffController::class, 'productStore'])->name('productStore');
-    // Route::post('/validateProductStore', [StaffController::class, 'validateProductStore'])->name('validateProductStore');
+    Route::get('/productEdit/{id}', [StaffController::class, 'productEdit'])->name('productEdit');
     Route::put('/productUpdate/{id}', [StaffController::class, 'productUpdate'])->name('productUpdate');
     Route::delete('/productDestroy/{id}', [StaffController::class, 'productDestroy'])->name('productDestroy');
-    Route::get('/productSearch', [LiveSearchController::class, 'productSearch'])->name('productSearch');
+    Route::get('/productSearch', [StaffLiveSearchController::class, 'productSearch'])->name('productSearch');
 
 
     // Transaction Routes
     Route::get('/transaction', [StaffController::class, 'transaction'])->name('transaction');
     Route::post('/transactionStore', [StaffController::class, 'transactionStore'])->name('transactionStore');
+    Route::get('/transactionEdit/{id}', [StaffController::class, 'transactionEdit'])->name('transactionEdit');
     Route::put('/transactionUpdate/{id}', [StaffController::class, 'transactionUpdate'])->name('transactionUpdate');
     Route::delete('/transactionDestroy/{id}', [StaffController::class, 'transactionDestroy'])->name('transactionDestroy');
     Route::post('/generateReport', [StaffController::class, 'generateReport'])->name('generateReport');
-    Route::get('/transactionSearch', [LiveSearchController::class, 'transactionSearch'])->name('transactionSearch');
+    Route::get('/transactionSearch', [StaffLiveSearchController::class, 'transactionSearch'])->name('transactionSearch');
 
 
     // Customer Routes
     Route::get('/customer', [StaffController::class, 'customer'])->name('customer');
     Route::post('/customerStore', [StaffController::class, 'customerStore'])->name('customerStore');
+    Route::get('/customerEdit/{id}', [StaffController::class, 'customerEdit'])->name('customerEdit');
     Route::put('/customerUpdate/{id}', [StaffController::class, 'customerUpdate'])->name('customerUpdate');
     Route::delete('/customerDestroy/{id}', [StaffController::class, 'customerDestroy'])->name('customerDestroy');
+    Route::get('/customerSearch', [StaffLiveSearchController::class, 'customerSearch'])->name('customerSearch');
 
 });
 

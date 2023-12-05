@@ -10,43 +10,42 @@
 
 @section('modals')
 
-    <div class="editOverlay"></div>
+    <div class="overlay"></div>
 
     {{-- Edit Modal --}}
-        <div id="editModal" class="editModal">
-            <div class="modal-content">
-                <a href="{{ route('admin.supplier') }}"><span class="close closeEditModal">&times;</span></a>
+    <div id="editModal" class="editModal">
+        <div class="modal-content">
+            <a href="{{ route('admin.supplier') }}"><span class="close closeEditModal">&times;</span></a>
 
-                <form class="edit-modal-form" action="{{ route('admin.supplierUpdate', $supplierss->id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
+            <form class="edit-modal-form" action="{{ route('admin.supplierUpdate', $supplierss->id) }}" method="POST">
+                @csrf
+                @method('PUT')
 
-                    <center>
-                        <h2 style="margin: 0%; color:#333;">Edit Supplier</h2>
-                    </center>
-                    <label class="modal-top" for="">Company Name:</label>
-                    <input required type="text" class="autofocus" name="supplier" id="" autofocus
-                        value="{{ old('supplier', $supplierss->supplier) }}" />
-                    <label for="">Contact Name:</label>
-                    <input required type="text" name="contact_person" id=""
-                        value="{{ old('contact_person', $supplierss->contact_person) }}" />
-                    <label for="">Contact Number:</label>
-                    <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
-                        name="contact_num" name="contact_num" id=""
-                        value="{{ old('contact_num', $supplierss->contact_num) }}" />
-                    <label for="">Address:</label>
-                    <input required type="text" name="address" id=""
-                        value="{{ old('address', $supplierss->address) }}" />
-                    <label for="">Product/s:</label>
-                    <input required type="text" name="product_name" id=""
-                        value="{{ old('product_name', $supplierss->product_name) }}" />
+                <center>
+                    <h2 style="margin: 0%; color:#333;">Edit Supplier</h2>
+                </center>
+                <label class="modal-top" for="">Company Name:</label>
+                <input required type="text" class="autofocus" name="supplier" id="" autofocus
+                    value="{{ old('supplier', $supplierss->supplier) }}" />
+                <label for="">Contact Name:</label>
+                <input required type="text" name="contact_person" id=""
+                    value="{{ old('contact_person', $supplierss->contact_person) }}" />
+                <label for="">Contact Number:</label>
+                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
+                    name="contact_num" name="contact_num" id=""
+                    value="{{ old('contact_num', $supplierss->contact_num) }}" />
+                <label for="">Address:</label>
+                <input required type="text" name="address" id=""
+                    value="{{ old('address', $supplierss->address) }}" />
+                <label for="">Product/s:</label>
+                <input required type="text" name="product_name" id=""
+                    value="{{ old('product_name', $supplierss->product_name) }}" />
 
 
-                    <input class="add" type="submit" value="Update" />
-                </form>
-            </div>
+                <input class="add" type="submit" value="Update" />
+            </form>
         </div>
-
+    </div>
 
 @endsection
 
@@ -92,7 +91,6 @@
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
-                    {{-- <img src="{{ asset('images/supplier.png') }}" class="user-i" alt=""> --}}
                     USERS</a>
             </div>
         </li>
@@ -104,11 +102,67 @@
 
     <div class="content">
         <div class="taas">
-            <form id="addCustomerForm">
-                <button class="add" type="button" id="newButton">Add Supplier</button>
-            </form>
+            <button class="add" type="button" id="newButton">Add Supplier</button>
+
+
+
+            <div class="sort-by">
+                <form id="sortForm" action="#" method="GET">
+                    <input type="hidden" name="sort" id="sortInput" value="{{ request('sort') }}">
+
+                    <label for="sort">Sort by:</label>
+                    <select name="sort" id="sortSelect">
+                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
+                            Default Sorting --</option>
+                        <option value="supplier_asc" {{ request('sort') === 'supplier_asc' ? 'selected' : '' }}>
+                            Company Name</option>
+                        <option value="contact_person_asc"
+                            {{ request('sort') === 'contact_person_asc' ? 'selected' : '' }}>
+                            Contact Name</option>
+                        <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
+                        </option>
+                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                           Product/s
+                        </option>
+
+                    </select>
+                </form>
+            </div>
+
+            {{-- <div class="sort-by">
+                <form id="sortForm" action="#" method="GET">
+                    <input type="hidden" name="sort_hidden" value="{{ request('sort') }}">
+                    <label for="sort">Sort by:</label>
+                    <select name="sort" id="sortSelect">
+                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>-- Default Sorting
+                            --</option>
+                        <option value="supplier_asc" {{ request('sort') === 'supplier_asc' ? 'selected' : '' }}>Company
+                            Name</option>
+                        <option value="contact_person_asc"
+                            {{ request('sort') === 'contact_person_asc' ? 'selected' : '' }}>Contact Name</option>
+                        <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
+                        </option>
+                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                            Product/s</option>
+                    </select>
+                </form>
+
+            </div> --}}
+
+            {{-- Search --}}
+            <div>
+                <div class="searchs">
+                    <div class="form-search">
+                        <input required type="search" id="search" name="search" placeholder="Search supplier..."
+                            autocomplete="off" class="search-prod" />
+                        <i class="fa fa-search search-icon"></i>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
-        <div class="table">
+        <div class="table" id="search-results">
             <table>
 
                 <tr>
@@ -130,7 +184,7 @@
                     <th>Actions</th>
                 </tr>
 
-                <tbody>
+                <tbody class="all-data">
                     @if ($suppliers->isEmpty())
                         <tr>
                             <td colspan="7">No data found.</td>
@@ -147,10 +201,13 @@
 
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <button type="button" class="edit editButton" id="edit"
-                                            data-id="{{ $supplier->id }}">
-                                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                        </button>
+                                        <form action="{{ route('admin.supplierEdit', $supplier->id) }}" method="POST">
+                                            @csrf
+                                            @method('GET')
+                                            <button type="submit" class="edit editButton" id="edit">
+                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                            </button>
+                                        </form>
 
                                         <form action="{{ route('admin.supplierDestroy', $supplier->id) }}"
                                             method="POST">
@@ -168,10 +225,15 @@
                         @endforeach
                     @endif
                 </tbody>
+                <tbody id="content" class="search-data"></tbody>
 
             </table>
 
-            <div class="pagination">{{ $suppliers->links('layouts.customPagination') }}</div>
+            <div class="pagination">
+                {{ $suppliers->appends(['sort' => request('sort')])->links('layouts.customPagination') }}
+            </div>
+
+            {{-- <div class="pagination">{{ $suppliers->links('layouts.customPagination') }}</div> --}}
 
         </div>
     </div>
@@ -182,5 +244,51 @@
 @endsection
 
 @section('script')
+    {{-- Auto Sorting --}}
+    <script>
+        // Automatically submit the form when the sorting option changes
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            document.getElementById('sortForm').submit();
+        });
+    </script>
+
+    {{-- Live Search --}}
+    <script type="text/javascript">
+        $('#search').on('input', function() {
+
+            const contentContainer = $('#content');
+            $value = $(this).val();
+
+            if ($value) {
+                $('.all-data').hide();
+                $('.search-data').show();
+            } else {
+                $('.all-data').show();
+                $('.search-data').hide();
+            }
+
+            contentContainer.html('');
+
+            $.ajax({
+                type: 'get',
+                url: '{{ route('admin.supplierSearch') }}',
+                data: {
+                    'search': $value
+                },
+                success: function(data) {
+                    console.log(data);
+                    if (data.trim() === "") {
+                        contentContainer.html(
+                            '<tr><td colspan="11" class="id">No Result Found</td></tr>');
+                    } else {
+                        contentContainer.html(data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        });
+    </script>
 
 @endsection

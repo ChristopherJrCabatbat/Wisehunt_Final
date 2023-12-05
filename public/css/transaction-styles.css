@@ -22,7 +22,14 @@
 .taas {
     display: flex;
     justify-content: flex-start;
-    gap: 13%;
+    gap: 16%;
+    margin-bottom: 20px;
+}
+
+.taas-staff {
+    display: flex;
+    justify-content: flex-start;
+    gap: 17%;
     margin-bottom: 20px;
 }
 
@@ -36,7 +43,7 @@
 .modal-content-report {
     background-color: #fefefe;
     margin: 15% auto;
-    padding: 20px;
+    padding: 20px 20px 20px 28px;
     border: 1px solid black;
     position: relative;
     bottom: 140px;
@@ -45,11 +52,11 @@
 
 hr {
     border: 0.1px solid black;
-    width: 115%;
+    width: 117.2%;
     margin-top: 20px;
     margin-bottom: 20px;
     position: relative;
-    right: 20px;
+    right: 28px;
 }
 
 .modal-form {
@@ -92,18 +99,17 @@ input[type="submit"] {
 
 .row-report {
     display: flex;
-    gap: 27px;
-    /* justify-content: space-evenly; */
+    gap: 55px;
 }
 
 input[type="date"] {
-    width: 111%;
+    width: 128%;
 }
 
 .column-report {
     display: flex;
     flex-direction: column;
-    /* gap: 8px; */
+    gap: 8px;
 }
 
 button[type="button"] {

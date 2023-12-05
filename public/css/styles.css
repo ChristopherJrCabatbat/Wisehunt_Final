@@ -141,7 +141,7 @@ a:hover {
 }
 
 .content {
-    margin-top: 85px;
+    margin-top: 80px;
     margin-left: 208px;
     /* margin-left: 19.4%; */
 }
@@ -372,9 +372,9 @@ button, input[type="submit"], a{
     background-color: red;
     border-radius: 50%;
     position: absolute;
-    right: 144px;
+    right: 146px;
     z-index: 10;
-    top: 40%;
+    top: 41%;
     transform: translateY(-50%);
     display: none; /* Initially hidden */
     color: white;
@@ -436,3 +436,6 @@ form button#delete:hover {
     background-color: #a11c29;
 }
 
+.nowrap {
+    white-space: nowrap;
+}

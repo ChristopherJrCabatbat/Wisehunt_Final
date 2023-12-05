@@ -49,9 +49,9 @@
                             <td>{{ $transaction->customer_name }}</td>
                             <td>{{ $transaction->product_name }}</td>
                             <td>{{ $transaction->qty }}</td>
-                            <td>{{ $transaction->unit_price }}</td>
-                            <td>{{ $transaction->total_price }}</td>
-                            <td>{{ $transaction->total_earned }}</td>
+                            <td class="nowrap">₱ {{ number_format($transaction->unit_price) }}</td>
+                            <td class="nowrap">₱ {{ number_format($transaction->total_price) }}</td>
+                            <td class="nowrap">₱ {{ number_format($transaction->total_earned) }}</td>
                             <td>{{ $transaction->created_at->format('M. d, Y') }}</td>
                         </tr>
                     @endforeach

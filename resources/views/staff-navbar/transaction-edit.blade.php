@@ -11,109 +11,65 @@
 
     <div class="overlay"></div>
 
-    {{-- Add Modal --}}
-    <div id="newModal" class="modal">
+    {{-- Edit Modal --}}
+    <div id="editModal" class="editModal">
         <div class="modal-content">
-            <a class="close closeModal">&times;</a>
+            <a class="close closeModal" href="{{ route('staff.transaction') }}">&times;</a>
 
-            <form class="modal-form" action="{{ route('staff.transactionStore') }}" method="POST">
+            <form class="modal-form" action="{{ route('staff.transactionUpdate', $transactionss->id) }}" method="POST">
                 @csrf
+                @method('PUT')
+
                 <center>
-                    <h2 style="margin: 0%; color:#333;">Add Transaction</h2>
+                    <h2 style="margin: 0%; color:#333;">Edit Transaction</h2>
                 </center>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                <select required name="customer_name" id="autofocus" class="select customer">
-                    <option value="" disabled selected>-- Select a Customer --</option>
+                <select class="select autofocus" name="customer_name" id="customer-edit">
+
                     @foreach ($customers as $customer)
                         <option value="{{ $customer->name }}" data-contact="{{ $customer->contact_num }}"
-                            {{ old('customer_name') === $customer->name ? 'selected' : '' }}>
+                            {{ old('customer_name', $transactionss->customer_name) === $customer->name ? 'selected' : '' }}>
                             {{ $customer->name }}
                         </option>
                     @endforeach
                 </select>
 
                 <label for="product_name" class="taas-select">Product:</label>
-                <select required name="product_name" id="product_name" class="select product_name product-select"
-                    onchange="updateUnitPrice('newModal')">
-                    <option value="" disabled selected>-- Select a Product --</option>
+                <select class="select product-select" name="product_name" id="product_name-edit"
+                    onchange="updateUnitPrice('editModal')">
                     @foreach ($products as $product)
                         <option value="{{ $product->name }}" data-unit-price="{{ $product->unit_price }}"
-                            {{ old('product_name') === $product->name ? 'selected' : '' }}>
+                            {{ old('product_name', $transactionss->product_name) === $product->name ? 'selected' : '' }}>
                             {{ $product->name }}
                         </option>
                     @endforeach
                 </select>
-
-                <!-- Display validation error for product_name -->
-                <div class="text-danger">{{ $errors->first('product_name') }}</div>
+                <div class="text-danger">{{ $errors->first('error') }}</div>
 
                 <label for="">Quantity:</label>
-                <input required name="qty" class="qty" type="number" id="qty" value="{{ old('qty') }}">
-
-                <!-- Display validation error for qty -->
+                <input required id="qty-edit" class="qty" name="qty" type="number"
+                    value="{{ old('qty', $transactionss->qty) }}">
                 <div class="text-danger">{{ $errors->first('qty') }}</div>
-
                 <!-- Display error for insufficient quantity in stock -->
                 @if ($errors->has('error_stock'))
                     <div class="text-danger-stock">{{ $errors->first('error_stock') }}</div>
                 @endif
 
-
                 <label for="unit_price">Unit Price:</label>
-                <input readonly required name="unit_price" id="unit_price" type="number" value="{{ old('unit_price') }}"
-                    class="unit_price">
+                <input readonly required name="unit_price" class="unit_price" id="unit_price-edit" type="number"
+                    value="{{ old('unit_price', $transactionss->unit_price) }}">
 
-                <label for="unit_price">Total Price:</label>
-                <input readonly name="total_price" id="total_price" type="number" value="{{ $totalPrice }}"
-                    class="total_price">
+                <label for="total_price">Total Price:</label>
+                <input readonly name="total_price" id="total_price_edit" type="number"
+                    value="{{ old('total_price', $transactionss->total_price) }}" class="total_price">
 
-                <input type="submit" value="Add" id="button-transac">
+                <input type="submit" id="button-transac" value="Update">
             </form>
         </div>
+
     </div>
 
-
-
-
-    {{-- Report Modal --}}
-    <div id="reportModal" class="reportModal">
-        <div class="modal-content-report">
-            <span class="close">&times;</span>
-
-            <form class="modal-form" action="{{ route('staff.generateReport') }}" method="POST" target="_blank">
-                @csrf
-                <label class="modal-top" for="">Generate Report</label>
-                <hr>
-                <div class="row-report">
-                    <div class="column-report">
-                        <label for="">From Date:</label>
-                        <input type="date" required name="from_date">
-                    </div>
-                    <div class="column-report">
-                        <label for="">To Date:</label>
-                        <input type="date" required name="to_date">
-                    </div>
-                </div>
-
-                <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                <select required name="customer_name" class="select customer">
-                    <option value="" disabled selected>-- Select a Customer --</option>
-                    @foreach ($customers as $customer)
-                        <option value="{{ $customer->name }}"
-                            {{ old('customer_name') === $customer->name ? 'selected' : '' }}>
-                            {{ $customer->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <hr>
-                <div class="buttons-report">
-                    <button type="submit">Generate</button>
-                </div>
-            </form>
-
-        </div>
-    </div>
 @endsection
 
 @section('side-navbar')
@@ -153,14 +109,14 @@
 
 @section('main-content')
     <div class="content">
-        <div class="taas-staff">
+        <div class="taas">
 
             <div class="new-generate">
                 <button type="button" id="newButton">Add Transaction</button>
 
-                {{-- <form action="" id="generateReportForm">
+                <form action="" id="generateReportForm">
                     <button type="button" id="generateReportBtn">Generate Report</button>
-                </form> --}}
+                </form>
             </div>
 
             <div class="sort-by">
@@ -239,9 +195,9 @@
                                 <td>{{ $transaction->customer_name }}</td>
                                 <td>{{ $transaction->product_name }}</td>
                                 <td>{{ $transaction->qty }}</td>
-                                <td class="nowrap">₱ {{ number_format($transaction->unit_price) }}</td>
-                                <td class="nowrap">₱ {{ number_format($transaction->total_price) }}</td>
-                                <td class="nowrap">₱ {{ number_format($transaction->total_earned) }}</td>
+                                <td>₱ {{ $transaction->unit_price }}</td>
+                                <td>₱ {{ $transaction->total_price }}</td>
+                                <td>₱ {{ $transaction->total_earned }}</td>
                                 <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                                 <td class="actions">
                                     <div class="actions-container">

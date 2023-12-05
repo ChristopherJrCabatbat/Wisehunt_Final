@@ -232,10 +232,10 @@ document.addEventListener("DOMContentLoaded", function () {
 // Navigate to product edit view
 function navigateToProductView(productId) {
     // Redirect to the product edit view with the corresponding ID
-    window.location.href = `#`;
+    // window.location.href = `#`;
     // window.location.href = `{{ route('admin.product') }}/${productId}/edit`;
     // Note: The line below seems redundant; you may choose one or the other based on your requirements
-    // window.location.href = `Products/${productId}/edit`;
+    window.location.href = `/productEdit/${productId}`;
 }
 
 // Call the function to load dismissed notifications when the page loads
