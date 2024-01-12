@@ -91,7 +91,7 @@
                 <a class="sidebar" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
                     {{-- <img src="{{ asset('images/supplier.png') }}" class="user-i" alt=""> --}}
-                    USERS</a>
+                    USER</a>
             </div>
         </li>
     </ul>

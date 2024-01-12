@@ -23,6 +23,7 @@ use App\Models\Customer;
 use App\Models\Transaction;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Models\Delivery;
 use App\Models\UserAccount;
 
 use App\Notifications\SMSNotification;
@@ -1304,6 +1305,65 @@ class AdminController extends Controller
         return back();
     }
 
+    
+    // Delivery Controllers
+    public function delivery()
+    {
+        $nm = Session::get('name');
+
+        // Assuming you retrieve $productsss and $forecasts here or from another method
+        $productsss = Product::all();
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Call the method to generate notifications
+        $notifications = $this->generateNotifications($productsss, $forecasts);
+
+        // Extract total counts from the generated notifications
+        $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+        $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+        $totalForecastMessages = $notifications['totalForecastMessages'];
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+        $deliveries = Delivery::paginate(8);
+
+        return view('navbar.delivery', [
+            'deliveries' => $deliveries,
+            'totalNotifications' => $totalNotifications,
+            'username' => $nm,
+        ] + $notifications);
+    }
+
+    public function deliveryStore(Request $request)
+    {
+        $request->validate([
+            'delivery_id' => ['required'],
+            'name' => ['required'],
+            'product' => ['required'],
+            'quantity' => ['required'],
+            'address' => ['required'],
+            'status' => ['required'],
+        ]);
+
+        $deliveries = new Delivery;
+        $deliveries->delivery_id = $request->input('delivery_id');
+        $deliveries->name = $request->input('name');
+        $deliveries->product = $request->input('product');
+        $deliveries->quantity = $request->input('quantity');
+        $deliveries->address = $request->input('address');
+        $deliveries->status = $request->input('status');
+
+        $deliveries->save();
+        return back();
+    }
+
+    public function deliveryDestroy(string $id)
+    {
+        $deliveries = Delivery::findOrFail($id);
+        $deliveries->delete();
+        return back();
+    }
 
 
     // User Controllers

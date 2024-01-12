@@ -1,6 +1,6 @@
 @extends('../layouts.layout')
 
-@section('title', 'Users')
+@section('title', 'User')
 
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/product-transaction-styles.css') }}">
@@ -95,9 +95,16 @@
         </li>
         <li>
             <div class="baba-container">
+                <a class="sidebar" href="{{ route('admin.delivery') }}">
+                    <img src="{{ asset('images/delivery.png') }}" class="delivery-i" alt="">
+                    DELIVERY</a>
+            </div>
+        </li>
+        <li>
+            <div class="baba-container">
                 <a class="sidebar active" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
-                    USERS</a>
+                    USER</a>
             </div>
         </li>
     </ul>
@@ -125,7 +132,7 @@
                 @endphp
 
                 <tr>
-                    <th>No.</th>
+                    {{-- <th>No.</th> --}}
                     <th>Name</th>
                     <th>Email</th>
                     {{-- <th>Password</th> --}}
@@ -141,7 +148,7 @@
                     @else
                         @foreach ($users as $user)
                             <tr>
-                                <td>{{ $rowNumber++ }}</td>
+                                {{-- <td>{{ $rowNumber++ }}</td> --}}
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 {{-- <td>{{ Crypt::decryptString($user->password) }}</td> --}}

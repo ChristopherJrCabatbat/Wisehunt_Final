@@ -88,9 +88,10 @@
             </div>
             <div class="top-navbar">
                 <div class="logo-container">
-                    <img class="logo" src="{{ asset('images/logo-blue.jpeg') }}" alt="" width="90"
+                    <img class="logo" src="{{ asset('images/logo-blue.jpg') }}" alt="" width="90"
                         height="auto" />
-                        <div class="company">WISEHUNT COMPANY</div>
+                        <div class="company">WISEHUNT COMPANY</div> <img class="globo" src="{{ asset('images/globo.png') }}" alt="" width="90"
+                        height="auto">
                 </div>
                 <div>
                     <div class="top-account">

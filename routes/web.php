@@ -80,6 +80,10 @@ Route::group([
     Route::delete('/supplierDestroy/{id}', [AdminController::class, 'supplierDestroy'])->name('supplierDestroy');
     Route::get('/supplierSearch', [LiveSearchController::class, 'supplierSearch'])->name('supplierSearch');
 
+    // Delivery Routes
+    Route::get('/delivery', [AdminController::class, 'delivery'])->name('delivery');
+    Route::post('/deliveryStore', [AdminController::class, 'deliveryStore'])->name('deliveryStore');
+    Route::delete('/deliveryDestroy/{id}', [AdminController::class, 'deliveryDestroy'])->name('deliveryDestroy');
     
     // User Routes
     Route::get('/user', [AdminController::class, 'user'])->name('user');

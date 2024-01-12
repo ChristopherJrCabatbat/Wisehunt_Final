@@ -120,11 +120,19 @@ a:hover {
     top: 313px;
     position: absolute;
 }
+
+.delivery-i {
+    width: 27px;
+    left: 28px;
+    top: 365px;
+    position: absolute;
+}
+
 .user-i {
     /* width: 100px; */
     font-size: 25px;
     left: 26px;
-    top: 365px;
+    top: 418px;
     position: absolute;
 }
 
@@ -164,6 +172,15 @@ div.company {
     /* font-style: italic; */
     color: #006181;
     font-size: 18px;
+    margin-left: 398px;
+    font-family: fangsong;
+}
+
+.globo {
+    max-width: 100%;
+    width: 29px;
+    height: auto;
+    margin-left: -28px;
 }
 
 .top-navbar .notification,

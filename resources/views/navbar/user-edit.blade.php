@@ -48,7 +48,7 @@
 
                 <label for="role">Role:</label>
                 <select required name="role" id="role">
-                    <option disabled selected value="">-- Select Role --</option>
+                    {{-- <option disabled selected value="">-- Select Role --</option> --}}
                     <option value="Admin" {{ $userss->role === 'Admin' ? 'selected' : '' }}>Admin</option>
                     <option value="Staff" {{ $userss->role === 'Staff' ? 'selected' : '' }}>Staff</option>
                 </select>
@@ -102,7 +102,7 @@
             <div class="baba-container">
                 <a class="sidebar active" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
-                    USERS</a>
+                    USER</a>
             </div>
         </li>
     </ul>

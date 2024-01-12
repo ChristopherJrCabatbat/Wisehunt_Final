@@ -159,7 +159,7 @@
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
-                    USERS</a>
+                    USER</a>
             </div>
         </li>
     </ul>
