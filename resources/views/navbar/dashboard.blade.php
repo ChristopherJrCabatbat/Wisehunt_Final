@@ -341,7 +341,7 @@
                     </tr>
                 </thead>
                 <?php
-                $dayTotalEarned = App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->sum('total_earned');
+                $dayTotalEarned = App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->sum('profit');
                 ?>
 
                 <tbody>
@@ -381,7 +381,7 @@
                 // Query the database to get data for the current week
                 $weekQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
                 $weekTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
-                $weekTotalEarned = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('total_earned');
+                $weekTotalEarned = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('profit');
                 ?>
                 <tbody>
                     <tr>
@@ -418,7 +418,7 @@
                 // Query the database to get data for the current month
                 $monthQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
                 $monthTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
-                $monthTotalEarned = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('total_earned');
+                $monthTotalEarned = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('profit');
                 ?>
                 <tbody>
                     <tr>
@@ -454,7 +454,7 @@
                 // Query the database to get data for the current year
                 $yearQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
                 $yearTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
-                $yearTotalEarned = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('total_earned');
+                $yearTotalEarned = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('profit');
                 ?>
                 <tbody>
                     <tr>

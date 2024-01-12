@@ -46,9 +46,9 @@
                             <td>{{ $transaction->customer_name }}</td>
                             <td>{{ $transaction->product_name }}</td>
                             <td>{{ $transaction->qty }}</td>
-                            <td>{{ $transaction->unit_price }}</td>
+                            <td>{{ $transaction->selling_price }}</td>
                             <td>{{ $transaction->total_price }}</td>
-                            <td>{{ $transaction->total_earned }}</td>
+                            <td>{{ $transaction->profit }}</td>
                             <td>{{ $transaction->created_at->format('M. d, Y') }}</td>
                             {{-- <td>{{ $transaction->created_at->date }}</td> --}}
                         </tr>

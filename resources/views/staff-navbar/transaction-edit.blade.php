@@ -39,7 +39,7 @@
                 <select class="select product-select" name="product_name" id="product_name-edit"
                     onchange="updateUnitPrice('editModal')">
                     @foreach ($products as $product)
-                        <option value="{{ $product->name }}" data-unit-price="{{ $product->unit_price }}"
+                        <option value="{{ $product->name }}" data-unit-price="{{ $product->selling_price }}"
                             {{ old('product_name', $transactionss->product_name) === $product->name ? 'selected' : '' }}>
                             {{ $product->name }}
                         </option>
@@ -56,9 +56,9 @@
                     <div class="text-danger-stock">{{ $errors->first('error_stock') }}</div>
                 @endif
 
-                <label for="unit_price">Unit Price:</label>
-                <input readonly required name="unit_price" class="unit_price" id="unit_price-edit" type="number"
-                    value="{{ old('unit_price', $transactionss->unit_price) }}">
+                <label for="selling_price">Unit Price:</label>
+                <input readonly required name="selling_price" class="selling_price" id="selling_price-edit" type="number"
+                    value="{{ old('selling_price', $transactionss->selling_price) }}">
 
                 <label for="total_price">Total Price:</label>
                 <input readonly name="total_price" id="total_price_edit" type="number"
@@ -135,14 +135,14 @@
                         </option>
                         <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity
                             (ascending)</option>
-                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit
+                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>Unit
                             Price (ascending)
                         </option>
                         <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
                             Total
                             Price
                             (ascending)</option>
-                        <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
+                        <option value="profit_asc" {{ request('sort') === 'profit_asc' ? 'selected' : '' }}>
                             Total Earned on Item
                             (descending)</option>
                     </select>
@@ -195,9 +195,9 @@
                                 <td>{{ $transaction->customer_name }}</td>
                                 <td>{{ $transaction->product_name }}</td>
                                 <td>{{ $transaction->qty }}</td>
-                                <td>₱ {{ $transaction->unit_price }}</td>
+                                <td>₱ {{ $transaction->selling_price }}</td>
                                 <td>₱ {{ $transaction->total_price }}</td>
-                                <td>₱ {{ $transaction->total_earned }}</td>
+                                <td>₱ {{ $transaction->profit }}</td>
                                 <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
@@ -309,7 +309,7 @@
     <script>
         function updateUnitPrice(elementId) {
             var productSelect = document.querySelector('#' + elementId + ' .product-select');
-            var unitPriceInput = document.querySelector('#' + elementId + ' .unit_price');
+            var unitPriceInput = document.querySelector('#' + elementId + ' .selling_price');
 
             var selectedPrice = productSelect.options[productSelect.selectedIndex];
             var unitPrice = selectedPrice.getAttribute('data-unit-price');

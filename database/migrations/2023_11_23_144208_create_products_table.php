@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('low_quantity_threshold')->default(0); // New column
             // $table->bigInteger('capital');
             $table->bigInteger('purchase_price');
-            // $table->bigInteger('unit_price');
+            // $table->bigInteger('selling_price');
             $table->bigInteger('selling_price');
             $table->timestamps();
         });

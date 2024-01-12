@@ -27,7 +27,7 @@
                 <input required autofocus type="text" name="name" id="autofocus" />
 
                 <label for="">Contact Name:</label>
-                <input required type="text" name="contact_person" id="" />
+                <input required type="text" name="contact_name" id="" />
 
                 <label for="">Contact Number:</label>
                 <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num" id="" value="">
@@ -116,7 +116,7 @@
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
                                 <td>{{ $customer->name }}</td>
-                                <td>{{ $customer->contact_person }}</td>
+                                <td>{{ $customer->contact_name }}</td>
                                 <td>{{ $customer->contact_num }}</td>
                                 <td>{{ $customer->address }}</td>
                                 <td class="actions">

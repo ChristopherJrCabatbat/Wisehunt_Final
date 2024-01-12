@@ -24,15 +24,15 @@
                     <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Supplier</h2>
                 </center>
                 <label class="modal-tops" for="">Company Name:</label>
-                <input required autofocus type="text" name="supplier" id="autofocus" />
+                <input required autofocus type="text" name="company_name" id="autofocus" />
                 <label for="">Contact Name:</label>
-                <input required type="text" name="contact_person" id="" />
+                <input required type="text" name="contact_name" id="" />
                 <label for="">Contact Number:</label>
                 <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number" name="contact_num"
                     id="" value="">
                 <label for="">Address:</label>
                 <input required type="text" name="address" id="" />
-                <label for="">Product/s:</label>
+                <label for="">Product:</label>
                 <input required type="text" name="product_name" id="" />
 
 
@@ -115,15 +115,15 @@
                     <select name="sort" id="sortSelect">
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
                             Default Sorting --</option>
-                        <option value="supplier_asc" {{ request('sort') === 'supplier_asc' ? 'selected' : '' }}>
+                        <option value="company_name_asc" {{ request('sort') === 'company_name_asc' ? 'selected' : '' }}>
                             Company Name</option>
-                        <option value="contact_person_asc"
-                            {{ request('sort') === 'contact_person_asc' ? 'selected' : '' }}>
+                        <option value="contact_name_asc"
+                            {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>
                             Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
-                           Product/s
+                           Product
                         </option>
 
                     </select>
@@ -137,14 +137,14 @@
                     <select name="sort" id="sortSelect">
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>-- Default Sorting
                             --</option>
-                        <option value="supplier_asc" {{ request('sort') === 'supplier_asc' ? 'selected' : '' }}>Company
+                        <option value="company_name_asc" {{ request('sort') === 'company_name_asc' ? 'selected' : '' }}>Company
                             Name</option>
-                        <option value="contact_person_asc"
-                            {{ request('sort') === 'contact_person_asc' ? 'selected' : '' }}>Contact Name</option>
+                        <option value="contact_name_asc"
+                            {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
-                            Product/s</option>
+                            Product</option>
                     </select>
                 </form>
 
@@ -181,7 +181,7 @@
                     <th>Contact Name</th>
                     <th>Contact Number</th>
                     <th>Address</th>
-                    <th>Product/s</th>
+                    <th>Product</th>
                     <th>Actions</th>
                 </tr>
 
@@ -194,8 +194,8 @@
                         @foreach ($suppliers as $supplier)
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
-                                <td>{{ $supplier->supplier }}</td>
-                                <td>{{ $supplier->contact_person }}</td>
+                                <td>{{ $supplier->company_name }}</td>
+                                <td>{{ $supplier->contact_name }}</td>
                                 <td>{{ $supplier->contact_num }}</td>
                                 <td>{{ $supplier->address }}</td>
                                 <td>{{ $supplier->product_name }}</td>

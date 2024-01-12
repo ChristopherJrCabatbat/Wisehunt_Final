@@ -25,11 +25,11 @@
                     <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-pen-to-square edt-taas"></i>Edit Supplier</h2>
                 </center>
                 <label class="modal-top" for="">Company Name:</label>
-                <input required type="text" class="autofocus" name="supplier" id="" autofocus
-                    value="{{ old('supplier', $supplierss->supplier) }}" />
+                <input required type="text" class="autofocus" name="company_name" id="" autofocus
+                    value="{{ old('company_name', $supplierss->company_name) }}" />
                 <label for="">Contact Name:</label>
-                <input required type="text" name="contact_person" id=""
-                    value="{{ old('contact_person', $supplierss->contact_person) }}" />
+                <input required type="text" name="contact_name" id=""
+                    value="{{ old('contact_name', $supplierss->contact_name) }}" />
                 <label for="">Contact Number:</label>
                 <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
                     name="contact_num" name="contact_num" id=""
@@ -114,10 +114,10 @@
                     <select name="sort" id="sortSelect">
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
                             Default Sorting --</option>
-                        <option value="supplier_asc" {{ request('sort') === 'supplier_asc' ? 'selected' : '' }}>
+                        <option value="company_name_asc" {{ request('sort') === 'company_name_asc' ? 'selected' : '' }}>
                             Company Name</option>
-                        <option value="contact_person_asc"
-                            {{ request('sort') === 'contact_person_asc' ? 'selected' : '' }}>
+                        <option value="contact_name_asc"
+                            {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>
                             Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option>
@@ -138,8 +138,8 @@
                             --</option>
                         <option value="supplier_asc" {{ request('sort') === 'supplier_asc' ? 'selected' : '' }}>Company
                             Name</option>
-                        <option value="contact_person_asc"
-                            {{ request('sort') === 'contact_person_asc' ? 'selected' : '' }}>Contact Name</option>
+                        <option value="contact_name_asc"
+                            {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
@@ -193,8 +193,8 @@
                         @foreach ($suppliers as $supplier)
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
-                                <td>{{ $supplier->supplier }}</td>
-                                <td>{{ $supplier->contact_person }}</td>
+                                <td>{{ $supplier->company_name }}</td>
+                                <td>{{ $supplier->contact_name }}</td>
                                 <td>{{ $supplier->contact_num }}</td>
                                 <td>{{ $supplier->address }}</td>
                                 <td>{{ $supplier->product_name }}</td>

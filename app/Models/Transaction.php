@@ -13,11 +13,11 @@ class Transaction extends Model
         // 'contact_num',
         'product_name',
         'qty',
-        'unit_price',
+        'selling_price',
         'total_price',
         // 'amount_tendered',
         // 'change_due',
-        'total_earned',
+        'profit',
 
         // Hindi pa na-migrate
         'created_at', 

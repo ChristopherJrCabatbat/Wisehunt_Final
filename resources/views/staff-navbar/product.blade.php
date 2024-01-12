@@ -66,18 +66,18 @@
 
                     <div class="column">
                         <label for="">Capital:</label>
-                        <input required type="number" name="capital" id="" value="{{ old('capital') }}"
+                        <input required type="number" name="purchase_price" id="" value="{{ old('purchase_price') }}"
                             class="row2-input" />
-                        @if ($errors->has('capital'))
-                            <div class="text-danger">{{ $errors->first('capital') }}</div>
+                        @if ($errors->has('purchase_price'))
+                            <div class="text-danger">{{ $errors->first('purchase_price') }}</div>
                         @endif
                     </div>
                     <div class="column">
                         <label for="">Unit Price:</label>
-                        <input required type="number" name="unit_price" id="" value="{{ old('unit_price') }}"
+                        <input required type="number" name="selling_price" id="" value="{{ old('selling_price') }}"
                             class="row2-input" />
-                        @if ($errors->has('unit_price'))
-                            <div class="text-danger">{{ $errors->first('unit_price') }}</div>
+                        @if ($errors->has('selling_price'))
+                            <div class="text-danger">{{ $errors->first('selling_price') }}</div>
                         @endif
                     </div>
 
@@ -199,9 +199,9 @@
                         </option>
                         <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Quantity
                             in Stock (ascending)</option>
-                        <option value="capital_asc" {{ request('sort') === 'capital_asc' ? 'selected' : '' }}>
+                        <option value="purchase_price_asc" {{ request('sort') === 'purchase_price_asc' ? 'selected' : '' }}>
                             Capital (ascending)</option>
-                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit
+                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>Unit
                             Price
                             (ascending)
                         </option>
@@ -265,8 +265,8 @@
                                         height="50px" style="background-color: transparent">
                                 </td>
                                 <td>{{ $product->quantity }}</td>
-                                <td class="nowrap">₱ {{ number_format($product->capital) }}</td>
-                                <td class="nowrap">₱ {{ number_format($product->unit_price) }}</td>
+                                <td class="nowrap">₱ {{ number_format($product->purchase_price) }}</td>
+                                <td class="nowrap">₱ {{ number_format($product->selling_price) }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
                                         <form action="{{ route('staff.productEdit', $product->id) }}" method="POST">

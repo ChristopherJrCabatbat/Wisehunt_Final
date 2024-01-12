@@ -81,18 +81,18 @@
 
                     <div class="column">
                         <label for="">Purchase Price:</label>
-                        <input required type="number" name="capital" id="" value="{{ old('capital') }}"
+                        <input required type="number" name="purchase_price" id="" value="{{ old('purchase_price') }}"
                             class="row2-input" />
-                        @if ($errors->has('capital'))
-                            <div class="text-danger">{{ $errors->first('capital') }}</div>
+                        @if ($errors->has('purchase_price'))
+                            <div class="text-danger">{{ $errors->first('purchase_price') }}</div>
                         @endif
                     </div>
                     <div class="column">
                         <label for="">Selling Price:</label>
-                        <input required type="number" name="unit_price" id="" value="{{ old('unit_price') }}"
+                        <input required type="number" name="selling_price" id="" value="{{ old('selling_price') }}"
                             class="row2-input" />
-                        @if ($errors->has('unit_price'))
-                            <div class="text-danger">{{ $errors->first('unit_price') }}</div>
+                        @if ($errors->has('selling_price'))
+                            <div class="text-danger">{{ $errors->first('selling_price') }}</div>
                         @endif
                     </div>
 
@@ -317,8 +317,8 @@
                                         height="50px" style="background-color: transparent">
                                 </td>
                                 <td>{{ $product->quantity }}</td>
-                                <td>₱ {{ number_format($product->capital) }}</td>
-                                <td>₱ {{ number_format($product->unit_price) }}</td>
+                                <td>₱ {{ number_format($product->purchase_price) }}</td>
+                                <td>₱ {{ number_format($product->selling_price) }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
                                         {{-- <form action="{{ route('admin.productEdit', $product->id) }}" method="POST">

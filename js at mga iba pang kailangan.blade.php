@@ -96,11 +96,11 @@
     //         var month = new Date('{{ date('Y-m', mktime(0, 0, 0, $i, 1)) }}');
     //         var currentMonthEarnings = <?php echo App\Models\Transaction::whereMonth('created_at', $i);
     //             ->whereYear('created_at', today()->year)
-    //             ->sum('total_earned') ?? 0;
+    //             ->sum('profit') ?? 0;
     ?>;
     //         var forecastMonthEarnings = <?php echo App\Models\Transaction::whereMonth('created_at', $i);
     //             ->whereYear('created_at', today()->year + 1)
-    //             ->sum('total_earned') ?? 0;
+    //             ->sum('profit') ?? 0;
     ?>;
 
     //         if (currentMonthEarnings > 0 || forecastMonthEarnings > 0) {
@@ -213,10 +213,10 @@
             var month = new Date('{{ date('Y-m', mktime(0, 0, 0, $i, 1)) }}');
             var currentMonthEarnings = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
                 ->whereYear('created_at', today()->year)
-                ->sum('total_earned') ?? 0; ?>;
+                ->sum('profit') ?? 0; ?>;
             var forecastMonthEarnings = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
                 ->whereYear('created_at', today()->year + 1)
-                ->sum('total_earned') ?? 0; ?>;
+                ->sum('profit') ?? 0; ?>;
 
             if (currentMonthEarnings > 0 || forecastMonthEarnings > 0) {
                 data.addRow([month.toLocaleString('default', {
@@ -347,7 +347,7 @@
             <input required autofocus type="text" name="name" id="autofocus" />
 
             <label for="">Contact Name:</label>
-            <input required type="text" name="contact_person" id="" />
+            <input required type="text" name="contact_name" id="" />
 
             <label for="">Contact Number:</label>
             <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
@@ -440,7 +440,7 @@ return back()->with('message' , 'Password does not match.');
             var month = new Date('{{ date('Y-m', mktime(0, 0, 0, $i, 1)) }}');
             var currentMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
                 ->whereYear('created_at', today()->year)
-                ->sum(DB::raw('qty * unit_price')) ?? 0; ?>;
+                ->sum(DB::raw('qty * purchase_price')) ?? 0; ?>;
 
             if (currentMonthSales > 0) {
                 data.addRow([month.toLocaleString('default', {
@@ -528,7 +528,7 @@ return back()->with('message' , 'Password does not match.');
 // // Return the forecasted sales value
 
 // // For demonstration purposes, I'm assuming a simple average calculation
-// $totalSales = $transactions->sum('total_earned');
+// $totalSales = $transactions->sum('profit');
 // $averageSales = $transactions->count() > 0 ? $totalSales / $transactions->count() : 0;
 
 // return $averageSales;
@@ -542,8 +542,8 @@ return back()->with('message' , 'Password does not match.');
     the base alpha parameter for weighted average // $sensitivity=0.1; // Set the sensitivity for dynamic alpha //
     $weightedTotal=0; // $weightSum=0; // // Iterate through transactions to calculate weighted average with dynamic
     alpha // foreach ($transactions as $index=> $transaction) {
-    // // Assuming total_earned is qty * unit_price, replace it with your actual field
-    // $totalSales = $transaction->qty * $transaction->unit_price;
+    // // Assuming profit is qty * purchase_price, replace it with your actual field
+    // $totalSales = $transaction->qty * $transaction->selling_price;
 
     // $weight = pow($alpha, $transactions->count() - $index);
     // $weightedTotal += $weight * $totalSales;
@@ -551,8 +551,8 @@ return back()->with('message' , 'Password does not match.');
     // }
 
     // // Calculate dynamic alpha based on recent trend
-    // $recentTrend = ($transactions->last()->qty * $transactions->last()->unit_price) -
-    // ($transactions->reverse()->get(1)->qty * $transactions->reverse()->get(1)->unit_price);
+    // $recentTrend = ($transactions->last()->qty * $transactions->last()->selling_price) -
+    // ($transactions->reverse()->get(1)->qty * $transactions->reverse()->get(1)->selling_price);
     // $alpha = $alpha * (1 + $sensitivity * $recentTrend);
     // $alpha = max(0, min(1, $alpha)); // Ensure alpha is between 0 and 1
 
@@ -569,8 +569,8 @@ return back()->with('message' , 'Password does not match.');
         base alpha parameter for weighted average $sensitivity=0.1; // Set the sensitivity for dynamic alpha
         $weightedTotal=0; $weightSum=0; $recentTrends=0; // Accumulate recent trends // Iterate through transactions to
         calculate weighted average with dynamic alpha foreach ($transactions as $index=> $transaction) {
-        // Assuming total_earned is qty * unit_price, replace it with your actual field
-        $totalSales = $transaction->qty * $transaction->unit_price;
+        // Assuming profit is qty * purchase_price, replace it with your actual field
+        $totalSales = $transaction->qty * $transaction->selling_price;
 
         $weight = pow($alpha, $transactions->count() - $index);
         $weightedTotal += $weight * $totalSales;
@@ -578,8 +578,8 @@ return back()->with('message' , 'Password does not match.');
 
         // Accumulate recent trends
         if ($index > 0) {
-        $recentTrends += ($transaction->qty * $transaction->unit_price) -
-        ($transactions[$index - 1]->qty * $transactions[$index - 1]->unit_price);
+        $recentTrends += ($transaction->qty * $transaction->selling_price) -
+        ($transactions[$index - 1]->qty * $transactions[$index - 1]->selling_price);
         }
         }
 
@@ -598,8 +598,8 @@ return back()->with('message' , 'Password does not match.');
         {
         // Check if there are enough transactions to calculate forecast
         if ($transactions->count() < 2) { return 0; // Not enough data for accurate forecasting } $totalSales=0; //
-            Calculate total sales for the day foreach ($transactions as $transaction) { // Assuming total_earned is qty
-            * unit_price, replace it with your actual field $totalSales +=$transaction->qty * $transaction->unit_price;
+            Calculate total sales for the day foreach ($transactions as $transaction) { // Assuming profit is qty
+            * purchase_price, replace it with your actual field $totalSales +=$transaction->qty * $transaction->selling_price;
             }
 
             // Calculate the forecasted sales as the cumulative total sales
@@ -612,7 +612,7 @@ return back()->with('message' , 'Password does not match.');
             // Check if there are enough transactions to calculate forecast
             if ($transactions->count() < 2) { return 0; // Not enough data for accurate forecasting } // Calculate total
                 sales for the day $totalSales=$transactions->sum(function ($transaction) {
-                return $transaction->qty * $transaction->unit_price;
+                return $transaction->qty * $transaction->selling_price;
                 });
 
                 // Calculate the average sales per transaction
@@ -638,31 +638,31 @@ return back()->with('message' , 'Password does not match.');
     // {
     //     // Retrieve data from the request
     //     $productName = $request->input('product_name');
-    //     $unitPrice = $request->input('unit_price');
+    //     $selling_price = $request->input('selling_price');
     //     $qty = $request->input('qty');
     //     $customerName = $request->input('customer_name');
 
     //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-    //     $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+    //     $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
 
     //     if ($product) {
     //         // Check if there's enough quantity to subtract
     //         if ($product->quantity >= $qty) {
     //             // Calculate total price
-    //             $totalPrice = $unitPrice * $qty;
+    //             $totalPrice = $selling_price * $qty;
 
     //             // Calculate total earned
-    //             $capital = $product->capital;
-    //             $totalEarned = ($unitPrice - $capital) * $qty;
+    //             $purchase_price = $product->purchase_price;
+    //             $profit = ($selling_price - $purchase_price) * $qty;
 
     //             // Create a new Transactions record and save it to the database
     //             $transaction = new Transaction;
     //             $transaction->customer_name = $customerName;
     //             $transaction->product_name = $productName;
     //             $transaction->qty = $qty;
-    //             $transaction->unit_price = $unitPrice;
+    //             $transaction->selling_price = $selling_price;
     //             $transaction->total_price = $totalPrice;
-    //             $transaction->total_earned = $totalEarned;
+    //             $transaction->profit = $profit;
     //             $transaction->save();
 
     //             // Update the product quantity by subtracting the sold quantity
@@ -764,31 +764,31 @@ public function transactionStore(Request $request)
     {
         // Retrieve data from the request
         $productName = $request->input('product_name');
-        $unitPrice = $request->input('unit_price');
+        $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
         $customerName = $request->input('customer_name');
 
         // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-        $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+        $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
 
         if ($product) {
             // Check if there's enough quantity to subtract
             if ($product->quantity >= $qty) {
                 // Calculate total price
-                $totalPrice = $unitPrice * $qty;
+                $totalPrice = $selling_price * $qty;
 
                 // Calculate total earned
-                $capital = $product->capital;
-                $totalEarned = ($unitPrice - $capital) * $qty;
+                $purchase_price = $product->purchase_price;
+                $profit = ($selling_price - $purchase_price) * $qty;
 
                 // Create a new Transactions record and save it to the database
                 $transaction = new Transaction;
                 $transaction->customer_name = $customerName;
                 $transaction->product_name = $productName;
                 $transaction->qty = $qty;
-                $transaction->unit_price = $unitPrice;
+                $transaction->selling_price = $selling_price;
                 $transaction->total_price = $totalPrice;
-                $transaction->total_earned = $totalEarned;
+                $transaction->profit = $profit;
                 $transaction->save();
 
                 // Update the product quantity by subtracting the sold quantity
@@ -913,13 +913,13 @@ class StaffController extends Controller
 
         $productCount = Product::count();
         $transactionCount = Transaction::count();
-        // $totalEarnings = Transaction::sum('total_earned');
-        $totalEarnings = Transaction::sum(DB::raw('qty * unit_price'));
+        // $totalEarnings = Transaction::sum('profit');
+        $totalEarnings = Transaction::sum(DB::raw('qty * purchase_price'));
 
         // Bar Chart/Graph
         $currentYear = date('Y');
 
-$sales = Transaction::selectRaw('MONTH(created_at) as month, SUM(qty * unit_price) as total_sales')
+$sales = Transaction::selectRaw('MONTH(created_at) as month, SUM(qty * purchase_price) as total_sales')
     ->whereYear('created_at', $currentYear)
     ->groupBy('month')
     ->orderBy('month')
@@ -1074,10 +1074,10 @@ for ($i = 1; $i <= 12; $i++) {
             $query->orderBy('category', 'asc');
         } elseif ($sortOption === 'quantity_asc') {
             $query->orderBy('quantity', 'asc');
-        } elseif ($sortOption === 'capital_asc') {
-            $query->orderBy('capital', 'asc');
-        } elseif ($sortOption === 'unit_price_asc') {
-            $query->orderBy('unit_price', 'asc');
+        } elseif ($sortOption === 'purchase_price_asc') {
+            $query->orderBy('purchase_price', 'asc');
+        } elseif ($sortOption === 'selling_price_asc') {
+            $query->orderBy('selling_price', 'asc');
         }
 
         $suppliers = Supplier::all();
@@ -1110,8 +1110,8 @@ for ($i = 1; $i <= 12; $i++) {
             'category' => 'required',
             'quantity' => 'required|numeric|min:1',
             'low_quantity_threshold' => 'required|numeric|min:1',
-            // 'capital' => 'required|numeric|min:1',
-            'unit_price' => 'required|numeric|min:1',
+            // 'purchase_price' => 'required|numeric|min:1',
+            'selling_price' => 'required|numeric|min:1',
         ], [
             'name.unique' => 'You already have :input in your table.',
         ]);
@@ -1128,8 +1128,8 @@ for ($i = 1; $i <= 12; $i++) {
         $products->category = $request->input('category');
         $products->quantity = $request->input('quantity');
         $products->low_quantity_threshold = $request->input('low_quantity_threshold');
-        // $products->capital = $request->input('capital');
-        $products->unit_price = $request->input('unit_price');
+        // $products->purchase_price = $request->input('purchase_price');
+        $products->selling_price = $request->input('selling_price');
 
         if ($request->hasFile('photo')) {
             $fileName = time() . $request->file('photo')->getClientOriginalName();
@@ -1151,8 +1151,8 @@ for ($i = 1; $i <= 12; $i++) {
             'category' => 'required',
             'quantity' => 'required|numeric|min:1',
             'low_quantity_threshold' => 'required|numeric|min:1',
-            'capital' => 'required|numeric|min:1',
-            'unit_price' => 'required|numeric|min:1',
+            'purchase_price' => 'required|numeric|min:1',
+            'selling_price' => 'required|numeric|min:1',
         ], [
             'name.unique' => 'You already have :input in your table.',
         ]);
@@ -1174,8 +1174,8 @@ for ($i = 1; $i <= 12; $i++) {
         $product->category = $request->category;
         $product->quantity = $request->quantity;
         $product->low_quantity_threshold = $request->low_quantity_threshold;
-        $product->capital = $request->capital;
-        $product->unit_price = $request->unit_price;
+        $product->purchase_price = $request->purchase_price;
+        $product->selling_price = $request->selling_price;
 
         if ($request->hasFile('photo')) {
             $fileName = time() . $request->file('photo')->getClientOriginalName();
@@ -1315,7 +1315,7 @@ for ($i = 1; $i <= 12; $i++) {
 
         $customers = new Customer;
         $customers->name = $request->input('name');
-        $customers->contact_person = $request->input('contact_person');
+        $customers->contact_name = $request->input('contact_name');
         $customers->address = $request->input('address');
         $customers->contact_num = $request->input('contact_num');
         // $customers->item_sold = $request->input('item_sold');
@@ -1327,7 +1327,7 @@ for ($i = 1; $i <= 12; $i++) {
     {
         $customers = Customer::find($id);
         $customers->name = $request->name;
-        $customers->contact_person = $request->contact_person;
+        $customers->contact_name = $request->contact_name;
         $customers->address = $request->address;
         $customers->contact_num = $request->contact_num;
         // $customers->item_sold = $request->item_sold;
@@ -1361,17 +1361,17 @@ for ($i = 1; $i <= 12; $i++) {
             $query->orderBy('product_name', 'asc');
         } elseif ($sortOption === 'qty_asc') {
             $query->orderBy('qty', 'asc');
-        } elseif ($sortOption === 'unit_price_asc') {
-            $query->orderBy('unit_price', 'asc');
+        } elseif ($sortOption === 'selling_price_asc') {
+            $query->orderBy('selling_price', 'asc');
         } elseif ($sortOption === 'total_price_asc') {
             $query->orderBy('total_price', 'asc');
-        } elseif ($sortOption === 'total_earned_asc') {
-            $query->orderByDesc('total_earned');
+        } elseif ($sortOption === 'profit_asc') {
+            $query->orderByDesc('profit');
         }
 
-        $unitPrice = $request->input('unit_price');
+        $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
-        $totalPrice = $unitPrice * $qty;
+        $totalPrice = $selling_price * $qty;
 
 
         // Notification arrays
@@ -1464,31 +1464,31 @@ for ($i = 1; $i <= 12; $i++) {
     {
         // Retrieve data from the request
         $productName = $request->input('product_name');
-        $unitPrice = $request->input('unit_price');
+        $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
         $customerName = $request->input('customer_name');
 
         // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-        $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+        $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
 
         if ($product) {
             // Check if there's enough quantity to subtract
             if ($product->quantity >= $qty) {
                 // Calculate total price
-                $totalPrice = $unitPrice * $qty;
+                $totalPrice = $selling_price * $qty;
 
                 // Calculate total earned
-                $capital = $product->capital;
-                $totalEarned = ($unitPrice - $capital) * $qty;
+                $purchase_price = $product->purchase_price;
+                $profit = ($selling_price - $purchase_price) * $qty;
 
                 // Create a new Transactions record and save it to the database
                 $transaction = new Transaction;
                 $transaction->customer_name = $customerName;
                 $transaction->product_name = $productName;
                 $transaction->qty = $qty;
-                $transaction->unit_price = $unitPrice;
+                $transaction->selling_price = $selling_price;
                 $transaction->total_price = $totalPrice;
-                $transaction->total_earned = $totalEarned;
+                $transaction->profit = $profit;
                 $transaction->save();
 
                 // Update the product quantity by subtracting the sold quantity
@@ -1521,7 +1521,7 @@ for ($i = 1; $i <= 12; $i++) {
 
         // Retrieve data from the request
         $productName = $request->input('product_name');
-        $unitPrice = $request->input('unit_price');
+        $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
         $customerName = $request->input('customer_name');
 
@@ -1529,24 +1529,24 @@ for ($i = 1; $i <= 12; $i++) {
         $oldQty = $transaction->qty;
 
         // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-        $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+        $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
 
         if ($product) {
             // Check if there's enough quantity to subtract
             if ($product->quantity + $oldQty >= $qty) {
                 // Calculate total price
-                $totalPrice = $unitPrice * $qty;
+                $totalPrice = $selling_price * $qty;
 
                 // Calculate total earned
-                $capital = $product->capital;
-                $totalEarned = ($unitPrice - $capital) * $qty;
+                $purchase_price = $product->purchase_price;
+                $profit = ($selling_price - $purchase_price) * $qty;
 
                 // Update the existing transaction record with the new data
                 $transaction->product_name = $productName;
-                $transaction->unit_price = $unitPrice;
+                $transaction->selling_price = $selling_price;
                 $transaction->qty = $qty;
                 $transaction->total_price = $totalPrice;
-                $transaction->total_earned = $totalEarned;
+                $transaction->profit = $profit;
                 $transaction->save();
 
                 // Update the product quantity by adding the old 'qty' and subtracting the new 'qty'
@@ -2141,8 +2141,8 @@ public function productSearch(Request $request)
                         <img src="' . asset($product->photo) . '" alt="' . $product->name . '" width="auto" height="50px" style="background-color: transparent">
                     </td>
                     <td> ' . $product->quantity . ' </td>
-                    <td class="nowrap"> ₱ ' . number_format($product->capital) . ' </td>
-                    <td class="nowrap"> ₱ ' . number_format($product->unit_price) . ' </td>
+                    <td class="nowrap"> ₱ ' . number_format($product->purchase_price) . ' </td>
+                    <td class="nowrap"> ₱ ' . number_format($product->selling_price) . ' </td>
                     <td class="actions">
                         <div class="actions-container">
                             <form action="' . route('admin.productEdit', $product->id) . '" method="POST">
@@ -2186,9 +2186,9 @@ public function productSearch(Request $request)
             <td> '.$transaction->customer_name.' </td>
             <td> '.$transaction->product_name.' </td>
             <td> '.$transaction->qty.' </td>
-            <td class="nowrap"> ₱ '.number_format($transaction->unit_price).' </td>
+            <td class="nowrap"> ₱ '.number_format($transaction->selling_price).' </td>
             <td class="nowrap"> ₱ '.number_format($transaction->total_price).' </td>
-            <td class="nowrap"> ₱ '.number_format($transaction->total_earned).' </td>
+            <td class="nowrap"> ₱ '.number_format($transaction->profit).' </td>
             <td> '.$transaction->created_at->format('M. d, Y').' </td>
 
             <td class="actions">

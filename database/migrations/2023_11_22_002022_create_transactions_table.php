@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('customer_name');
             $table->string('product_name');
             $table->integer('qty');
-            $table->integer('unit_price');
+            $table->integer('selling_price');
             $table->integer('total_price');
-            $table->integer('total_earned');
-            $table->timestamp('last_transaction_date')->nullable();
+            // $table->integer('total_earned');
+            $table->integer('profit');
             $table->timestamps();
         });
     }

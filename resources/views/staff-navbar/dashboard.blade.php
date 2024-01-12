@@ -86,7 +86,7 @@
                 var month = new Date('{{ date('Y-m', mktime(0, 0, 0, $i, 1)) }}');
                 var currentMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
                     ->whereYear('created_at', today()->year)
-                    ->sum(DB::raw('qty * unit_price')) ?? 0; ?>;
+                    ->sum(DB::raw('qty * selling_price')) ?? 0; ?>;
 
                 var currentMonthSalesLabel = '₱' + currentMonthSales;
 

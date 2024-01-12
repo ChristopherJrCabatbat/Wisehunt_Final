@@ -17,8 +17,8 @@ class Product extends Model
         'photo',
         'quantity',
         'low_quantity_threshold',
-        'capital',
-        'unit_price',
+        'purchase_price',
+        'selling_price',
     ];
 
     // Define the relationship to transactions

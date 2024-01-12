@@ -49,7 +49,7 @@ ${product.message}
 function isSalesForecastNotification(product) {
     // You can customize this function based on your criteria for sales forecast notifications
     // For example, if a product's quantity is low and it's a high-value product, consider it a sales forecast
-    return product.quantity <= 20 && product.unit_price >= 100;
+    return product.quantity <= 20 && product.purchase_price >= 100;
 }
 
 // Function to store dismissed notifications in local storage

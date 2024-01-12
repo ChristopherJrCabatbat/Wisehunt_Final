@@ -38,7 +38,7 @@
                     onchange="updateUnitPrice('newModal')">
                     <option value="" disabled selected>-- Select a Product --</option>
                     @foreach ($products as $product)
-                        <option value="{{ $product->name }}" data-unit-price="{{ $product->unit_price }}"
+                        <option value="{{ $product->name }}" data-unit-price="{{ $product->selling_price }}"
                             {{ old('product_name') === $product->name ? 'selected' : '' }}>
                             {{ $product->name }}
                         </option>
@@ -60,11 +60,11 @@
                 @endif
 
 
-                <label for="unit_price">Selling Price:</label>
-                <input readonly required name="unit_price" id="unit_price" type="number" value="{{ old('unit_price') }}"
-                    class="unit_price">
+                <label for="selling_price">Selling Price:</label>
+                <input readonly required name="selling_price" id="selling_price" type="number" value="{{ old('selling_price') }}"
+                    class="selling_price">
 
-                <label for="unit_price">Total Price:</label>
+                <label for="selling_price">Total Price:</label>
                 <input readonly name="total_price" id="total_price" type="number" value="{{ $totalPrice }}"
                     class="total_price">
 
@@ -179,14 +179,14 @@
                         </option>
                         <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity
                             (ascending)</option>
-                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit
+                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>Unit
                             Price (ascending)
                         </option>
                         <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
                             Total
                             Price
                             (ascending)</option>
-                        <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
+                        <option value="profit_asc" {{ request('sort') === 'profit_asc' ? 'selected' : '' }}>
                             Profit
                             (descending)</option>
                     </select>
@@ -239,9 +239,9 @@
                                 <td class="transcact-td">{{ $transaction->customer_name }}</td>
                                 <td class="transcact-td">{{ $transaction->product_name }}</td>
                                 <td class="transcact-td">{{ $transaction->qty }}</td>
-                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->unit_price) }}</td>
+                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->selling_price) }}</td>
                                 <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_price) }}</td>
-                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_earned) }}</td>
+                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->profit) }}</td>
                                 <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                                 {{-- <td class="actions">
                                     <div class="actions-container">
@@ -353,7 +353,7 @@
     <script>
         function updateUnitPrice(elementId) {
             var productSelect = document.querySelector('#' + elementId + ' .product-select');
-            var unitPriceInput = document.querySelector('#' + elementId + ' .unit_price');
+            var unitPriceInput = document.querySelector('#' + elementId + ' .selling_price');
 
             var selectedPrice = productSelect.options[productSelect.selectedIndex];
             var unitPrice = selectedPrice.getAttribute('data-unit-price');

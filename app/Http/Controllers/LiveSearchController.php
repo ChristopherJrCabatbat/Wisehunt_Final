@@ -32,8 +32,8 @@ class LiveSearchController extends Controller
                         <img src="' . asset($product->photo) . '" alt="' . $product->name . '" width="auto" height="50px" style="background-color: transparent">
                     </td>
                     <td> ' . $product->quantity . ' </td>
-                    <td class="nowrap"> ₱ ' . number_format($product->capital) . ' </td>
-                    <td class="nowrap"> ₱ ' . number_format($product->unit_price) . ' </td>
+                    <td class="nowrap"> ₱ ' . number_format($product->purchase_price) . ' </td>
+                    <td class="nowrap"> ₱ ' . number_format($product->selling_price) . ' </td>
                     <td class="actions">
                         <div class="actions-container">
                             
@@ -71,9 +71,9 @@ class LiveSearchController extends Controller
             <td class="transcact-td"> '.$transaction->customer_name.' </td>
             <td class="transcact-td"> '.$transaction->product_name.' </td>
             <td class="transcact-td"> '.$transaction->qty.' </td>
-            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->unit_price).' </td>
+            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->selling_price).' </td>
             <td class="nowrap transcact-td"> ₱ '.number_format($transaction->total_price).' </td>
-            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->total_earned).' </td>
+            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->profit).' </td>
             <td> '.$transaction->created_at->format('M. d, Y').' </td>
 
             <tr>';
@@ -88,8 +88,8 @@ class LiveSearchController extends Controller
         $rowNumber = 1;
         $output="";
 
-        $suppliers = Supplier::where('supplier', 'Like', '%' . $request->search . '%')
-        ->orWhere('contact_person', 'LIKE', '%' . $request->search . '%')
+        $suppliers = Supplier::where('company_name', 'Like', '%' . $request->search . '%')
+        ->orWhere('contact_name', 'LIKE', '%' . $request->search . '%')
         ->orWhere('product_name', 'LIKE', '%' . $request->search . '%')
         ->get();
 
@@ -100,8 +100,8 @@ class LiveSearchController extends Controller
             '<tr>
 
             <td>' . $rowNumber++ . '</td>
-            <td> '.$supplier->supplier.' </td>
-            <td> '.$supplier->contact_person.' </td>
+            <td> '.$supplier->company_name.' </td>
+            <td> '.$supplier->contact_name.' </td>
             <td> '.$supplier->contact_num.' </td>
             <td> '.$supplier->address.' </td>
             <td> '.$supplier->product_name.' </td>

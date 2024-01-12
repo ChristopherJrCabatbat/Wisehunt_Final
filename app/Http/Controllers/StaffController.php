@@ -72,7 +72,7 @@ class StaffController extends Controller
         // Retrieve current month sales logic
         $currentMonthSales = Transaction::whereMonth('created_at', $currentMonth)
             ->whereYear('created_at', now()->year)
-            ->sum(DB::raw('qty * unit_price'));
+            ->sum(DB::raw('qty * purchase_price'));
 
         return response()->json(['data' => $currentMonthSales]);
     }
@@ -85,7 +85,7 @@ class StaffController extends Controller
         // Retrieve current month sales logic
         $currentMonthSales = Transaction::whereMonth('created_at', $currentMonth)
             ->whereYear('created_at', now()->year)
-            ->sum(DB::raw('qty * unit_price'));
+            ->sum(DB::raw('qty * purchase_price'));
 
         // Simple growth rate (you can adjust this percentage based on your needs)
         $growthRate = 0.1; // 10% growth
@@ -198,7 +198,7 @@ class StaffController extends Controller
         // Bar Chart/Graph
         $currentYear = date('Y');
 
-        $earnings = Transaction::selectRaw('MONTH(created_at) as month, SUM(total_earned) as total_earned')
+        $earnings = Transaction::selectRaw('MONTH(created_at) as month, SUM(profit) as profit')
             ->whereYear('created_at', $currentYear)
             ->groupBy('month')
             ->orderBy('month')
@@ -214,7 +214,7 @@ class StaffController extends Controller
 
             foreach ($earnings as $earning) {
                 if ($earning->month == $i) {
-                    $earningsPerMonth = $earning->total_earned;
+                    $earningsPerMonth = $earning->profit;
                     break;
                 }
             }
@@ -287,7 +287,7 @@ class StaffController extends Controller
         for ($i = 1; $i <= 12; $i++) {
             $forecastData[$i] = Transaction::whereMonth('created_at', $i)
                 ->whereYear('created_at', today()->year + 1)
-                ->sum('total_earned') ?? 0;
+                ->sum('profit') ?? 0;
         }
 
         return response()->json($forecastData);
@@ -340,10 +340,10 @@ class StaffController extends Controller
             $query->orderBy('category', 'asc');
         } elseif ($sortOption === 'quantity_asc') {
             $query->orderBy('quantity', 'asc');
-        } elseif ($sortOption === 'capital_asc') {
-            $query->orderBy('capital', 'asc');
-        } elseif ($sortOption === 'unit_price_asc') {
-            $query->orderBy('unit_price', 'asc');
+        } elseif ($sortOption === 'purchase_price_asc') {
+            $query->orderBy('purchase_price', 'asc');
+        } elseif ($sortOption === 'selling_price_asc') {
+            $query->orderBy('selling_price', 'asc');
         }
 
         $suppliers = Supplier::all();
@@ -370,8 +370,8 @@ class StaffController extends Controller
             'category' => 'required',
             'quantity' => 'required|numeric|min:1',
             'low_quantity_threshold' => 'required|numeric|min:1',
-            'capital' => 'required|numeric|min:1',
-            'unit_price' => 'required|numeric|min:1',
+            'purchase_price' => 'required|numeric|min:1',
+            'selling_price' => 'required|numeric|min:1',
         ], [
             'name.unique' => 'You already have :input in your table.',
         ]);
@@ -388,8 +388,8 @@ class StaffController extends Controller
         $products->category = $request->input('category');
         $products->quantity = $request->input('quantity');
         $products->low_quantity_threshold = $request->input('low_quantity_threshold');
-        $products->capital = $request->input('capital');
-        $products->unit_price = $request->input('unit_price');
+        $products->purchase_price = $request->input('purchase_price');
+        $products->selling_price = $request->input('selling_price');
 
         if ($request->hasFile('photo')) {
             $fileName = time() . $request->file('photo')->getClientOriginalName();
@@ -446,8 +446,8 @@ class StaffController extends Controller
             'category' => 'required',
             'quantity' => 'required|numeric|min:1',
             'low_quantity_threshold' => 'required|numeric|min:1',
-            'capital' => 'required|numeric|min:1',
-            'unit_price' => 'required|numeric|min:1',
+            'purchase_price' => 'required|numeric|min:1',
+            'selling_price' => 'required|numeric|min:1',
         ], [
             'name.unique' => 'You already have :input in your table.',
         ]);
@@ -469,8 +469,8 @@ class StaffController extends Controller
         $product->category = $request->category;
         $product->quantity = $request->quantity;
         $product->low_quantity_threshold = $request->low_quantity_threshold;
-        $product->capital = $request->capital;
-        $product->unit_price = $request->unit_price;
+        $product->purchase_price = $request->purchase_price;
+        $product->selling_price = $request->selling_price;
 
         if ($request->hasFile('photo')) {
             $fileName = time() . $request->file('photo')->getClientOriginalName();
@@ -506,17 +506,17 @@ class StaffController extends Controller
             $query->orderBy('product_name', 'asc');
         } elseif ($sortOption === 'qty_asc') {
             $query->orderBy('qty', 'asc');
-        } elseif ($sortOption === 'unit_price_asc') {
-            $query->orderBy('unit_price', 'asc');
+        } elseif ($sortOption === 'selling_price_asc') {
+            $query->orderBy('selling_price', 'asc');
         } elseif ($sortOption === 'total_price_asc') {
             $query->orderBy('total_price', 'asc');
-        } elseif ($sortOption === 'total_earned_asc') {
-            $query->orderByDesc('total_earned');
+        } elseif ($sortOption === 'profit_asc') {
+            $query->orderByDesc('profit');
         }
 
-        $unitPrice = $request->input('unit_price');
+        $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
-        $totalPrice = $unitPrice * $qty;
+        $totalPrice = $selling_price * $qty;
 
 
         // Assuming you retrieve $productsss and $forecasts here or from another method
@@ -570,9 +570,9 @@ class StaffController extends Controller
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
-        $unitPrice = $request->input('unit_price');
+        $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
-        $totalPrice = $unitPrice * $qty;
+        $totalPrice = $selling_price * $qty;
 
         $products = Product::all();
         $customers = Customer::all();
@@ -597,31 +597,31 @@ class StaffController extends Controller
         // {
         //     // Retrieve data from the request
         //     $productName = $request->input('product_name');
-        //     $unitPrice = $request->input('unit_price');
+        //     $selling_price = $request->input('selling_price');
         //     $qty = $request->input('qty');
         //     $customerName = $request->input('customer_name');
 
         //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-        //     $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+        //     $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
 
         //     if ($product) {
         //         // Check if there's enough quantity to subtract
         //         if ($product->quantity >= $qty) {
         //             // Calculate total price
-        //             $totalPrice = $unitPrice * $qty;
+        //             $totalPrice = $selling_price * $qty;
 
         //             // Calculate total earned
-        //             $capital = $product->capital;
-        //             $totalEarned = ($unitPrice - $capital) * $qty;
+        //             $purchase_price = $product->purchase_price;
+        //             $profit = ($selling_price - $purchase_price) * $qty;
 
         //             // Create a new Transactions record and save it to the database
         //             $transaction = new Transaction;
         //             $transaction->customer_name = $customerName;
         //             $transaction->product_name = $productName;
         //             $transaction->qty = $qty;
-        //             $transaction->unit_price = $unitPrice;
+        //             $transaction->selling_price = $selling_price;
         //             $transaction->total_price = $totalPrice;
-        //             $transaction->total_earned = $totalEarned;
+        //             $transaction->profit = $profit;
         //             $transaction->save();
 
         //             // Update the product quantity by subtracting the sold quantity
@@ -664,7 +664,7 @@ class StaffController extends Controller
         // Validation rules
         $rules = [
             'product_name' => 'required|string',
-            'unit_price' => 'required|numeric|min:0',
+            'selling_price' => 'required|numeric|min:0',
             'qty' => 'required|integer|min:1',
             'customer_name' => 'required|string',
         ];
@@ -679,31 +679,31 @@ class StaffController extends Controller
 
         // Retrieve data from the request
         $productName = $request->input('product_name');
-        $unitPrice = $request->input('unit_price');
+        $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
         $customerName = $request->input('customer_name');
 
         // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-        $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+        $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
 
         if ($product) {
             // Check if there's enough quantity to subtract
             if ($product->quantity >= $qty) {
                 // Calculate total price
-                $totalPrice = $unitPrice * $qty;
+                $totalPrice = $selling_price * $qty;
 
                 // Calculate total earned
-                $capital = $product->capital;
-                $totalEarned = ($unitPrice - $capital) * $qty;
+                $purchase_price = $product->purchase_price;
+                $profit = ($selling_price - $purchase_price) * $qty;
 
                 // Create a new Transactions record and save it to the database
                 $transaction = new Transaction;
                 $transaction->customer_name = $customerName;
                 $transaction->product_name = $productName;
                 $transaction->qty = $qty;
-                $transaction->unit_price = $unitPrice;
+                $transaction->selling_price = $selling_price;
                 $transaction->total_price = $totalPrice;
-                $transaction->total_earned = $totalEarned;
+                $transaction->profit = $profit;
                 $transaction->save();
 
                 // Update the product quantity by subtracting the sold quantity
@@ -766,7 +766,7 @@ class StaffController extends Controller
 
         // Calculate total sales for the day
         $totalSales = $transactions->sum(function ($transaction) {
-            return $transaction->qty * $transaction->unit_price;
+            return $transaction->qty * $transaction->selling_price;
         });
 
         // Calculate the average sales per transaction
@@ -787,7 +787,7 @@ class StaffController extends Controller
 
         // Calculate total sales for the month
         $totalSales = $allTransactions->sum(function ($transaction) {
-            return $transaction->qty * $transaction->unit_price;
+            return $transaction->qty * $transaction->selling_price;
         });
 
         // Calculate the average sales per transaction
@@ -805,7 +805,7 @@ class StaffController extends Controller
         // Validation rules
         $rules = [
             'product_name' => 'required|string',
-            'unit_price' => 'required|numeric|min:0',
+            'selling_price' => 'required|numeric|min:0',
             'qty' => 'required|integer|min:1',
             'customer_name' => 'required|string',
         ];
@@ -827,7 +827,7 @@ class StaffController extends Controller
 
         // Retrieve data from the request
         $productName = $request->input('product_name');
-        $unitPrice = $request->input('unit_price');
+        $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
         $customerName = $request->input('customer_name');
 
@@ -835,24 +835,24 @@ class StaffController extends Controller
         $oldQty = $transaction->qty;
 
         // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-        $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+        $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
 
         if ($product) {
             // Check if there's enough quantity to subtract
             if ($product->quantity + $oldQty >= $qty) {
                 // Calculate total price
-                $totalPrice = $unitPrice * $qty;
+                $totalPrice = $selling_price * $qty;
 
                 // Calculate total earned
-                $capital = $product->capital;
-                $totalEarned = ($unitPrice - $capital) * $qty;
+                $purchase_price = $product->purchase_price;
+                $profit = ($selling_price - $purchase_price) * $qty;
 
                 // Update the existing transaction record with the new data
                 $transaction->product_name = $productName;
-                $transaction->unit_price = $unitPrice;
+                $transaction->selling_price = $selling_price;
                 $transaction->qty = $qty;
                 $transaction->total_price = $totalPrice;
-                $transaction->total_earned = $totalEarned;
+                $transaction->profit = $profit;
                 $transaction->save();
 
                 // Update the product quantity by adding the old 'qty' and subtracting the new 'qty'
@@ -957,7 +957,7 @@ class StaffController extends Controller
 
         $customers = new Customer;
         $customers->name = $request->input('name');
-        $customers->contact_person = $request->input('contact_person');
+        $customers->contact_name = $request->input('contact_name');
         $customers->address = $request->input('address');
         $customers->contact_num = $request->input('contact_num');
         // $customers->item_sold = $request->input('item_sold');
@@ -971,7 +971,7 @@ class StaffController extends Controller
     {
         $customers = Customer::find($id);
         $customers->name = $request->name;
-        $customers->contact_person = $request->contact_person;
+        $customers->contact_name = $request->contact_name;
         $customers->address = $request->address;
         $customers->contact_num = $request->contact_num;
         // $customers->item_sold = $request->item_sold;

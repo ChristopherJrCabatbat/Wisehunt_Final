@@ -32,8 +32,8 @@ class StaffLiveSearchController extends Controller
                         <img src="' . asset($product->photo) . '" alt="' . $product->name . '" width="auto" height="50px" style="background-color: transparent">
                     </td>
                     <td> ' . $product->quantity . ' </td>
-                    <td class="nowrap"> ₱ ' . number_format($product->capital) . ' </td>
-                    <td class="nowrap"> ₱ ' . number_format($product->unit_price) . ' </td>
+                    <td class="nowrap"> ₱ ' . number_format($product->purchase_price) . ' </td>
+                    <td class="nowrap"> ₱ ' . number_format($product->selling_price) . ' </td>
                     <td class="actions">
                         <div class="actions-container">
                             <form action="' . route('staff.productEdit', $product->id) . '" method="POST">
@@ -77,9 +77,9 @@ class StaffLiveSearchController extends Controller
             <td class="transcact-td"> '.$transaction->customer_name.' </td>
             <td class="transcact-td"> '.$transaction->product_name.' </td>
             <td class="transcact-td"> '.$transaction->qty.' </td>
-            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->unit_price).' </td>
+            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->selling_price).' </td>
             <td class="nowrap transcact-td"> ₱ '.number_format($transaction->total_price).' </td>
-            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->total_earned).' </td>
+            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->profit).' </td>
             <td> '.$transaction->created_at->format('M. d, Y').' </td>
 
            
@@ -110,9 +110,9 @@ class StaffLiveSearchController extends Controller
             <td> '.$transaction->customer_name.' </td>
             <td> '.$transaction->product_name.' </td>
             <td> '.$transaction->qty.' </td>
-            <td> ₱ '.$transaction->unit_price.' </td>
+            <td> ₱ '.$transaction->selling_price.' </td>
             <td> ₱ '.number_format($transaction->total_price).' </td>
-            <td> ₱ '.number_format($transaction->total_earned).' </td>
+            <td> ₱ '.number_format($transaction->profit).' </td>
             <td> '.$transaction->created_at->format('M. d, Y').' </td>
 
             <td class="actions">
