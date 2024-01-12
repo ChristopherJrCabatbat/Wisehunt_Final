@@ -10,61 +10,70 @@
 </head>
 
 <body>
-    <header>
+    <div class="container-login">
+        <div class="container-loob">
+            <header>
+            
+                {{-- <div class="wisehunt">
+                    <h2>WISEHUNT COMPANY</h2>
+                </div> --}}
+                <div class="wisehunt">
+                    <h2>LOG IN</h2>
+                </div>
+            </header>
+            <main>
+                {{-- <div class="top-left">
+                    <div class="taas-tleft">Login to Wisehunt</div>
+                    <div class="taas-tleft">Inventory Management System</div>
+                    <div class="horizontal-line"></div>
+                </div> --}}
+                <div class="double-wrap">
+                    <div class="wrapper">
+                        {{-- <form action="{{ route('loginStore') }}" method="POST"> --}}
+                        <form method="POST" action="{{ route('login') }}">
+                            @csrf
+                            {{-- <h2>Login</h2> --}}
+                            <div class="input-field">
+                                <input type="email" class="has-value" name="email" id="email" value="{{ old('email') }}" required>
+                                <label>Enter your email</label>
+                            </div>
+                            {{-- <x-input-error :messages="$errors->get('email')" class="mt-2" /> --}}
+                            @if ($errors->has('email'))
+                                <div class="text-danger">{{ $errors->first('email') }}</div>
+                            @endif
+                            <div class="input-field">
+                                <input type="password" name="password" required>
+                                <label>Enter your password</label>
+                            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                            </div>
+                            <button type="submit">Log In</button>
+                            <div class="register">
+                                @if (Route::has('password.request'))
+                                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                                    {{ __('Forgot your password?') }}
+                                </a>
+                            @endif
+                        </div>
+                        </form>
+                        <hr class="vertical-hr">
+
+                    </div>
+                </div>
+            </main>
+            <footer>
+                <div class="baba">
+                    <div><i class="far fa-copyright" style="color: #000000;"></i></div>
+                    <div>2023 WiseHunt. All rights reserved.</div>
+                </div>
+            </footer>
+        </div>
         <div><img src="{{ asset('images/logo.png') }}" class="logo" alt="logo" width="100" height="100"></div>
-        <div class="wisehunt">
-            <h2>WISEHUNT COMPANY</h2>
-        </div>
-    </header>
+    </div>
+    {{-- <div class="kalahati-verti">
+    </div>
+    <div class="kalahati-hori"></div> --}}
 
-    <main>
-        <div class="top-left">
-            <div class="taas-tleft">Login to Wisehunt</div>
-            <div class="taas-tleft">Inventory Management System</div>
-            <div class="horizontal-line"></div>
-            {{-- <div class="baba-tleft">Enter your username and password to use the system.</div> --}}
-        </div>
-        <div class="wrapper">
-            {{-- <form action="{{ route('loginStore') }}" method="POST"> --}}
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-                
-                <h2>Login</h2>
-                <div class="input-field">
-                    <input type="email" class="has-value" name="email" id="email" value="{{ old('email') }}" required>
-                    <label>Enter your email</label>
-                </div>
-                {{-- <x-input-error :messages="$errors->get('email')" class="mt-2" /> --}}
-                @if ($errors->has('email'))
-                    <div class="text-danger">{{ $errors->first('email') }}</div>
-                @endif
-                <div class="input-field">
-                    <input type="password" name="password" required>
-                    <label>Enter your password</label>
-
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-
-
-                </div>
-
-                <button type="submit">Log In</button>
-                <div class="register">
-                    @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
-                    </a>
-                @endif                
-            </div>
-            </form>
-        </div>
-    </main>
-
-    <footer>
-        <div class="baba">
-            <div><i class="far fa-copyright" style="color: #000000;"></i></div>
-            <div>2023 WiseHunt. All rights reserved.</div>
-        </div>
-    </footer>
+    
 
    <!-- Add this script inside your HTML file, preferably just before the closing </body> tag -->
    <script>

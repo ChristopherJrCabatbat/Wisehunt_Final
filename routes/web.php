@@ -34,6 +34,7 @@ Route::group([
 
     // Dashboard
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/getTransactions', [AdminController::class, 'getTransactions'])->name('getTransactions');
 
     // Endpoint for current month sales
     Route::get('/get-current-sales', [AdminController::class, 'getCurrentSales'])->name('getCurrentSales');

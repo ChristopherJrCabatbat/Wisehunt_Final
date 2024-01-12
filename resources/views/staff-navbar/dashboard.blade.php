@@ -4,11 +4,33 @@
 
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/dashboard-styles.css') }}">
+    <style>
+        .taas-content {
+           justify-content: center;
+        }
+
+        .loob-box {
+            width: 40vw;
+        }
+
+        .staff-transaction-i {
+            width: 25px;
+            left: 27px;
+            top: 134px;
+            position: absolute;
+        }
+
+        .staff-customer-i {
+            width: 25px;
+            left: 27px;
+            top: 189px;
+            position: absolute;
+        }
+    </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     {{-- // Line Chart --}}
     <script type="text/javascript">
-    
         google.charts.load('current', {
             'packages': ['corechart']
         });
@@ -217,24 +239,24 @@
                     DASHBOARD</a>
             </div>
         </li>
-        <li>
+        {{-- <li>
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('staff.product') }}">
                     <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
                     PRODUCT</a>
             </div>
-        </li>
+        </li> --}}
         <li>
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('staff.transaction') }}">
-                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                    <img src="{{ asset('images/transaction.png') }}" class="staff-transaction-i" alt="">
                     TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('staff.customer') }}">
-                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                    <img src="{{ asset('images/customer.png') }}" class="staff-customer-i" alt="">
                     CUSTOMER</a>
             </div>
         </li>
@@ -263,7 +285,7 @@
                     <div class="baba-taasbox">Number of Items Sold Today</div>
                 </div>
             </div>
-            <div class="taasbox-dashboard">
+            {{-- <div class="taasbox-dashboard">
                 <img src="{{ asset('images/transactions.png') }}" class="product" alt="" />
                 <div class="loob-box">
                     <div class="zero">{{ $transactionCount }}</div>
@@ -278,12 +300,12 @@
                     <div class="item-stock">Sales</div>
                     <div class="baba-taasbox">All-Time Total Sales</div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         {{-- Graph --}}
         <div class="graph">
-            <div class="line-graph">
+            {{-- <div class="line-graph">
                 <div id="curve_chart" style="height: 500px;"></div>
                 <div class="sales">Sales</div>
             </div>
@@ -293,22 +315,22 @@
                     <canvas id="chart" width="1100" height="400"></canvas>
                     <div class="chart-label chart-y-label">Earnings</div>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="pie-graph">
-                <div id="piechart" style="width: 700px; height: 700px;"></div>
+                <div id="piechart" style="width: 1000px; height: 700px;"></div>
             </div>
 
         </div>
 
 
         <div class="box-pinakababa">
-            <select name="transactions" id="transactions">
+            {{-- <select name="transactions" id="transactions">
                 <option value="daily-transactions">Daily Transaction</option>
                 <option value="weekly-transactions">Transaction by Weeks</option>
                 <option value="monthly-transactions">Transaction by Months</option>
                 <option value="yearly-transactions">Transaction by Year</option>
-            </select>
+            </select> --}}
 
             <table class="daily-transactions">
                 <thead>
@@ -323,7 +345,7 @@
                     </tr>
                 </thead>
                 <?php
-    $dayTotalSales = App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->sum(DB::raw('qty * unit_price'));
+                $dayTotalSales = App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->sum(DB::raw('total_price'));
                 ?>
                 <tbody>
                     <tr>
@@ -332,13 +354,12 @@
                         </td>
                         <td> {{ App\Models\Transaction::whereDate('created_at', now()->format('Y-m-d'))->count() }}
                         </td>
-                        <td>₱ {{ number_format($dayTotalSales) }}
-                        </td>
+                        <td>₱ {{ number_format($dayTotalSales) }}</td>
                     </tr>
                 </tbody>
             </table>
 
-            <table class="weekly-transactions">
+            {{-- <table class="weekly-transactions">
                 <thead>
                     <tr>
                         <th colspan="4" class="th">Transaction by Weeks</th>
@@ -362,7 +383,7 @@
                 // Query the database to get data for the current week
                 $weekQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
                 $weekTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
-                $weekTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('qty * unit_price'));
+                $weekTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('total_price'));
                 ?>
                 <tbody>
                     <tr>
@@ -399,7 +420,7 @@
                 // Query the database to get data for the current month
                 $monthQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
                 $monthTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
-                $monthTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('qty * unit_price'));
+                $monthTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('total_price'));
                 ?>
                 <tbody>
                     <tr>
@@ -435,7 +456,7 @@
                 // Query the database to get data for the current year
                 $yearQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
                 $yearTotalTransactions = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->count();
-                $yearTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('qty * unit_price'));
+                $yearTotalSales = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum(DB::raw('total_price'));
                 ?>
                 <tbody>
                     <tr>
@@ -445,7 +466,8 @@
                         <td>₱ {{ number_format($yearTotalSales) }}</td>
                     </tr>
                 </tbody>
-            </table>
+            </table> --}}
+
         </div>
 
     </div>

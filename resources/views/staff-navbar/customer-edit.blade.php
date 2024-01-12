@@ -9,41 +9,42 @@
 
 @section('modals')
 
-    <div class="overlay"></div>
+    <div class="editOverlay"></div>
 
-      {{-- Edit Modal --}}
-      <div id="editModal" class="editModal">
-        <div class="modal-content">
-            <a href="{{ route('staff.customer') }}"><span class="close closeEditModal">&times;</span></a>
 
-            <form class="edit-modal-form" action="{{ route('staff.customerUpdate', $customerss->id) }}" method="POST">
-                @csrf
-                @method('PUT')
+    {{-- Edit Modal --}}
+        <div id="editModal" class="editModal">
+            <div class="modal-content">
+                <a href="{{ route('staff.customer') }}"><span class="close closeEditModal">&times;</span></a>
 
-                <center>
-                    <h2 style="margin: 0%; color:#333;">Edit Customer</h2>
-                </center>
+                <form class="edit-modal-form" action="{{ route('staff.customerUpdate', $customerss->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
 
-                <label class="modal-top" for="">Company Name:</label>
-                <input required type="text" class="autofocus" name="name" id="" autofocus
-                    value="{{ old('name', $customerss->name) }}">
-                <label for="">Contact Name:</label>
-                <input required type="text" name="contact_person" id=""
-                    value="{{ old('contact_person', $customerss->contact_person) }}">
+                    <center>
+                        <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-pen-to-square edt-taas"></i>Edit Customer</h2>
+                    </center>
 
-                <label for="">Contact Number:</label>
-                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
-                    name="contact_num" id="" value="{{ old('contact_num', $customerss->contact_num) }}">
+                    <label class="modal-tops" for="">Company Name:</label>
+                    <input required type="text" class="autofocus" name="name" id="" autofocus
+                        value="{{ old('name', $customerss->name) }}">
+                    <label for="">Contact Name:</label>
+                    <input required type="text" name="contact_person" id=""
+                        value="{{ old('contact_person', $customerss->contact_person) }}">
 
-                <label for="">Address:</label>
-                <input required type="text" name="address" id=""
-                    value="{{ old('address', $customerss->address) }}">
+                    <label for="">Contact Number:</label>
+                    <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+                        name="contact_num" id="" value="{{ old('contact_num', $customerss->contact_num) }}">
 
-                <input class="add" type="submit" value="Update">
-            </form>
+                    <label for="">Address:</label>
+                    <input required type="text" name="address" id=""
+                        value="{{ old('address', $customerss->address) }}">
 
+                    <input class="add" type="submit" value="Update">
+                </form>
+
+            </div>
         </div>
-    </div>
 
 @endsection
 
@@ -57,24 +58,24 @@
                     DASHBOARD</a>
             </div>
         </li>
-        <li>
+        {{-- <li>
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('staff.product') }}">
                     <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
                     PRODUCT</a>
             </div>
-        </li>
+        </li> --}}
         <li>
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('staff.transaction') }}">
-                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                    <img src="{{ asset('images/transaction.png') }}" class="staff-transaction-i" alt="">
                     TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
                 <a class="sidebar active" href="{{ route('staff.customer') }}">
-                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                    <img src="{{ asset('images/customer.png') }}" class="staff-customer-i" alt="">
                     CUSTOMER</a>
             </div>
         </li>
@@ -107,6 +108,7 @@
                     <th>Contact Name</th>
                     <th>Contact Number</th>
                     <th>Address</th>
+                    {{-- <th>Item Sold</th> --}}
                     <th>Actions</th>
                 </tr>
 
@@ -123,12 +125,12 @@
                                 <td>{{ $customer->contact_person }}</td>
                                 <td>{{ $customer->contact_num }}</td>
                                 <td>{{ $customer->address }}</td>
+                                {{-- <td>{{ $customer->item_sold }}</td> --}}
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form action="{{ route('staff.customerEdit', $customer->id) }}" method="POST">
-                                            @csrf
-                                            @method('GET')                                            
-                                            <button type="submit" class="edit editButton" id="edit">
+                                        <form>
+                                            <button type="button" class="edit editButton" id="edit"
+                                                data-id="{{ $customer->id }}">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>

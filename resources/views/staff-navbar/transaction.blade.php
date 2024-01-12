@@ -60,7 +60,7 @@
                 @endif
 
 
-                <label for="unit_price">Unit Price:</label>
+                <label for="unit_price">Selling Price:</label>
                 <input readonly required name="unit_price" id="unit_price" type="number" value="{{ old('unit_price') }}"
                     class="unit_price">
 
@@ -126,24 +126,24 @@
                     DASHBOARD</a>
             </div>
         </li>
-        <li>
+        {{-- <li>
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('staff.product') }}">
                     <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
                     PRODUCT</a>
             </div>
-        </li>
+        </li> --}}
         <li>
             <div class="baba-container">
                 <a class="sidebar active" href="{{ route('staff.transaction') }}">
-                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                    <img src="{{ asset('images/transaction.png') }}" class="staff-transaction-i" alt="">
                     TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('staff.customer') }}">
-                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                    <img src="{{ asset('images/customer.png') }}" class="staff-customer-i" alt="">
                     CUSTOMER</a>
             </div>
         </li>
@@ -187,7 +187,7 @@
                             Price
                             (ascending)</option>
                         <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
-                            Total Earned on Item
+                            Profit
                             (descending)</option>
                     </select>
                 </form>
@@ -220,11 +220,11 @@
                     <th>Customer</th>
                     <th>Product</th>
                     <th>Quantity</th>
-                    <th>Unit Price</th>
+                    <th>Selling Price</th>
                     <th>Total Price</th>
-                    <th>Total Earn</th>
+                    <th>Profit</th>
                     <th>Date</th>
-                    <th>Actions</th>
+                    {{-- <th>Actions</th> --}}
                 </tr>
 
                 <tbody class="all-data">
@@ -235,15 +235,15 @@
                     @else
                         @foreach ($transactions as $transaction)
                             <tr>
-                                <td>{{ $rowNumber++ }}</td>
-                                <td>{{ $transaction->customer_name }}</td>
-                                <td>{{ $transaction->product_name }}</td>
-                                <td>{{ $transaction->qty }}</td>
-                                <td class="nowrap">₱ {{ number_format($transaction->unit_price) }}</td>
-                                <td class="nowrap">₱ {{ number_format($transaction->total_price) }}</td>
-                                <td class="nowrap">₱ {{ number_format($transaction->total_earned) }}</td>
+                                <td class="transcact-td">{{ $rowNumber++ }}</td>
+                                <td class="transcact-td">{{ $transaction->customer_name }}</td>
+                                <td class="transcact-td">{{ $transaction->product_name }}</td>
+                                <td class="transcact-td">{{ $transaction->qty }}</td>
+                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->unit_price) }}</td>
+                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_price) }}</td>
+                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_earned) }}</td>
                                 <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
-                                <td class="actions">
+                                {{-- <td class="actions">
                                     <div class="actions-container">
                                         <form action="{{ route('staff.transactionEdit', $transaction->id) }}"
                                             method="POST">
@@ -263,7 +263,7 @@
                                             </button>
                                         </form>
                                     </div>
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                     @endif
@@ -349,7 +349,7 @@
         });
     </script>
 
-    <!-- Auto Unit Price Script -->
+    <!-- Auto Selling Price Script -->
     <script>
         function updateUnitPrice(elementId) {
             var productSelect = document.querySelector('#' + elementId + ' .product-select');

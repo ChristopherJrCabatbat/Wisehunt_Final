@@ -250,7 +250,6 @@ class AdminController extends Controller
 
 
     // Dashboard Controller
-
     public function dashboard()
     {
         $nm = Session::get('name');
@@ -334,11 +333,14 @@ class AdminController extends Controller
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
+        $transactions = Transaction::all();
+
         // Pass both arrays to the view
         return view('navbar.dashboard', $arr + [
             'username' => $nm,
             'productCount' => $productCount,
             'transactionCount' => $transactionCount,
+            'transactions' => $transactions,
             'totalSalesQty' => $totalSalesQty,
             'totalEarnings' => $totalEarnings,
             'datasets' => $datasets, // Adding the datasets for the bar chart
@@ -347,6 +349,12 @@ class AdminController extends Controller
             'nextMonthStartDate' => $nextMonthStartDate,
             'nextMonthEndDate' => $nextMonthEndDate,
         ] + $notifications);
+    }
+
+    public function getTransactions()
+    {
+        $transactions = Transaction::all(); // Adjust this query based on your actual model structure
+        return response()->json($transactions);
     }
 
     public function getEarningsForecast()
@@ -408,13 +416,10 @@ class AdminController extends Controller
             $query->orderBy('name', 'asc');
         } elseif ($sortOption === 'category_asc') {
             $query->orderBy('category', 'asc');
-        } elseif ($sortOption === 'quantity_asc') {
-            $query->orderBy('quantity', 'asc');
-        } elseif ($sortOption === 'capital_asc') {
-            $query->orderBy('capital', 'asc');
-        } elseif ($sortOption === 'unit_price_asc') {
-            $query->orderBy('unit_price', 'asc');
+        } elseif ($sortOption === 'default_asc') {
+            return redirect()->route('admin.product');
         }
+        
 
         $suppliers = Supplier::all();
         $products = $query->paginate(5);
@@ -428,8 +433,8 @@ class AdminController extends Controller
             'totalNotifications' => $totalNotifications,
         ] + $notifications);
     }
-    
-    public function filterProductsByCategory($category)
+
+    public function filterProductsByCategory(Request $request, $category)
     {
         $nm = Session::get('name');
         $query = Product::query();
@@ -452,6 +457,19 @@ class AdminController extends Controller
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
+        // Sort
+        $sortOption = $request->input('sort');
+
+        if ($sortOption === 'name_asc') {
+            $query->orderBy('name', 'asc');
+        }
+        elseif ($sortOption === 'default_asc') {
+            return redirect()->route('admin.product');
+        }
+        elseif ($sortOption === 'category_asc') {
+            $query->orderBy('category', 'asc');
+        }
+
         $suppliers = Supplier::all();
         $products = $query->paginate(5);
 
@@ -462,6 +480,7 @@ class AdminController extends Controller
             'totalNotifications' => $totalNotifications,
         ] + $notifications);
     }
+
 
 
     public function productStore(Request $request)
@@ -737,69 +756,86 @@ class AdminController extends Controller
 
 
     // public function transactionStore(Request $request)
-        // {
-        //     // Retrieve data from the request
-        //     $productName = $request->input('product_name');
-        //     $unitPrice = $request->input('unit_price');
-        //     $qty = $request->input('qty');
-        //     $customerName = $request->input('customer_name');
+    // {
+    //     // Retrieve data from the request
+    //     $productName = $request->input('product_name');
+    //     $unitPrice = $request->input('unit_price');
+    //     $qty = $request->input('qty');
+    //     $customerName = $request->input('customer_name');
 
-        //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-        //     $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
+    //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
+    //     $product = Product::where('name', $productName)->where('unit_price', $unitPrice)->first();
 
-        //     if ($product) {
-        //         // Check if there's enough quantity to subtract
-        //         if ($product->quantity >= $qty) {
-        //             // Calculate total price
-        //             $totalPrice = $unitPrice * $qty;
+    //     if ($product) {
+    //         // Check if there's enough quantity to subtract
+    //         if ($product->quantity >= $qty) {
+    //             // Calculate total price
+    //             $totalPrice = $unitPrice * $qty;
 
-        //             // Calculate total earned
-        //             $capital = $product->capital;
-        //             $totalEarned = ($unitPrice - $capital) * $qty;
+    //             // Calculate total earned
+    //             $capital = $product->capital;
+    //             $totalEarned = ($unitPrice - $capital) * $qty;
 
-        //             // Create a new Transactions record and save it to the database
-        //             $transaction = new Transaction;
-        //             $transaction->customer_name = $customerName;
-        //             $transaction->product_name = $productName;
-        //             $transaction->qty = $qty;
-        //             $transaction->unit_price = $unitPrice;
-        //             $transaction->total_price = $totalPrice;
-        //             $transaction->total_earned = $totalEarned;
-        //             $transaction->save();
+    //             // Create a new Transactions record and save it to the database
+    //             $transaction = new Transaction;
+    //             $transaction->customer_name = $customerName;
+    //             $transaction->product_name = $productName;
+    //             $transaction->qty = $qty;
+    //             $transaction->unit_price = $unitPrice;
+    //             $transaction->total_price = $totalPrice;
+    //             $transaction->total_earned = $totalEarned;
+    //             $transaction->save();
 
-        //             // Update the product quantity by subtracting the sold quantity
-        //             $product->quantity -= $qty;
-        //             $product->save();
+    //             // Update the product quantity by subtracting the sold quantity
+    //             $product->quantity -= $qty;
+    //             $product->save();
 
-        //             // Fetch past transactions for the current day
-        //             $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
+    //             // Fetch past transactions for the current day
+    //             $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
 
-        //             // Perform sales forecasting logic based on the past transactions
-        //             $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
+    //             // Perform sales forecasting logic based on the past transactions
+    //             $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
 
-        //             // Display alert with forecasted sales
-        //             if ($forecastedSales !== null) {
-        //                 // You can customize the alert message based on your requirements
-        //                 // Here, I'm using the basic alert() function for demonstration purposes
-        //                 // echo "<script>alert('Forecasted Sales for the day: $forecastedSales');</script>";
-        //                 return back()->with('forecastedSales', $forecastedSales);
+    //             // Display alert with forecasted sales
+    //             if ($forecastedSales !== null) {
+    //                 // You can customize the alert message based on your requirements
+    //                 // Here, I'm using the basic alert() function for demonstration purposes
+    //                 // echo "<script>alert('Forecasted Sales for the day: $forecastedSales');</script>";
+    //                 return back()->with('forecastedSales', $forecastedSales);
 
-        //             }
+    //             }
 
-        //             return back();
-        //         } else {
-        //             // Handle the case where the quantity is insufficient
-        //             return redirect()->back()
-        //                 ->withInput()
-        //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
-        //         }
-        //     } else {
-        //         // Keep the form data and repopulate the fields
-        //         return redirect()->back()
-        //             ->withInput()
-        //             ->withErrors(['error' => 'Selected product and unit price did not match.']);
-        //     }
-        // }
+    //             return back();
+    //         } else {
+    //             // Handle the case where the quantity is insufficient
+    //             return redirect()->back()
+    //                 ->withInput()
+    //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
+    //         }
+    //     } else {
+    //         // Keep the form data and repopulate the fields
+    //         return redirect()->back()
+    //             ->withInput()
+    //             ->withErrors(['error' => 'Selected product and unit price did not match.']);
+    //     }
+    // }
+
+    public function calculateLastMonthSales()
+    {
+        // Get the first and last day of the last month
+        $firstDayLastMonth = now()->subMonth()->firstOfMonth();
+        $lastDayLastMonth = now()->subMonth()->lastOfMonth();
+
+        // Query transactions for the last month
+        $lastMonthTransactions = Transaction::whereBetween('created_at', [$firstDayLastMonth, $lastDayLastMonth])->get();
+
+        // Calculate total sales for the last month
+        $totalSalesLastMonth = $lastMonthTransactions->sum(function ($transaction) {
+            return $transaction->qty * $transaction->unit_price;
+        });
+
+        return $totalSalesLastMonth;
+    }
 
 
     public function transactionStore(Request $request)
@@ -866,9 +902,9 @@ class AdminController extends Controller
                 $monthlyTransactionCount = session('monthlyTransactionCount', 0) + 1;
                 session(['monthlyTransactionCount' => $monthlyTransactionCount]);
 
-                // Display alert with forecasted sales after every five transactions
+                 // // Display alert with forecasted sales after every five transactions
                 if ($forecastedSales !== null && $transactionCount % 2 === 0) {
-                    $message = "Forecasted Sales for the day: ₱" . number_format($forecastedSales, 2);
+                    $message = "Your forecased sales for the day is: ₱" . number_format($forecastedSales, 2);
                     session()->flash('forecastedSalesAlert', $message);
                 }
 
@@ -879,8 +915,11 @@ class AdminController extends Controller
                         ->whereMonth('created_at', now()->month)
                         ->get();
 
+                    $salesLastMonth = $this->calculateLastMonthSales(); // Calculate last month sales
                     $monthlyForecastedSales = $this->calculateMonthlyForecastedSales($allTransactions);
-                    $monthlyMessage = "Forecasted Sales for the month: ₱" . number_format($monthlyForecastedSales, 2);
+
+                    // $monthlyMessage = "Forecasted Sales for the month: ₱" . number_format($monthlyForecastedSales, 2);
+                    $monthlyMessage = "Last month, you earned ₱" . number_format($salesLastMonth, 2) . " due to demand. It is expected that this month your monthly sales will reach up to ₱" . number_format($monthlyForecastedSales, 2);
                     session()->flash('monthlyForecastedSalesAlert', $monthlyMessage);
                 }
 
@@ -898,7 +937,6 @@ class AdminController extends Controller
                 ->withErrors(['error' => 'Selected product and unit price did not match.']);
         }
     }
-
 
     private function calculateForecastedSales($transactions)
     {

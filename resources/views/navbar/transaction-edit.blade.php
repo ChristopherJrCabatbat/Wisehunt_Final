@@ -21,7 +21,7 @@
                     @method('PUT')
 
                 <center>
-                    <h2 style="margin: 0%; color:#333;">Edit Transaction</h2>
+                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-pen-to-square edt-taas"></i>Edit Transaction</h2>
                 </center>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>

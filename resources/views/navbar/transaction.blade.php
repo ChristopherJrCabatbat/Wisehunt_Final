@@ -19,7 +19,7 @@
             <form class="modal-form" action="{{ route('admin.transactionStore') }}" method="POST">
                 @csrf
                 <center>
-                    <h2 style="margin: 0%; color:#333;">Add Transaction</h2>
+                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Transaction</h2>
                 </center>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
@@ -60,7 +60,7 @@
                 @endif
 
 
-                <label for="unit_price">Unit Price:</label>
+                <label for="unit_price">Selling Price:</label>
                 <input readonly required name="unit_price" id="unit_price" type="number" value="{{ old('unit_price') }}"
                     class="unit_price">
 
@@ -114,6 +114,7 @@
 
         </div>
     </div>
+    
 @endsection
 
 @section('side-navbar')
@@ -190,12 +191,15 @@
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
                             Product Name</option>
                         <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity</option>
-                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit Price
+                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Selling Price
                         </option>
                         <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
                             Total Price</option>
                         <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
-                            Total Earned on Item</option>
+                            Profit</option>
+                            {{-- Hindi pa ayos to --}}
+                        <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
+                            Date</option>
                     </select>
                     {{-- <select name="sort" id="sortSelect">
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
@@ -216,7 +220,7 @@
                             Price
                             (ascending)</option>
                         <option value="total_earned_asc" {{ request('sort') === 'total_earned_asc' ? 'selected' : '' }}>
-                            Total Earned on Item
+                            Profit
                             (descending)</option>
                     </select> --}}
                 </form>
@@ -249,11 +253,11 @@
                     <th>Customer</th>
                     <th>Product</th>
                     <th>Quantity</th>
-                    <th>Unit Price</th>
+                    <th>Selling Price</th>
                     <th>Total Price</th>
-                    <th>Total Earn</th>
+                    <th>Profit</th>
                     <th>Date</th>
-                    <th>Actions</th>
+                    {{-- <th>Actions</th> --}}
                 </tr>
 
                 <tbody class="all-data">
@@ -264,15 +268,15 @@
                     @else
                         @foreach ($transactions as $transaction)
                             <tr>
-                                <td>{{ $rowNumber++ }}</td>
-                                <td>{{ $transaction->customer_name }}</td>
-                                <td>{{ $transaction->product_name }}</td>
-                                <td>{{ $transaction->qty }}</td>
-                                <td class="nowrap">₱ {{ number_format($transaction->unit_price) }}</td>
-                                <td class="nowrap">₱ {{ number_format($transaction->total_price) }}</td>
-                                <td class="nowrap">₱ {{ number_format($transaction->total_earned) }}</td>
+                                <td class="transcact-td">{{ $rowNumber++ }}</td>
+                                <td class="transcact-td">{{ $transaction->customer_name }}</td>
+                                <td class="transcact-td">{{ $transaction->product_name }}</td>
+                                <td class="transcact-td">{{ $transaction->qty }}</td>
+                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->unit_price) }}</td>
+                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_price) }}</td>
+                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_earned) }}</td>
                                 <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
-                                <td class="actions">
+                                {{-- <td class="actions">
                                     <div class="actions-container">
                                         <form action="{{ route('admin.transactionEdit', $transaction->id) }}"
                                             method="POST">
@@ -292,7 +296,7 @@
                                             </button>
                                         </form>
                                     </div>
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                     @endif
@@ -378,7 +382,7 @@
         });
     </script>
 
-    <!-- Auto Unit Price Script -->
+    <!-- Auto Selling Price Script -->
     <script>
         function updateUnitPrice(elementId) {
             var productSelect = document.querySelector('#' + elementId + ' .product-select');

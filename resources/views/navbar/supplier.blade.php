@@ -4,6 +4,7 @@
 
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/product-transaction-styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/transaction-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/customer-supplier-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/supplier-styles.css') }}">
 @endsection
@@ -20,9 +21,9 @@
             <form class="modal-form" action="{{ route('admin.supplierStore') }}" method="POST">
                 @csrf
                 <center>
-                    <h2 style="margin: 0%; color:#333;">Add Supplier</h2>
+                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Supplier</h2>
                 </center>
-                <label class="modal-top" for="">Company Name:</label>
+                <label class="modal-tops" for="">Company Name:</label>
                 <input required autofocus type="text" name="supplier" id="autofocus" />
                 <label for="">Contact Name:</label>
                 <input required type="text" name="contact_person" id="" />

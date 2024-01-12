@@ -73,33 +73,16 @@ class StaffLiveSearchController extends Controller
 
             '<tr>
 
-            <td>' . $rowNumber++ . '</td>
-            <td> '.$transaction->customer_name.' </td>
-            <td> '.$transaction->product_name.' </td>
-            <td> '.$transaction->qty.' </td>
-            <td class="nowrap"> ₱ '.number_format($transaction->unit_price).' </td>
-            <td class="nowrap"> ₱ '.number_format($transaction->total_price).' </td>
-            <td class="nowrap"> ₱ '.number_format($transaction->total_earned).' </td>
+            <td class="transcact-td">' . $rowNumber++ . '</td>
+            <td class="transcact-td"> '.$transaction->customer_name.' </td>
+            <td class="transcact-td"> '.$transaction->product_name.' </td>
+            <td class="transcact-td"> '.$transaction->qty.' </td>
+            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->unit_price).' </td>
+            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->total_price).' </td>
+            <td class="nowrap transcact-td"> ₱ '.number_format($transaction->total_earned).' </td>
             <td> '.$transaction->created_at->format('M. d, Y').' </td>
 
-            <td class="actions">
-                <div class="actions-container">
-                        <form action="'. route('staff.transactionEdit', $transaction->id) .'" method="POST">
-                        ' . csrf_field() . '
-                        ' . method_field('GET') . '
-                        <button type="submit" class="edit editButton" id="edit" data-id="'.$transaction->id.'">
-                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                        </button>
-                    </form>
-                    <form action="'. route('staff.productDestroy', $transaction->id) .'" method="POST">
-                        ' . csrf_field() . '
-                        ' . method_field('DELETE') . '
-                        <button onclick="return confirm(\'Are you sure you want to delete this?\')" type="submit" class="delete" id="delete">
-                            <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
-                        </button>
-                    </form>
-                </div>
-            </td>
+           
 
             <tr>';
 

@@ -23,21 +23,6 @@ var userChart = new Chart(ctx, {
     },
 });
 
-// // Pie Chart/Graph
-// var ctxPie = document.getElementById('pieChart').getContext('2d');
-// var quantitySoldChart = new Chart(ctxPie, {
-//     type: 'pie',
-//     data: {
-//         labels: productLabels,
-//         datasets: productDatasets,
-//     },
-//     options: {
-//         legend: {
-//             position: 'top', // Adjust the position as needed
-//         },
-//     },
-// });
-
 document.addEventListener("DOMContentLoaded", function () {
     // Pie Chart/Graph
     var ctxPie = document.getElementById("pieChart").getContext("2d");

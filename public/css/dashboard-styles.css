@@ -22,6 +22,12 @@ label {
     margin: 10px;
 }
 
+.todays-total {
+    width: 32px;
+    position: absolute;
+    margin: 10px;
+}
+
 .earn {
     width: 33px;
     height: 28px;
@@ -244,33 +250,33 @@ svg g g rect {
 .product-i {
     width: 25px;
     left: 27px;
-    top: 137px;
+    top: 134px;
     position: absolute;
 }
 
 .transaction-i {
     width: 25px;
     left: 27px;
-    top: 192px;
+    top: 188px;
     position: absolute;
 }
 
 .customer-i {
     width: 25px;
     left: 27px;
-    top: 247px;
+    top: 241px;
     position: absolute;
 }
 
 .supplier-i {
     width: 25px;
     left: 26px;
-    top: 299px;
+    top: 295px;
     position: absolute;
 }
 .user-i {
     width: 25px;
     left: 26px;
-    top: 352px;
+    top: 347px;
     position: absolute;
 }

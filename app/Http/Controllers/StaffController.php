@@ -193,8 +193,7 @@ class StaffController extends Controller
 
         $productCount = Product::count();
         $transactionCount = Transaction::count();
-        // $totalEarnings = Transaction::sum('total_earned');
-        $totalEarnings = Transaction::sum(DB::raw('qty * unit_price'));
+        $totalEarnings = Transaction::sum(DB::raw('total_price'));
 
         // Bar Chart/Graph
         $currentYear = date('Y');

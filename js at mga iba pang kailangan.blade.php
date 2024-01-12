@@ -1597,3 +1597,624 @@ for ($i = 1; $i <= 12; $i++) {
         ]);
     }
 }
+
+
+  {{-- // Line Chart --}}
+    {{-- <script type="text/javascript">
+        google.charts.load('current', {
+            'packages': ['corechart']
+        });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function calculateWeightedAverage(data, currentIndex, alpha) {
+            var weightedTotal = 0;
+            var weightSum = 0;
+
+            for (var i = currentIndex; i >= 0; i--) {
+                var weight = Math.pow(alpha, currentIndex - i);
+                weightedTotal += weight * data.getValue(i, 1);
+                weightSum += weight;
+            }
+
+            return weightedTotal / weightSum;
+        }
+
+        function calculateWeightedAverageDynamic(data, currentIndex, alpha) {
+            var weightedTotal = 0;
+            var weightSum = 0;
+
+            for (var i = currentIndex; i >= 0; i--) {
+                var weight = Math.pow(alpha, currentIndex - i);
+                weightedTotal += weight * data.getValue(i, 1);
+                weightSum += weight;
+            }
+
+            return weightedTotal / weightSum;
+        }
+
+        function calculateDynamicAlpha(data, currentIndex, baseAlpha, sensitivity) {
+            // If there's not enough data points to calculate the trend, use the base alpha
+            if (currentIndex < 2) {
+                return baseAlpha;
+            }
+
+            var recentTrend = data.getValue(currentIndex, 1) - data.getValue(currentIndex - 1, 1);
+            var alpha = baseAlpha * (1 + sensitivity * recentTrend);
+            return Math.max(0, Math.min(1, alpha)); // Ensure alpha is between 0 and 1
+        }
+
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Month');
+            data.addColumn('number', 'Current Sales');
+            data.addColumn('number', 'Forecasted Sales');
+
+            var monthsWithData = [];
+            var latestMonthWithData = null;
+
+            @for ($i = 1; $i <= 12; $i++)
+                var month = new Date('{{ date('Y-m', mktime(0, 0, 0, $i, 1)) }}');
+                var currentMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
+                    ->whereYear('created_at', today()->year)
+                    ->sum(DB::raw('total_price')) ?? 0; ?>;
+
+                var currentMonthSalesLabel = '₱' + currentMonthSales;
+
+
+                if (currentMonthSales > 0) {
+                    data.addRow([month.toLocaleString('default', {
+                        month: 'long'
+                    }), currentMonthSales, null]);
+                    monthsWithData.push(month.toLocaleString('default', {
+                        month: 'long'
+                    }));
+                    latestMonthWithData = month;
+                }
+            @endfor
+
+            // Include the next month after the latest month with data
+            if (latestMonthWithData !== null) {
+                var nextMonth = new Date(latestMonthWithData);
+                nextMonth.setMonth(nextMonth.getMonth() + 1);
+                var nextMonthString = nextMonth.toLocaleString('default', {
+                    month: 'long'
+                });
+
+                // Check if the next month is not already in the array before adding it
+                if (!monthsWithData.includes(nextMonthString)) {
+                    monthsWithData.push(nextMonthString);
+
+                    // Set the base alpha parameter for weighted average
+                    var baseAlpha = 0.2; // You can adjust this value
+
+                    // Calculate dynamic alpha based on recent trend
+                    var dynamicAlpha = calculateDynamicAlpha(data, data.getNumberOfRows() - 1, baseAlpha, 0.1);
+
+                    // Calculate forecasted sales using weighted average with dynamic alpha
+                    var forecastedSales = calculateWeightedAverageDynamic(data, data.getNumberOfRows() - 1, dynamicAlpha);
+                    var forecastedSalesLabel = '₱' + forecastedSales;
+
+                    // Add the data for the next month
+                    data.addRow([nextMonthString, null, forecastedSales]);
+                }
+            }
+
+            // Add the weighted average for the Future Sales line
+            for (var i = 0; i < data.getNumberOfRows(); i++) {
+                var weightedAverage = calculateWeightedAverage(data, i, baseAlpha);
+                data.setValue(i, 2, weightedAverage);
+            }
+
+            // // Add the weighted average for the Future Sales line
+            // for (var i = 0; i < data.getNumberOfRows(); i++) {
+            //     // Calculate dynamic alpha based on recent trend
+            //     var dynamicAlpha = calculateDynamicAlpha(data, i, baseAlpha, 0.1);
+
+            //     // Calculate forecasted sales using weighted average with dynamic alpha
+            //     var forecastedSales = calculateWeightedAverageDynamic(data, i, dynamicAlpha);
+
+            //     data.setValue(i, 2, forecastedSales);
+            // }
+
+            var options = {
+                title: 'Sales Forecasting',
+                titleTextStyle: {
+                    color: '#414141',
+                    fontSize: 28,
+                    bold: true,
+                    fontFamily: 'Arial, Helvetica, sans-serif',
+                },
+                curveType: 'function',
+                legend: {
+                    position: 'bottom'
+                },
+                series: {
+                    0: {
+                        pointShape: 'circle',
+                        pointSize: 5,
+                        lineWidth: 2
+                    },
+                    1: {
+                        pointShape: 'circle',
+                        pointSize: 5,
+                        lineWidth: 2
+                    },
+                },
+                vAxis: {
+                    format: '₱ ', // Format vertical axis labels as currency
+                }
+            };
+
+            try {
+                var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                chart.draw(data, options);
+            } catch (error) {
+                console.error('Error drawing the chart:', error);
+            }
+        }
+    </script> --}}
+
+     {{-- Line Chart --}}
+     <script type="text/javascript">
+        google.charts.load('current', {
+            'packages': ['corechart']
+        });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function calculateWeightedAverage(data, currentIndex, alpha) {
+            var weightedTotal = 0;
+            var weightSum = 0;
+
+            for (var i = currentIndex; i >= 0; i--) {
+                var weight = Math.pow(alpha, currentIndex - i);
+                weightedTotal += weight * data.getValue(i, 1);
+                weightSum += weight;
+            }
+
+            return weightedTotal / weightSum;
+        }
+
+        function calculateDynamicAlpha(data, currentIndex, baseAlpha, sensitivity) {
+            // If there's not enough data points to calculate the trend, use the base alpha
+            if (currentIndex < 2) {
+                return baseAlpha;
+            }
+
+            var recentTrend = data.getValue(currentIndex, 1) - data.getValue(currentIndex - 1, 1);
+            var alpha = baseAlpha * (1 + sensitivity * recentTrend);
+            return Math.max(0, Math.min(1, alpha)); // Ensure alpha is between 0 and 1
+        }
+
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Month');
+            data.addColumn('number', 'Current Sales');
+            data.addColumn('number', 'Forecasted Sales');
+
+            var monthsWithData = [];
+            var latestMonthWithData = null;
+
+            @for ($i = 1; $i <= 12; $i++)
+                var month = new Date('{{ date('Y-m', mktime(0, 0, 0, $i, 1)) }}');
+                var currentMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
+                    ->whereYear('created_at', today()->year)
+                    ->sum(DB::raw('total_price')) ?? 0; ?>;
+
+                var currentMonthSalesLabel = '₱' + currentMonthSales;
+
+                if (currentMonthSales > 0) {
+                    data.addRow([month.toLocaleString('default', {
+                        month: 'long'
+                    }), currentMonthSales, null]);
+                    monthsWithData.push(month.toLocaleString('default', {
+                        month: 'long'
+                    }));
+                    latestMonthWithData = month;
+                }
+            @endfor
+
+            // Include the next month based on the current date
+            var currentDate = new Date();
+            var nextMonth = new Date(currentDate);
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            var nextMonthString = nextMonth.toLocaleString('default', {
+                month: 'long'
+            });
+
+            // Check if the next month is not already in the array before adding it
+            if (!monthsWithData.includes(nextMonthString)) {
+                monthsWithData.push(nextMonthString);
+
+                // Set the base alpha parameter for weighted average
+                var baseAlpha = 0.2; // You can adjust this value
+
+                // Calculate dynamic alpha based on recent trend
+                var dynamicAlpha = calculateDynamicAlpha(data, data.getNumberOfRows() - 1, baseAlpha, 0.1);
+
+                // Calculate forecasted sales using weighted average with dynamic alpha
+                var growthRate = 0.1; // You can adjust this value
+                var forecastedSales = currentMonthSales * (1 + growthRate);
+                var forecastedSalesLabel = '₱' + forecastedSales;
+
+                // Add the data for the next month
+                data.addRow([nextMonthString, null, forecastedSales]);
+            }
+
+
+            // Add the weighted average for the Future Sales line
+            for (var i = 0; i < data.getNumberOfRows(); i++) {
+                var weightedAverage = calculateWeightedAverage(data, i, baseAlpha);
+                data.setValue(i, 2, weightedAverage);
+            }
+
+            var options = {
+                title: 'Sales Forecasting',
+                titleTextStyle: {
+                    color: '#414141',
+                    fontSize: 28,
+                    bold: true,
+                    fontFamily: 'Arial, Helvetica, sans-serif',
+                },
+                curveType: 'function',
+                legend: {
+                    position: 'bottom'
+                },
+                series: {
+                    0: {
+                        pointShape: 'circle',
+                        pointSize: 5,
+                        lineWidth: 2
+                    },
+                    1: {
+                        pointShape: 'circle',
+                        pointSize: 5,
+                        lineWidth: 2
+                    },
+                },
+                vAxis: {
+                    format: '₱ ', // Format vertical axis labels as currency
+                }
+            };
+
+            try {
+                var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                chart.draw(data, options);
+            } catch (error) {
+                console.error('Error drawing the chart:', error);
+            }
+        }
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Login CSS
+
+    @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@200;300;400;500;600;700&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Open Sans", sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 0 10px;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    /* background: url("https://www.codingnepalweb.com/demos/create-glassmorphism-login-form-html-css/hero-bg.jpg"), #000; */
+    background: url("../images/bg.jpg"), white;
+    background-position: center;
+    background-size: cover;
+}
+
+header {
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+    padding: 3vh 5vw; /* Adjusted padding values */
+    height: 100vh;
+    width: 100vw;
+    min-height: 60px; 
+    font-style: italic;
+    position: absolute;
+    top: 0;
+}
+
+.logo {
+    /* width: 9%; */
+    width: 120px;
+    height: auto;
+    position: absolute;
+    left: 3%;
+    top: 0;
+}
+
+.top-left {
+    position: absolute;
+    top: 20%;
+    left: 4%;
+}
+
+.taas-tleft {
+    font-size: 1.1rem;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.baba-tleft {
+    font-size: .8rem;
+    font-weight: 500;
+    margin-left: 5rem;
+}
+
+.horizontal-line {
+    height: 1vh;
+    width: 30vw;
+    margin: 5px 0;
+    margin-left: -99px;
+    background-color: #D9D9D9;
+}
+
+.wrapper {
+    width: 400px;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    /* border: 1px solid rgba(255, 255, 255, 0.5); */
+    border: 1px solid black;
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: black;
+}
+
+.input-field {
+    position: relative;
+    border-bottom: 2px solid #ccc;
+    margin: 15px 0;
+}
+
+.input-field label {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    color: black;
+    font-size: 16px;
+    pointer-events: none;
+    transition: 0.15s ease;
+}
+
+.input-field input {
+    width: 100%;
+    height: 40px;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: black;
+}
+
+.input-field input:focus ~ label,
+.input-field input:valid ~ label {
+    font-size: 0.8rem;
+    top: 10px;
+    transform: translateY(-120%);
+}
+
+.forget {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 25px 0 35px 0;
+    color: black;
+}
+
+#remember {
+    accent-color: black;
+}
+
+.forget label {
+    display: flex;
+    align-items: center;
+}
+
+.forget label p {
+    margin-left: 8px;
+}
+
+.wrapper a {
+    color: black;
+    text-decoration: none;
+}
+
+.wrapper a:hover {
+    text-decoration: underline;
+}
+
+button {
+    background: black;
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 16px;
+    border: 2px solid transparent;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    color: black;
+    border-color: black;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.register {
+    text-align: center;
+    margin-top: 30px;
+    color: black;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
+.baba {
+    display: flex;
+    gap: 5px;
+}
+
+.input-field input.has-value ~ label,
+.input-field input:focus ~ label,
+.input-field input:valid ~ label {
+    font-size: 0.8rem;
+    top: 10px;
+    transform: translateY(-120%);
+}
+
+.text-danger {
+    color: red;
+    font-size: 14px;
+    position: relative;
+    bottom: 8px;
+}
+
+
+
+// Mga inalis after defense sa LiveSearchController
+
+public function productSearch(Request $request)
+    {
+        $rowNumber = 1;
+        $output = "";
+    
+        $products = Product::where('code', 'Like', '%' . $request->search . '%')
+            ->orWhere('name', 'LIKE', '%' . $request->search . '%')
+            ->orWhere('description', 'LIKE', '%' . $request->search . '%')
+            ->orWhere('category', 'LIKE', '%' . $request->search . '%')
+            ->get();
+    
+        foreach ($products as $product) {
+            $output .=
+                '<tr>
+                    <td>' . $rowNumber++ . '</td>
+                    <td> ' . $product->code . ' </td>
+                    <td> ' . $product->brand_name . ' </td>
+                    <td> ' . $product->description . ' </td>
+                    <td> ' . $product->category . ' </td>
+                    <td>
+                        <img src="' . asset($product->photo) . '" alt="' . $product->name . '" width="auto" height="50px" style="background-color: transparent">
+                    </td>
+                    <td> ' . $product->quantity . ' </td>
+                    <td class="nowrap"> ₱ ' . number_format($product->capital) . ' </td>
+                    <td class="nowrap"> ₱ ' . number_format($product->unit_price) . ' </td>
+                    <td class="actions">
+                        <div class="actions-container">
+                            <form action="' . route('admin.productEdit', $product->id) . '" method="POST">
+                                ' . csrf_field() . '
+                                ' . method_field('GET') . '
+                                <button type="submit" class="edit editButton" id="edit">
+                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                            </button>
+                            </form>
+                            <form action="' . route('admin.productDestroy', $product->id) . '" method="POST">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button onclick="return confirm(\'Are you sure you want to delete this?\')" type="submit" class="delete" id="delete">
+                                    <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>';
+        }
+    
+        return response($output ?: '');
+    }
+
+    public function transactionSearch(Request $request)
+    {
+        $rowNumber = 1;
+        $output="";
+
+        $transactions = Transaction::where('customer_name', 'Like', '%' . $request->search . '%')
+        ->orWhere('product_name', 'LIKE', '%' . $request->search . '%')
+        ->get();
+
+        foreach ($transactions as $transaction) 
+        {
+            $output.=
+
+            '<tr>
+
+            <td>' . $rowNumber++ . '</td>
+            <td> '.$transaction->customer_name.' </td>
+            <td> '.$transaction->product_name.' </td>
+            <td> '.$transaction->qty.' </td>
+            <td class="nowrap"> ₱ '.number_format($transaction->unit_price).' </td>
+            <td class="nowrap"> ₱ '.number_format($transaction->total_price).' </td>
+            <td class="nowrap"> ₱ '.number_format($transaction->total_earned).' </td>
+            <td> '.$transaction->created_at->format('M. d, Y').' </td>
+
+            <td class="actions">
+                <div class="actions-container">
+                        <form action="'. route('admin.transactionEdit', $transaction->id) .'" method="POST">
+                        ' . csrf_field() . '
+                        ' . method_field('GET') . '
+                        <button type="submit" class="edit editButton" id="edit" data-id="'.$transaction->id.'">
+                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                        </button>
+                    </form>
+                    <form action="'. route('admin.transactionDestroy', $transaction->id) .'" method="POST">
+                        ' . csrf_field() . '
+                        ' . method_field('DELETE') . '
+                        <button onclick="return confirm(\'Are you sure you want to delete this?\')" type="submit" class="delete" id="delete">
+                            <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                        </button>
+                    </form>
+                </div>
+            </td>
+
+            <tr>';
+
+        }
+
+        return response($output ?: '');
+    }
+
+    

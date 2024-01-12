@@ -22,7 +22,7 @@
                 @method('PUT')
 
                 <center>
-                    <h2 style="margin: 0%; color:#333;">Edit Supplier</h2>
+                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-pen-to-square edt-taas"></i>Edit Supplier</h2>
                 </center>
                 <label class="modal-top" for="">Company Name:</label>
                 <input required type="text" class="autofocus" name="supplier" id="" autofocus

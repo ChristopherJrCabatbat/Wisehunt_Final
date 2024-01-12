@@ -19,7 +19,7 @@
     {{-- Add Modal --}}
     <div id="newModal" class="modal">
         <div class="modal-content">
-            <p class="taas-new">Add Product</p>
+            <p class="taas-new"><i class="fa-regular fa-plus"></i>Add Product</p>
 
             <hr>
 
@@ -56,6 +56,15 @@
                         <input required type="text" name="brand_name" id="" value="{{ old('brand_name') }}"
                             class="row1-input" />
                     </div>
+                    
+                    {{-- <div class="column">
+                        <label for="">Stock Quantity:</label>
+                        <input required type="number" name="quantity" id="" value="{{ old('quantity') }}"
+                            class="row2-input" />
+                        @if ($errors->has('quantity'))
+                            <div class="text-danger">{{ $errors->first('quantity') }}</div>
+                        @endif
+                    </div> --}}
 
                 </div>
 
@@ -68,10 +77,10 @@
                         @if ($errors->has('quantity'))
                             <div class="text-danger">{{ $errors->first('quantity') }}</div>
                         @endif
-                    </div>
+                    </div>                 
 
                     <div class="column">
-                        <label for="">Capital:</label>
+                        <label for="">Purchase Price:</label>
                         <input required type="number" name="capital" id="" value="{{ old('capital') }}"
                             class="row2-input" />
                         @if ($errors->has('capital'))
@@ -79,7 +88,7 @@
                         @endif
                     </div>
                     <div class="column">
-                        <label for="">Unit Price:</label>
+                        <label for="">Selling Price:</label>
                         <input required type="number" name="unit_price" id="" value="{{ old('unit_price') }}"
                             class="row2-input" />
                         @if ($errors->has('unit_price'))
@@ -136,7 +145,7 @@
                 <hr>
                 <div class="buttons">
                     <input type="submit" id="saveButton" class="add-green save"
-                        style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Add" />
+                        style="font-family: Arial, Helvetica, sans-serif; font-size: 1rem;" value="Add" />
                     <button type="button" class="closeModal">Cancel</button>
                 </div>
             </form>
@@ -145,20 +154,14 @@
     </div>
 
     {{-- Category Modal --}}
-    {{-- <div class="fade" id="categoryModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Select Category</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="categoryForm">
-                        <label for="category">Category:</label>
+    <div id="categoryModal" class="categoryModal">
+        <div class="modal-content-category">
+                <form id="categoryForm">
+                    <h3>Choose Category</h3>
+
+                    <div>
+                        <label for="category">Categories:</label>
                         <select required name="category" id="category" class="form-control">
-                            <option value="" disabled selected>-- Select Category --</option>
                             <option value="Paper">Paper</option>
                             <option value="Tape">Tape</option>
                             <option value="Plastic">Plastic</option>
@@ -166,15 +169,15 @@
                             <option value="Machine">Machine</option>
                             <option value="Food Material">Food Material</option>
                         </select>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="applyCategoryFilter()">Apply</button>
-                </div>
-            </div>
+                    </div>
+
+                    <div class="categ-baba">
+                        <button type="button" class="btn btn-primary" onclick="applyCategoryFilter()">Apply</button>
+                        <a href="{{ route('admin.product') }}" class="anchor-categ">Close</a>
+                    </div>
+                </form>
         </div>
-    </div> --}}
+    </div>
 
 
 
@@ -236,59 +239,16 @@
         <div class="taas">
             <button type="button" id="newButton">Add Product</button>
 
-            {{-- <div class="sort-by">
-                <form id="sortForm" action="#" method="GET">
-                    <input type="hidden" name="sort" id="sortInput" value="{{ request('sort') }}">
-            
-                    <label for="sort">Sort by:</label>
-                    <select name="sort" id="sortSelect" onchange="handleSortChange()">
-                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
-                            Default Sorting --</option>
-                        <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product
-                            Name (A-Z)</option>
-                        <option value="category_asc" {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category
-                        </option>
-                        <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Quantity
-                            in Stock (ascending)</option>
-                        <option value="capital_asc" {{ request('sort') === 'capital_asc' ? 'selected' : '' }}>
-                            Capital (ascending)</option>
-                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit
-                            Price
-                            (ascending)
-                        </option>
-                    </select>
-                </form>
-            </div> --}}
-
             <div class="sort-by">
                 <form id="sortForm" action="#" method="GET">
                     <input type="hidden" name="sort" id="sortInput" value="{{ request('sort') }}">
 
                     <label for="sort">Sort by:</label>
-                    {{-- <select name="sort" id="sortSelect" onchange="handleSortChange()">
-                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
-                            Default Sorting --</option>
-                        <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product
-                            Name (A-Z)</option>
-                        <option value="category_asc" data-toggle="modal" data-target="#categoryModal"
-                            {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category
-                        </option>
-                        <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Stock Quantity (ascending)</option>
-                        <option value="capital_asc" {{ request('sort') === 'capital_asc' ? 'selected' : '' }}>
-                            Capital (ascending)</option>
-                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit
-                            Price
-                            (ascending)
-                        </option>
-                    </select> --}}
                     <select name="sort" id="sortSelect" onchange="handleSortChange()">
-                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>-- Default Sorting --</option>
+                        <option value="default_asc" {{ request('sort') === 'default_asc' ? 'selected' : '' }}>-- Default Sorting --</option>
                         <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product Name</option>
                         <option value="category_asc" data-toggle="modal" data-target="#categoryModal"
                             {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category</option>
-                        <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Stock Quantity</option>
-                        <option value="capital_asc" {{ request('sort') === 'capital_asc' ? 'selected' : '' }}>Capital</option>
-                        <option value="unit_price_asc" {{ request('sort') === 'unit_price_asc' ? 'selected' : '' }}>Unit Price</option>
                     </select>
                     
                 </form>
@@ -327,9 +287,9 @@
                     <th>Category</th>
                     <th>Image</th>
                     <th>Stock Quantity</th>
-                    <th>Capital</th>
-                    <th>Unit Price</th>
-                    <th>Actions</th>
+                    <th>Purchase Price</th>
+                    <th>Selling Price</th>
+                    <th>Delete</th>
                 </tr>
                 <tbody class="all-data">
                     @if ($products->isEmpty())
@@ -354,14 +314,14 @@
                                 <td>₱ {{ number_format($product->unit_price) }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form action="{{ route('admin.productEdit', $product->id) }}" method="POST">
+                                        {{-- <form action="{{ route('admin.productEdit', $product->id) }}" method="POST">
                                             @csrf
                                             @method('GET')
 
                                             <button type="submit" class="edit" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
-                                        </form>
+                                        </form> --}}
                                         <form action="{{ route('admin.productDestroy', $product->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -432,14 +392,14 @@
     </script>
 
     {{-- Auto Sorting --}}
-    <script>
+    {{-- <script>
         // Automatically submit the form when the sorting option changes
         document.getElementById('sortSelect').addEventListener('change', function() {
             document.getElementById('sortForm').submit();
         });
-    </script>
+    </script> --}}
 
-    {{-- <script>
+    <script>
         function handleSortChange() {
             console.log('handleSortChange called');
     
@@ -454,21 +414,29 @@
                 document.getElementById('sortForm').submit();
             }
         }
-    </script> --}}
-    
-    
+    </script>
 
-    <script>
+    {{-- <script>
         function applyCategoryFilter() {
             var selectedCategory = document.getElementById('category').value;
             // You can use AJAX to fetch and update the table based on the selected category
             // For simplicity, let's assume you have a route that returns the filtered products
-            var url = '/products/filter/' + encodeURIComponent(selectedCategory);
+            var url = 'admin/products/filter/' + encodeURIComponent(selectedCategory);
 
             // Redirect to the filtered products route
             window.location.href = url;
         }
+    </script> --}}
+    <script>
+        function applyCategoryFilter() {
+            var selectedCategory = document.getElementById('category').value;
+            var url = '/admin/products/filter/' + encodeURIComponent(selectedCategory);
+    
+            // Redirect to the filtered products route
+            window.location.href = url;
+        }
     </script>
+    
 
 
 @endsection

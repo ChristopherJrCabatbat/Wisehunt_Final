@@ -53,24 +53,24 @@
                     DASHBOARD</a>
             </div>
         </li>
-        <li>
+        {{-- <li>
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('staff.product') }}">
                     <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
                     PRODUCT</a>
             </div>
-        </li>
+        </li> --}}
         <li>
             <div class="baba-container">
                 <a class="sidebar" href="{{ route('staff.transaction') }}">
-                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                    <img src="{{ asset('images/transaction.png') }}" class="staff-transaction-i" alt="">
                     TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
                 <a class="sidebar active" href="{{ route('staff.customer') }}">
-                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                    <img src="{{ asset('images/customer.png') }}" class="staff-customer-i" alt="">
                     CUSTOMER</a>
             </div>
         </li>

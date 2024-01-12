@@ -11,42 +11,46 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    /* min-height: 100vh; */
     width: 100%;
+    /* background-color: #818FB4; */
+    background: url("../images/bg.jpg"), white;
+    background-size: cover;
     padding: 0 10px;
 }
 
-body::before {
-    content: "";
+
+.container-login {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    /* background: url("https://www.codingnepalweb.com/demos/create-glassmorphism-login-form-html-css/hero-bg.jpg"), #000; */
-    background: url("../images/bg.jpg"), white;
-    background-position: center;
-    background-size: cover;
+    top: 11%;
+    background-color: white;
+    height: 80%;
+    width: 80%;
+    border: 3px solid #006181;
+    z-index: 99;
 }
+
 
 header {
     display: flex;
     /* align-items: center; */
     justify-content: center;
-    padding: 3vh 5vw; /* Adjusted padding values */
-    height: 100vh;
-    width: 100vw;
-    min-height: 60px; 
-    font-style: italic;
+    /* padding: 3vh 5vw; */ /* Adjusted padding values */
+    /* height: 100vh; */
+    /* width: 100vw; */
+    min-height: 60px;
+    /* font-style: italic; */
     position: absolute;
     top: 0;
 }
 
 .logo {
     /* width: 9%; */
-    width: 120px;
+    width: 320px;
     height: auto;
     position: absolute;
-    left: 3%;
-    top: 0;
+    right: 9%;
+    top: 26%;
 }
 
 .top-left {
@@ -75,15 +79,42 @@ header {
     background-color: #D9D9D9;
 }
 
+main {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.double-wrap {
+    height: 100px;
+    
+}
+.vertical-hr {
+    width: 3px;
+    height: 79.5vh; /* Set the desired height of your vertical line */
+    background-color: #006181; /* Set the color of your vertical line */
+    margin: 0 10px; /* Optional margin for spacing */
+    transform: rotate(180deg);
+    position: absolute;
+    top: -18.3vh;
+    color: black;
+    left: 120%;
+    border: none;
+  }
 .wrapper {
+    position: absolute;
+    top: 23%;
+    left: 7%;
     width: 400px;
-    border-radius: 8px;
+    /* border-radius: 8px; */
+    /* height: 42vh; */
     padding: 30px;
-    text-align: center;
+    /* border-right: 1px solid black; */
+    /* text-align: center; */
     /* border: 1px solid rgba(255, 255, 255, 0.5); */
-    border: 1px solid black;
-    backdrop-filter: blur(9px);
-    -webkit-backdrop-filter: blur(9px);
+    /* border: 1px solid black; */
+    /* backdrop-filter: blur(9px); */
+    /* -webkit-backdrop-filter: blur(9px); */
+    /* background-color: #006181; */
 }
 
 form {
@@ -95,6 +126,11 @@ h2 {
     font-size: 2rem;
     margin-bottom: 20px;
     color: black;
+    position: absolute;
+    /* left: 0%; */
+    top: 154%;
+    white-space: nowrap;
+    margin-left: 104px;
 }
 
 .input-field {
@@ -162,7 +198,7 @@ h2 {
 }
 
 button {
-    background: black;
+    background-color: #006181;
     color: white;
     font-weight: 600;
     border: none;
@@ -175,9 +211,9 @@ button {
 }
 
 button:hover {
-    color: black;
-    border-color: black;
-    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border-color: #363535;
+    background-color: #363535;
 }
 
 .register {
@@ -194,6 +230,8 @@ footer {
 .baba {
     display: flex;
     gap: 5px;
+    margin-left: 262%;
+    white-space: nowrap;
 }
 
 .input-field input.has-value ~ label,
@@ -209,4 +247,20 @@ footer {
     font-size: 14px;
     position: relative;
     bottom: 8px;
+}
+
+.kalahati-verti {
+    background-color: black;
+    width: 100px;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+}
+.kalahati-hori {
+    background-color: black;
+    width: 100vw;
+    height: 100px;
+    position: absolute;
+    left: 0;
+    top: 46%;
 }

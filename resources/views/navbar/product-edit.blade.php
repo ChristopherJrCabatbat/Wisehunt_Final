@@ -19,7 +19,7 @@
     <!-- Edit Modal -->
     <div id="" class="editModal">
         <div class="edit-modal-content">
-            <p class="taas-new">Edit Product </p>
+            <p class="taas-new"><i class="fa-regular fa-pen-to-square edt-taas"></i>Edit Product </p>
             <hr>
             <form class="edit-modal-form" action="{{ route('admin.productUpdate', $productss->id) }}"
                 enctype="multipart/form-data" method="POST">
@@ -141,7 +141,7 @@
                 <hr>
                 <div class="buttons">
                     <input type="submit" class="add-green"
-                        style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Update" />
+                        style="font-size: 1rem; font-family: Arial, Helvetica, sans-serif;"  value="Update" />
             </form>
                     <form action="{{ route('admin.product') }}">
                         <button type="submit" class="closeEditModal">Cancel</button>

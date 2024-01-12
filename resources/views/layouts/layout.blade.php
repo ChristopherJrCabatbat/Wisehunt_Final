@@ -1,5 +1,3 @@
-{{-- @php dd($bestSellerNotifications) @endphp --}}
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 
-    {{-- <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> --}}
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
@@ -25,34 +23,6 @@
 </head>
 
 <body>
-
-    {{-- @if ($errors->any())
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                // Check if there are validation errors for the add modal
-                const newModal = document.getElementById("newModal");
-                const overlay = document.querySelector(".overlay");
-
-                if (newModal) {
-                    newModal.style.display = "block";
-                    overlay.style.display = "block";
-                }
-
-                // Check if there are validation errors for any of the edit modals
-                @foreach ($users as $user)
-                    @if($errors->has('name', 'email', 'password', 'role', "editModal{{$user->id}}"))
-                        const editModal{{ $user->id }} = document.getElementById("editModal{{ $user->id }}");
-                        const editOverlay{{ $user->id }} = document.querySelector(".editOverlay{{ $user->id }}");
-
-                        if (editModal{{ $user->id }}) {
-                            editModal{{ $user->id }}.style.display = "block";
-                            editOverlay{{ $user->id }}.style.display = "block";
-                        }
-                    @endif
-                @endforeach
-            });
-        </script>
-    @endif --}}
 
     @if (session('staff'))
         <script>
@@ -75,18 +45,10 @@
                 // Open the modal if there are validation errors
                 const newModal = document.getElementById("newModal");
                 const overlay = document.querySelector(".overlay");
-                // const editModals = document.getElementById("editModal");
-                // const editOverlays = document.querySelector(".editOverlay");
-
                 if (newModal && overlay) {
                     newModal.style.display = "block";
                     overlay.style.display = "block";
                 }
-
-                // if (editModals && editOverlays) {
-                //     editModals.style.display = "block";
-                //     editOverlays.style.display = "block";
-                // }
             });
         </script>
     @endif
@@ -96,28 +58,28 @@
 
     <div class="container">
 
-        <!-- Notification -->
-        <div id="notificationPanel" class="notification-panel">
-            <span class="close-notification" onclick="closeNotification()">&times;</span>
-            <h3 class="h3-notif">Notifications</h3>
-            <ul id="notificationList" class="notification-list">
-                <!-- Display low-quantity notifications -->
-                @foreach ($lowQuantityNotifications as $notification)
-                    <li class="notification-item">
-                        {!! $notification['message'] !!}
-                        <span class="dot"></span>
-                    </li>
-                @endforeach
+       <!-- Notification -->
+<div id="notificationPanel" class="notification-panel" data-route="{{ route('admin.productEdit', ['id' => '__productId__']) }}">
+    <span class="close-notification" onclick="closeNotification()">&times;</span>
+    <h3 class="h3-notif">Notifications</h3>
+    <ul id="notificationList" class="notification-list">
+        <!-- Display low-quantity notifications -->
+        @foreach ($lowQuantityNotifications as $notification)
+            <li class="notification-item" onclick="navigateToProductView('{{ $notification['productId'] }}')">
+                {!! $notification['message'] !!}
+                <span class="dot"></span>
+            </li>
+        @endforeach
 
-                <!-- Display best-seller notifications -->
-                @foreach ($bestSellerNotifications as $notification)
-                    <li class="notification-item best-seller">
-                        {!! $notification['message'] !!}
-                        <span class="dot"></span>
-                    </li>
-                @endforeach
-            </ul>
-        </div>
+        <!-- Display best-seller notifications -->
+        @foreach ($bestSellerNotifications as $notifications)
+            <li class="notification-item best-seller">
+                {!! $notifications['message'] !!}
+                <span class="dot"></span>
+            </li>
+        @endforeach
+    </ul>
+</div>
 
 
         <header>
@@ -126,14 +88,21 @@
             </div>
             <div class="top-navbar">
                 <div class="logo-container">
-                    <img class="logo" src="{{ asset('images/logo.jpg') }}" alt="" width="90px"
+                    <img class="logo" src="{{ asset('images/logo-blue.jpeg') }}" alt="" width="90"
                         height="auto" />
+                        <div class="company">WISEHUNT COMPANY</div>
                 </div>
                 <div>
                     <div class="top-account">
                         <img class="notif" src="{{ asset('images/notif.png') }}" alt="notif img" width="100"
                             height="auto" onclick="toggleNotificationPanel()">
-                        <span class="red-dot" id="notificationDot">{{ $totalNotifications }}</span>
+                        @if (auth()->user()->role === 'Admin')
+                            <span class="red-dot" id="notificationDot">{{ $totalNotifications }}</span>
+                        @endif
+                        @if (auth()->user()->role === 'Staff')
+                            <span class="red-dot-staff" id="notificationDot">{{ $totalNotifications }}</span>
+                        @endif
+
                         {{-- <span class="red-dot" id="notificationDot">{{ count($lowQuantityNotifications) }}</span> --}}
 
                         {{-- <div class="username">{{ $username }}</div> --}}
@@ -154,8 +123,9 @@
                                         alt="" width="100" height="auto">
                                 @endif
                                 @if (auth()->user()->role === 'Staff')
-                                    <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-usersss.png') }}"
-                                        alt="" width="100" height="auto">
+                                    {{-- <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-usersss.png') }}"
+                                        alt="" width="100" height="auto"> --}}
+                                        <i class="fa-solid fa-circle-user icon-user-staff" id="logoutBtn" style="color: #006181;"></i>
                                 @endif
                             </label>
                             <input type="checkbox" id="logout">
@@ -200,8 +170,6 @@
 
     <script src="{{ asset('js/logout.js') }}"></script>
     <script src="{{ asset('js/add.js') }}"></script>
-    {{-- <script src="{{ asset('js/edit.js') }}"></script> --}}
-    {{-- <script src="{{ asset('js/easyAdd.js') }}"></script> --}}
 
     <script>
         const lowQuantityNotifications = {!! json_encode(
@@ -216,6 +184,35 @@
 
 
     @yield('script')
+
+    {{-- <script>
+        function navigateToProductView(productId) {
+            showNotificationPanel();
+
+            setTimeout(function() {
+                window.location.href = `@url('productEdit', ['id' => '__productId__'])`.replace('__productId__', productId);
+            }, 2000);
+        }
+
+        function showNotificationPanel() {
+            var notificationPanel = document.getElementById('notificationPanel');
+            if (notificationPanel) {
+                notificationPanel.style.display = 'block';
+            }
+        }
+
+        function closeNotification() {
+            var notificationPanel = document.getElementById('notificationPanel');
+            if (notificationPanel) {
+                notificationPanel.style.display = 'none';
+            }
+        }
+    </script> --}}
+
+    {{-- <script>
+        // Pass lowQuantityNotifications to JavaScript
+        const lowQuantityNotifications = @json($lowQuantityNotifications);
+    </script> --}}
 
     <script src="{{ asset('js/notification.js') }}"></script>
 

@@ -130,7 +130,7 @@
                 <hr>
                 <div class="buttons">
                     <input type="submit" id="saveButton" class="add-green save"
-                        style="font-family: 'Times New Roman', Times, serif; font-size: 1rem;" value="Add" />
+                        style="font-family: Arial, Helvetica, sans-serif; font-size: 1rem;" value="Add" />
                     <button type="button" class="closeModal">Cancel</button>
                 </div>
             </form>

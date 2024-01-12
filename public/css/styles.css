@@ -2,7 +2,7 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
-    font-family: "Times New Roman", Times, serif;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 input:not([type="file"]), textarea {
@@ -52,7 +52,7 @@ a:hover {
 .side-navbar ul {
     list-style-type: none;
     padding: 0;
-    margin: 0;
+    margin: 0px;
 }
 
 .side-navbar li a {
@@ -60,7 +60,7 @@ a:hover {
     padding-top: 18px;
     padding-bottom: 18px;
     padding-left: 70px;
-    padding-right: 25px;
+    padding-right: 24px;
     font-size: 0.9rem;
     color: white;
     text-decoration: none;
@@ -82,35 +82,49 @@ a:hover {
 .product-i {
     width: 25px;
     left: 27px;
-    top: 155px;
+    top: 152px;
     position: absolute;
 }
 
 .transaction-i {
     width: 25px;
     left: 27px;
-    top: 210px;
+    top: 206px;
     position: absolute;
 }
 
 .customer-i {
     width: 25px;
     left: 27px;
-    top: 265px;
+    top: 259px;
+    position: absolute;
+}
+
+.staff-transaction-i {
+    width: 25px;
+    left: 27px;
+    top: 152px;
+    position: absolute;
+}
+
+.staff-customer-i {
+    width: 25px;
+    left: 27px;
+    top: 207px;
     position: absolute;
 }
 
 .supplier-i {
     width: 25px;
     left: 26px;
-    top: 317px;
+    top: 313px;
     position: absolute;
 }
 .user-i {
     /* width: 100px; */
     font-size: 25px;
     left: 26px;
-    top: 370px;
+    top: 365px;
     position: absolute;
 }
 
@@ -118,7 +132,7 @@ a:hover {
 .top-navbar {
     background-color: white;
     color: #006181;
-    border-bottom: 2px solid #006181;
+    border-bottom: 6px solid #006181;
     max-height: 68px;
     width: 100vw;
     display: flex;
@@ -131,8 +145,25 @@ a:hover {
 }
 
 .top-navbar .logo {
-    margin-top: 5px;
-    margin-left: 55px;
+    margin: 15px 10px 10px 55px;
+    max-width: 100%;
+    width: 58px;
+    height: auto;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 36px;
+}
+
+div.company {
+    letter-spacing: 4px;
+    font-weight: bold;
+    /* font-style: italic; */
+    color: #006181;
+    font-size: 18px;
 }
 
 .top-navbar .notification,
@@ -150,11 +181,6 @@ a:hover {
     margin-top: 85px;
     margin-left: 220px;
     /* margin-left: 19.4%; */
-}
-
-.logo {
-    max-width: 100%;
-    width: 90px;
 }
 
 img {
@@ -196,6 +222,13 @@ img {
     border-radius: 50%;
 }
 
+.icon-user-staff {
+    font-size: 30px;
+    position: relative;
+    cursor: pointer;
+    margin-top: 2px;
+}
+
 .dropdown {
     position: relative;
     display: inline-block;
@@ -228,7 +261,7 @@ img {
     white-space: nowrap;
     text-decoration: none;
     display: block;
-    color: black;
+    color: #006181;
     background-color: white;
 }
 
@@ -327,7 +360,7 @@ button, input[type="submit"], a{
 
 .notification-list li {
     padding: 8px 13px;
-    padding-right: 21px;
+    padding-right: 22px;
     text-decoration: none;
     /* align-items: center;
     display: flex;
@@ -366,22 +399,26 @@ button, input[type="submit"], a{
     display: none;
 }
 
-.red-dot {
+.red-dot, .red-dot-staff {
     width: 15px;
     height: 15px;
     background-color: red;
     border-radius: 50%;
     position: absolute;
-    right: 146px;
+    right: 143px;
     z-index: 10;
     top: 41%;
     transform: translateY(-50%);
     display: none; /* Initially hidden */
     color: white;
-    font-size: 14px;
+    font-size: 13px;
     text-align: center;
     align-content: center;
     user-select: none;
+}
+
+.red-dot {
+    right: 148px;
 }
 
 .bold-text {
@@ -438,4 +475,10 @@ form button#delete:hover {
 
 .nowrap {
     white-space: nowrap;
+}
+
+i.fa-plus, i.edt-taas  {
+    font-size: 27px;
+    margin-right: 10px;
+    margin-top: 5px;
 }

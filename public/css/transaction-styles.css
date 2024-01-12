@@ -8,6 +8,10 @@
     width: 30%;
 }
 
+table td.transcact-td {
+    padding: 15px;
+}
+
 .reportModal {
     display: none;
     position: fixed;
@@ -99,11 +103,12 @@ input[type="submit"] {
 
 .row-report {
     display: flex;
-    gap: 55px;
+    gap: 50px;
+    margin-top: -10px;
 }
 
 input[type="date"] {
-    width: 128%;
+    width: 127%;
 }
 
 .column-report {
@@ -177,6 +182,12 @@ select {
     max-width: 100%;
 }
 
+select.select {
+    max-width: 100%;
+    min-width: 104%;
+}
+
+
 .text-danger {
     color: red;
     font-size: 14px;
@@ -187,4 +198,10 @@ select {
 .text-danger-stock {
     color: red;
     font-size: 14px;
+}
+
+i.fa-plus, i.edt-taas  {
+    font-size: 25px;
+    margin-right: 9px;
+    margin-top: 3px;
 }

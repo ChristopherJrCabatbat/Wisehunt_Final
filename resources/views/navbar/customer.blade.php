@@ -4,6 +4,7 @@
 
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/product-transaction-styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/transaction-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/customer-supplier-styles.css') }}">
 @endsection
 
@@ -20,10 +21,10 @@
                 @csrf
 
                 <center>
-                    <h2 style="margin: 0%; color:#333;">Add Customer</h2>
+                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Customer</h2>
                 </center>
                 
-                <label class="modal-top" for="">Company Name:</label>
+                <label class="modal-tops" for="">Company Name:</label>
                 <input required autofocus type="text" name="name" id="autofocus" />
 
                 <label for="">Contact Name:</label>
