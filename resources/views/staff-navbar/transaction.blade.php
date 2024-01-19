@@ -61,8 +61,8 @@
 
 
                 <label for="selling_price">Selling Price:</label>
-                <input readonly required name="selling_price" id="selling_price" type="number" value="{{ old('selling_price') }}"
-                    class="selling_price">
+                <input readonly required name="selling_price" id="selling_price" type="number"
+                    value="{{ old('selling_price') }}" class="selling_price">
 
                 <label for="selling_price">Total Price:</label>
                 <input readonly name="total_price" id="total_price" type="number" value="{{ $totalPrice }}"
@@ -179,7 +179,8 @@
                         </option>
                         <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity
                             (ascending)</option>
-                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>Unit
+                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>
+                            Unit
                             Price (ascending)
                         </option>
                         <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
@@ -230,20 +231,27 @@
                 <tbody class="all-data">
                     @if ($transactions->isEmpty())
                         <tr>
-                            <td colspan="13">No data found.</td>
+                            <td colspan="8">No data found.</td>
                         </tr>
                     @else
+                        @php
+                            $today = now()->format('M. d, Y');
+                        @endphp
+
                         @foreach ($transactions as $transaction)
-                            <tr>
-                                <td class="transcact-td">{{ $rowNumber++ }}</td>
-                                <td class="transcact-td">{{ $transaction->customer_name }}</td>
-                                <td class="transcact-td">{{ $transaction->product_name }}</td>
-                                <td class="transcact-td">{{ $transaction->qty }}</td>
-                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->selling_price) }}</td>
-                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_price) }}</td>
-                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->profit) }}</td>
-                                <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
-                                {{-- <td class="actions">
+                            @if (optional($transaction->created_at)->format('M. d, Y') === $today)
+                                <tr>
+                                    <td class="transcact-td">{{ $rowNumber++ }}</td>
+                                    <td class="transcact-td">{{ $transaction->customer_name }}</td>
+                                    <td class="transcact-td">{{ $transaction->product_name }}</td>
+                                    <td class="transcact-td">{{ $transaction->qty }}</td>
+                                    <td class="nowrap transcact-td">₱ {{ number_format($transaction->selling_price) }}
+                                    </td>
+                                    <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_price) }}</td>
+                                    <td class="nowrap transcact-td">₱ {{ number_format($transaction->profit) }}</td>
+                                    <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
+                                    
+                                    {{-- <td class="actions">
                                     <div class="actions-container">
                                         <form action="{{ route('staff.transactionEdit', $transaction->id) }}"
                                             method="POST">
@@ -264,10 +272,20 @@
                                         </form>
                                     </div>
                                 </td> --}}
-                            </tr>
+                                </tr>
+                            @endif
                         @endforeach
+
+                        @if ($rowNumber === 1)
+                            {{-- No transactions for today --}}
+                            <tr>
+                                <td colspan="8">No transactions for today.</td>
+                            </tr>
+                        @endif
                     @endif
                 </tbody>
+
+
                 <tbody id="content" class="search-data"></tbody>
 
             </table>

@@ -82,7 +82,7 @@ a.closeModal:hover, a.closeEditModal:hover {
     color: black;
 }
 
-input[type="submit"] {
+input[type="submit"], input[type="button"] {
     background-color: #333;
     color: white;
     border: none;
@@ -165,7 +165,7 @@ input:focus+.search {
     cursor: pointer;
 }
 
-input[type="submit"] {
+input[type="submit"], input[type="button"] {
     background-color: #006181;
 }
 

@@ -2218,3 +2218,110 @@ public function productSearch(Request $request)
     }
 
     
+
+    // Ito yung tama
+
+    @section('modals')
+
+    <div class="overlay"></div>
+
+    {{-- Add Modal --}}
+    <div id="newModal" class="modal">
+        <div class="modal-content">
+            <span class="close closeModal">&times;</span>
+
+            <form class="modal-form" action="{{ route('admin.deliveryStore') }}" method="POST">
+                @csrf
+                <center>
+                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Delivery</h2>
+                </center>
+                <label class="modal-tops" for="">Delivery ID:</label>
+                <input required autofocus type="text" name="delivery_id" id="autofocus" pattern="{5,15}"
+                    value="{{ old('delivery_id') }}" />
+                @if ($errors->has('delivery_id'))
+                    <div class="text-danger">{{ $errors->first('delivery_id') }}</div>
+                @endif
+
+                <label class="modal-tops" for="">Name:</label>
+                <input required type="text" name="name" id="" value="{{ old('name') }}" />
+                @if ($errors->has('name'))
+                    <div class="text-danger">{{ $errors->first('name') }}</div>
+                @endif
+
+                {{-- <label class="modal-tops" for="">Product/s:</label>
+                <input required  type="text" name="product" id="" value="{{ old('product') }}" />
+                @if ($errors->has('product'))
+                <div class="text-danger">{{ $errors->first('product') }}</div>
+                @endif --}}
+                {{-- <select required class="select_product" name="product" id="product_name">
+                    <option value="" disabled selected>-- Select a Product --</option>
+                    @foreach ($products as $product)
+                        <option value="{{ $product->product_name }}"
+                            {{ old('product') === $product->product_name ? 'selected' : '' }}>
+                            {{ $product->product_name }}
+                        </option>
+                    @endforeach
+                </select> --}}
+
+                {{-- <label class="modal-tops" for="">Quantity:</label>
+                <input required type="number" name="quantity" id="" value="{{ old('quantity') }}" />
+                @if ($errors->has('quantity'))
+                    <div class="text-danger">{{ $errors->first('quantity') }}</div>
+                @endif --}}
+
+                <label class="modal-tops" for="">Address:</label>
+                <input required type="text" name="address" id="" value="{{ old('address') }}" />
+                @if ($errors->has('address'))
+                    <div class="text-danger">{{ $errors->first('address') }}</div>
+                @endif
+
+                <label for="">Pending Status:</label>
+                <select required name="status" id="" class="">
+                    <option disabled selected value="">-- Select Status --</option>
+                    <option value="Delivered" {{ old('status') === 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                    <option value="Not Delivered" {{ old('status') === 'Not Delivered' ? 'selected' : '' }}>Not Delivered
+                    </option>
+                </select>
+                @if ($errors->has('status'))
+                    <div class="text-danger">{{ $errors->first('status') }}</div>
+                @endif
+
+                <input class="add nextButton" type="button" onclick="showProductModal()" value="Next" />
+                {{-- <button type="button" class="nextButton" onclick="showProductModal()">Next</button> --}}
+
+            </form>
+        </div>
+    </div>
+
+    {{-- Product Selection Modal --}}
+    <div id="productModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close closeModal" onclick="closeProductModal()">&times;</span>
+
+            <form class="modal-form" id="productSelectionForm" action="{{ route('admin.deliveryStore') }}" method="POST">
+                @csrf
+                <center>
+                    <h2 style="margin: 0%; color:#333;">Select Products</h2>
+                </center>
+
+                {{-- Display products with checkboxes --}}
+                @foreach ($products as $product)
+                    <label>
+                        {{-- <input type="checkbox" name="selectedProducts[]" value="{{ $product->id }}" /> --}}
+                        <input type="checkbox" name="product" value="{{ $product->id }}" />
+                        {{ $product->name }}
+                    </label>
+                    {{-- <input type="number" name="productQuantities[]" placeholder="Quantity" /> --}}
+                    <input type="number" name="quantity" placeholder="Quantity" />
+                @endforeach
+
+                {{-- <button type="button" class="nextButton" onclick="submitProductSelection()">Submit</button> --}}
+                {{-- <button type="button" class="backButton" onclick="goBack()">Back</button> --}}
+                <input class="add backButton" type="button" onclick="goBack()" value="Back" />
+                <input class="add" type="submit" value="Add" />
+
+            </form>
+        </div>
+    </div>
+
+@endsection

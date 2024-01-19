@@ -1330,10 +1330,13 @@ class AdminController extends Controller
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
+        $products = Product::all();
         $deliveries = Delivery::paginate(8);
+
 
         return view('navbar.delivery', [
             'deliveries' => $deliveries,
+            'products' => $products,
             'totalNotifications' => $totalNotifications,
             'username' => $nm,
         ] + $notifications);
