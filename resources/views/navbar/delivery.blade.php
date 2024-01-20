@@ -12,17 +12,17 @@
 
 @section('modals')
 
-    <div class="overlay"></div>
+    {{-- <div class="overlay"></div> --}}
 
     {{-- Add Modal --}}
-    <div id="newModal" class="modal">
-        <div class="modal-content">
-            <span class="close closeModal" onclick="closeModal()">&times;</span>
 
-            <form class="modal-form" id="addDeliveryForm" action="{{ route('admin.deliveryStore') }}" method="POST">
+    <form class="modal-form" id="addDeliveryForm" action="{{ route('admin.deliveryStore') }}" method="POST">
+        <div id="newModal" class="modal">
+            <div class="modal-content-delivery">
+                <span class="close closeModal" onclick="window.closeModal()">&times;</span>
                 @csrf
                 <center>
-                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Delivery</h2>
+                    <h2 style="margin: 0%; color:#333; "><i class="fa-regular fa-plus"></i>Add Delivery</h2>
                 </center>
                 <label class="modal-tops" for="">Delivery ID:</label>
                 <input required autofocus type="text" name="delivery_id" id="autofocus" pattern="{5,15}"
@@ -54,38 +54,39 @@
                     <div class="text-danger">{{ $errors->first('status') }}</div>
                 @endif
 
-                <input class="add nextButton" type="button" onclick="showProductSection()" value="Next" />
-            </form> {{-- Add this line to close the form --}}
-
+                <input class="add nextButton" type="button" id="nextButton" value="Next" />
+            </div>
         </div>
-    </div>
 
-    {{-- Product Selection Modal --}}
-    <div id="productModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close closeModal" onclick="closeProductSection()">&times;</span>
 
-            <form class="modal-form" id="productSelectionForm" action="{{ route('admin.deliveryStore') }}" method="POST">
-                @csrf
+        {{-- Product Selection Modal --}}
+        <div id="productModal" class="" style="display:none;">
+            <div class="modal-content-delivery-next">
+                <span class="close closeModal" onclick="window.closeModal()">&times;</span>
+
+
                 <center>
-                    <h2 style="margin: 0%; color:#333;">Select Products</h2>
+                    <h2 style="margin: 0%; color:#333; font-size: 1.4rem">Select Products to Deliver</h2>
                 </center>
 
                 {{-- Display products with checkboxes --}}
-                @foreach ($products as $product)
-                    <label>
-                        <input type="checkbox" name="selectedProducts[]" value="{{ $product->id }}" />
-                        {{ $product->name }}
-                    </label>
-                    <input type="number" name="productQuantities[]" placeholder="Quantity" />
-                @endforeach
+@foreach ($products as $product)
+<label>
+    <input type="checkbox" name="product[]" value="{{ $product->name }}" />
+    {{ $product->name }}
+</label>
+<input type="number" name="quantity[]" placeholder="Quantity" />
+@endforeach
 
-                <input class="add backButton" type="button" onclick="goBack()" value="Back" />
-                <input class="add" type="submit" value="Add" />
-            </form>
 
+                <div class="buttons">
+                    <input class="add backButton" type="button" id="backButton" value="Back" />
+                    <input class="add" type="submit" value="Add" />
+                </div>
+            </div>
         </div>
-    </div>
+    </form>
+
 
 @endsection
 
@@ -189,8 +190,28 @@
                                 <td>{{ $rowNumber++ }}</td>
                                 <td>{{ $delivery->delivery_id }}</td>
                                 <td>{{ $delivery->name }}</td>
-                                <td>{{ $delivery->product }}</td>
-                                <td>{{ $delivery->quantity }}</td>
+
+                                {{-- <td>{{ $delivery->product }}</td>
+                                <td>{{ $delivery->quantity }}</td> --}}
+
+                                <td>
+                                    @foreach (json_decode($delivery->product) as $index => $product)
+                                        {{ $product }}
+                                        @if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </td>
+
+                                <td>
+                                    @foreach (json_decode($delivery->quantity) as $index => $quantity)
+                                        {{ $quantity }}
+                                        @if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </td>
+
                                 <td>{{ $delivery->address }}</td>
                                 <td class="status">
                                     {{-- {{ $delivery->address }} --}}
@@ -253,22 +274,38 @@
 @endsection
 
 @section('script')
-<script>
-    function showProductSection() {
-        document.getElementById('productModal').style.display = 'block';
-        document.getElementById('newModal').style.display = 'none';
-    }
 
-    function goBack() {
-        document.getElementById('productModal').style.display = 'none';
-        document.getElementById('newModal').style.display = 'block';
-    }
+    <script src="{{ asset('js/delivery.js') }}"></script>
 
-    function closeModal() {
-        // You can add any additional logic to reset or close the modal
-        document.getElementById('newModal').style.display = 'none';
-    }
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkboxes = document.querySelectorAll('input[name="product[]"]');
+            const quantityInputs = document.querySelectorAll('input[name="quantity[]"]');
+    
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.addEventListener('change', function () {
+                    quantityInputs[index].required = this.checked;
+                });
+            });
+        });
+    </script>
+
+    {{-- <script>
+        function showProductSection() {
+            document.getElementById('productModal').style.display = 'block';
+            document.getElementById('newModal').style.display = 'none';
+        }
+
+        function goBack() {
+            document.getElementById('productModal').style.display = 'none';
+            document.getElementById('newModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            // You can add any additional logic to reset or close the modal
+            document.getElementById('newModal').style.display = 'none';
+        }
+    </script> --}}
 
     {{-- <script>
         function showProductModal() {

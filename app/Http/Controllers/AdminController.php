@@ -420,7 +420,7 @@ class AdminController extends Controller
         } elseif ($sortOption === 'default_asc') {
             return redirect()->route('admin.product');
         }
-        
+
 
         $suppliers = Supplier::all();
         $products = $query->paginate(5);
@@ -463,11 +463,9 @@ class AdminController extends Controller
 
         if ($sortOption === 'name_asc') {
             $query->orderBy('name', 'asc');
-        }
-        elseif ($sortOption === 'default_asc') {
+        } elseif ($sortOption === 'default_asc') {
             return redirect()->route('admin.product');
-        }
-        elseif ($sortOption === 'category_asc') {
+        } elseif ($sortOption === 'category_asc') {
             $query->orderBy('category', 'asc');
         }
 
@@ -907,7 +905,7 @@ class AdminController extends Controller
                 $monthlyTransactionCount = session('monthlyTransactionCount', 0) + 1;
                 session(['monthlyTransactionCount' => $monthlyTransactionCount]);
 
-                 // // Display alert with forecasted sales after every five transactions
+                // // Display alert with forecasted sales after every five transactions
                 if ($forecastedSales !== null && $transactionCount % 2 === 0) {
                     $message = "Your forecased sales for the day is: ₱" . number_format($forecastedSales, 2);
                     session()->flash('forecastedSalesAlert', $message);
@@ -1309,7 +1307,7 @@ class AdminController extends Controller
         return back();
     }
 
-    
+
     // Delivery Controllers
     public function delivery()
     {
@@ -1345,7 +1343,7 @@ class AdminController extends Controller
     public function deliveryStore(Request $request)
     {
         $request->validate([
-            'delivery_id' => ['required'],
+            'delivery_id' => ['required', 'unique:' . Delivery::class],
             'name' => ['required'],
             'product' => ['required'],
             'quantity' => ['required'],
@@ -1356,12 +1354,23 @@ class AdminController extends Controller
         $deliveries = new Delivery;
         $deliveries->delivery_id = $request->input('delivery_id');
         $deliveries->name = $request->input('name');
-        $deliveries->product = $request->input('product');
-        $deliveries->quantity = $request->input('quantity');
+
+        // // Convert arrays to strings (you may adjust this logic based on your requirements)
+        // $deliveries->product = implode(', ', $request->input('product'));
+        // $deliveries->quantity = implode(', ', $request->input('quantity'));
+
+        $deliveries->product = json_encode($request->input('product'));
+        $deliveries->quantity = json_encode($request->input('quantity'));
+
+        // $deliveries->product = $request->input('product');
+        // $deliveries->quantity = $request->input('quantity');
+
+
         $deliveries->address = $request->input('address');
         $deliveries->status = $request->input('status');
 
         $deliveries->save();
+
         return back();
     }
 

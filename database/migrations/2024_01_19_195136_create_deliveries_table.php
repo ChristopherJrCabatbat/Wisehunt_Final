@@ -15,8 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('delivery_id');
             $table->string('name');
-            $table->string('product');
-            $table->integer('quantity');
+
+            // $table->string('product');
+            // $table->integer('quantity');
+
+            $table->text('product'); // Change the data type to TEXT
+            $table->text('quantity'); // Change the data type to TEXT
+
             $table->string('address');
             $table->string('status');
             $table->timestamps();

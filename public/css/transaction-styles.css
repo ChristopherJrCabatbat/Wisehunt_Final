@@ -169,9 +169,6 @@ input[type="submit"], input[type="button"] {
     background-color: #006181;
 }
 
-input[type="submit"]:hover {
-    background-color: #003b4e;
-}
 
 label {
     margin-top: 8px;

@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const form = document.querySelector(".modal-form");
 
         // Loop through each form element and reset its value
-        form.querySelectorAll("input:not([type='submit']), select, textarea").forEach((element) => {
+        form.querySelectorAll("input:not([type='submit']):not([type='button']), select, textarea").forEach((element) => {
             element.value = "";
         });
 
