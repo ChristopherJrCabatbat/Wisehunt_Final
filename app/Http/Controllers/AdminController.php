@@ -1340,6 +1340,40 @@ class AdminController extends Controller
         ] + $notifications);
     }
 
+    // public function deliveryStore(Request $request)
+    // {
+    //     $request->validate([
+    //         'delivery_id' => ['required', 'unique:' . Delivery::class],
+    //         'name' => ['required'],
+    //         'product' => ['required'],
+    //         'quantity' => ['required'],
+    //         'address' => ['required'],
+    //         'status' => ['required'],
+    //     ]);
+
+    //     $deliveries = new Delivery;
+    //     $deliveries->delivery_id = $request->input('delivery_id');
+    //     $deliveries->name = $request->input('name');
+
+    //     // // Convert arrays to strings (you may adjust this logic based on your requirements)
+    //     // $deliveries->product = implode(', ', $request->input('product'));
+    //     // $deliveries->quantity = implode(', ', $request->input('quantity'));
+
+    //     $deliveries->product = json_encode($request->input('product'));
+    //     $deliveries->quantity = json_encode($request->input('quantity'));
+
+    //     // $deliveries->product = $request->input('product');
+    //     // $deliveries->quantity = $request->input('quantity');
+
+
+    //     $deliveries->address = $request->input('address');
+    //     $deliveries->status = $request->input('status');
+
+    //     $deliveries->save();
+
+    //     return back();
+    // }
+
     public function deliveryStore(Request $request)
     {
         $request->validate([
@@ -1355,16 +1389,13 @@ class AdminController extends Controller
         $deliveries->delivery_id = $request->input('delivery_id');
         $deliveries->name = $request->input('name');
 
-        // // Convert arrays to strings (you may adjust this logic based on your requirements)
-        // $deliveries->product = implode(', ', $request->input('product'));
-        // $deliveries->quantity = implode(', ', $request->input('quantity'));
+        // Remove null values from the quantity array
+        $filteredQuantity = array_filter($request->input('quantity'), function ($value) {
+            return $value !== null;
+        });
 
         $deliveries->product = json_encode($request->input('product'));
-        $deliveries->quantity = json_encode($request->input('quantity'));
-
-        // $deliveries->product = $request->input('product');
-        // $deliveries->quantity = $request->input('quantity');
-
+        $deliveries->quantity = json_encode($filteredQuantity);
 
         $deliveries->address = $request->input('address');
         $deliveries->status = $request->input('status');
@@ -1372,6 +1403,17 @@ class AdminController extends Controller
         $deliveries->save();
 
         return back();
+    }
+
+    public function deliveryUpdate(Request $request)
+    {
+        // Validate the request if needed
+
+        $delivery = Delivery::findOrFail($request->input('delivery_id'));
+        $delivery->status = $request->input('status');
+        $delivery->save();
+
+        return response()->json(['success' => true]);
     }
 
     public function deliveryDestroy(string $id)

@@ -69,14 +69,33 @@
                     <h2 style="margin: 0%; color:#333; font-size: 1.4rem">Select Products to Deliver</h2>
                 </center>
 
+                {{-- Display products with checkboxes
+                @foreach ($products as $product)
+                    <label>
+                        <input type="checkbox" name="product[]" value="{{ $product->name }}" />
+                        {{ $product->name }}
+                    </label>
+                    <input type="number" name="quantity[]" placeholder="Quantity" />
+                @endforeach --}}
+
                 {{-- Display products with checkboxes --}}
-@foreach ($products as $product)
-<label>
-    <input type="checkbox" name="product[]" value="{{ $product->name }}" />
-    {{ $product->name }}
-</label>
-<input type="number" name="quantity[]" placeholder="Quantity" />
-@endforeach
+                @foreach ($products as $index => $product)
+                    <label>
+                        <input type="checkbox" name="product[]" value="{{ $product->name }}" />
+                        {{ $product->name }}
+                    </label>
+                    @if ($loop->first)
+                        <!-- Display the first quantity input without any condition -->
+                        <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity" />
+                    @else
+                        <!-- Display the quantity input only if the checkbox is checked -->
+                        @if (old('product') && in_array($product->name, old('product')))
+                            <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity" required />
+                        @else
+                            <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity" />
+                        @endif
+                    @endif
+                @endforeach
 
 
                 <div class="buttons">
@@ -203,11 +222,22 @@
                                     @endforeach
                                 </td>
 
-                                <td>
+                                {{-- <td>
                                     @foreach (json_decode($delivery->quantity) as $index => $quantity)
                                         {{ $quantity }}
                                         @if (!$loop->last)
                                             ,
+                                        @endif
+                                    @endforeach
+                                </td> --}}
+
+                                <td>
+                                    @foreach (json_decode($delivery->quantity) as $index => $quantity)
+                                        @if ($quantity !== null)
+                                            {{ $quantity }}
+                                            @if (!$loop->last && count(json_decode($delivery->quantity)) > 1)
+                                                ,
+                                            @endif
                                         @endif
                                     @endforeach
                                 </td>
@@ -221,17 +251,14 @@
                                             <option value="Not Delivered" {{ old('status') === 'Not Delivered' ? 'selected' : '' }}>Not Delivered</option>
                                         </select>
                                     </form> --}}
-                                    <form action="">
-                                        <select required name="status" id="status">
-                                            {{-- <option disabled selected value="">-- Select Role --</option> --}}
-                                            <option value="Delivered"
-                                                {{ $delivery->status === 'Delivered' ? 'selected' : '' }}>Delivered
-                                            </option>
-                                            <option value="Not Delivered"
-                                                {{ $delivery->status === 'Not Delivered' ? 'selected' : '' }}>Not Delivered
-                                            </option>
+                                    
+                                    <form id="statusForm">
+                                        <select required name="status" id="status" class="status-select" data-delivery-id="{{ $delivery->id }}">
+                                            <option value="Delivered" {{ $delivery->status === 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                                            <option value="Not Delivered" {{ $delivery->status === 'Not Delivered' ? 'selected' : '' }}>Not Delivered</option>
                                         </select>
                                     </form>
+                                    
                                 </td>
 
 
@@ -274,58 +301,66 @@
 @endsection
 
 @section('script')
-
     <script src="{{ asset('js/delivery.js') }}"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const checkboxes = document.querySelectorAll('input[name="product[]"]');
-            const quantityInputs = document.querySelectorAll('input[name="quantity[]"]');
-    
+            const quantityInputs = document.querySelectorAll('input[name^="quantity["]');
+
             checkboxes.forEach((checkbox, index) => {
-                checkbox.addEventListener('change', function () {
-                    quantityInputs[index].required = this.checked;
+                checkbox.addEventListener('change', function() {
+                    const quantityInput = quantityInputs[index];
+                    if (this.checked) {
+                        quantityInput.required = true;
+                    } else {
+                        quantityInput.required = false;
+                        quantityInput.value = ''; // Clear the value if checkbox is unchecked
+                    }
                 });
             });
         });
     </script>
 
     {{-- <script>
-        function showProductSection() {
-            document.getElementById('productModal').style.display = 'block';
-            document.getElementById('newModal').style.display = 'none';
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusSelects = document.querySelectorAll('select[name="status"]');
 
-        function goBack() {
-            document.getElementById('productModal').style.display = 'none';
-            document.getElementById('newModal').style.display = 'block';
-        }
-
-        function closeModal() {
-            // You can add any additional logic to reset or close the modal
-            document.getElementById('newModal').style.display = 'none';
-        }
+            statusSelects.forEach((select) => {
+                select.addEventListener('change', function() {
+                    // Assuming the form has an ID 'addDeliveryForm'
+                    const form = document.getElementById('addDeliveryForm');
+                    form.submit(); // Submit the form when the status is changed
+                });
+            });
+        });
     </script> --}}
 
-    {{-- <script>
-        function showProductModal() {
-            document.getElementById('newModal').style.display = 'none';
-            document.getElementById('productModal').style.display = 'block';
-        }
-
-        function closeProductModal() {
-            document.getElementById('newModal').style.display = 'block';
-            document.getElementById('productModal').style.display = 'none';
-        }
-
-        function goBack() {
-            closeProductModal();
-            // You can add additional logic here if needed
-        }
-
-        function submitProductSelection() {
-            // Add logic to process selected products and quantities if needed
-            document.getElementById('addDeliveryForm').submit();
-        }
-    </script> --}}
+    <script>
+        $(document).ready(function() {
+            $('.status-select').on('change', function() {
+                const deliveryId = $(this).data('delivery-id');
+                const selectedStatus = $(this).val();
+    
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route("admin.deliveryUpdate") }}', // Replace with your actual route
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        'delivery_id': deliveryId,
+                        'status': selectedStatus
+                    },
+                    success: function(response) {
+                        // Handle success if needed
+                        console.log(response);
+                    },
+                    error: function(error) {
+                        // Handle error if needed
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+    
 @endsection
