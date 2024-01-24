@@ -2325,3 +2325,144 @@ public function productSearch(Request $request)
     </div>
 
 @endsection
+
+
+
+
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deliveryIdInput = document.getElementById('autofocus');
+            const nameInput = document.getElementsByName('name')[0];
+            const addressInput = document.getElementsByName('address')[0];
+            const statusSelect = document.getElementsByName('status')[0];
+            const nextButton = document.getElementById('nextButton');
+
+            // Function to check if all required inputs are filled
+            function checkFormCompleteness() {
+                const isComplete = deliveryIdInput.value.trim() !== '' &&
+                    nameInput.value.trim() !== '' &&
+                    addressInput.value.trim() !== '' &&
+                    statusSelect.value !== '';
+
+                console.log('isComplete:', isComplete); // Log isComplete value
+                nextButton.disabled = !isComplete;
+
+                return isComplete; // Return the boolean value
+            }
+
+            // Event listeners for input changes
+            deliveryIdInput.addEventListener('input', checkFormCompleteness);
+            nameInput.addEventListener('input', checkFormCompleteness);
+            addressInput.addEventListener('input', checkFormCompleteness);
+            statusSelect.addEventListener('change', checkFormCompleteness);
+
+            // Call checkFormCompleteness initially to set the initial state
+            checkFormCompleteness();
+
+            // Handle Next button click
+            nextButton.addEventListener('click', function() {
+                console.log('Next button clicked');
+                if (!checkFormCompleteness()) {
+                    console.log('Fields not complete. Showing alert.');
+                    alert('Please fill in all fields before proceeding.');
+                } else {
+                    console.log('Fields complete. Opening Product Selection Modal.');
+                    // Open the Product Selection Modal
+                    document.getElementById('newModal').style.display = 'none';
+                    document.getElementById('productModal').style.display = 'block';
+                }
+            });
+        });
+    </script>
+
+
+
+
+
+
+
+    
+
+
+    <form class="modal-form" id="addDeliveryForm" action="{{ route('admin.deliveryStore') }}" method="POST">
+        <div id="newModal" class="modal" style="@if ($errors->any()) display:block; @endif">
+            <div class="modal-content-delivery">
+                <span class="close closeModal" onclick="window.closeModal()">&times;</span>
+                @csrf
+                <center>
+                    <h2 style="margin: 0%; color:#333; "><i class="fa-regular fa-plus"></i>Add Delivery</h2>
+                </center>
+                <label class="modal-tops" for="">Delivery ID:</label>
+                <input required autofocus type="text" name="delivery_id" id="autofocus" pattern="^.{5,15}$"
+                    value="{{ old('delivery_id') }}" />
+                @if ($errors->has('delivery_id'))
+                    <div class="text-danger">{{ $errors->first('delivery_id') }}</div>
+                @endif
+
+                <label class="modal-tops" for="">Name:</label>
+                <input required type="text" name="name" id="" value="{{ old('name') }}" />
+                @if ($errors->has('name'))
+                    <div class="text-danger">{{ $errors->first('name') }}</div>
+                @endif
+
+                <label class="modal-tops" for="">Address:</label>
+                <input required type="text" name="address" id="" value="{{ old('address') }}" />
+                @if ($errors->has('address'))
+                    <div class="text-danger">{{ $errors->first('address') }}</div>
+                @endif
+
+                <label for="">Pending Status:</label>
+                <select required name="status" id="" class="">
+                    <option disabled selected value="">-- Select Status --</option>
+                    <option value="Delivered" {{ old('status') === 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                    <option value="Not Delivered" {{ old('status') === 'Not Delivered' ? 'selected' : '' }}>Not Delivered
+                    </option>
+                </select>
+                @if ($errors->has('status'))
+                    <div class="text-danger">{{ $errors->first('status') }}</div>
+                @endif
+
+                <input class="add nextButton" type="button" id="nextButton" value="Next" />
+                {{-- <input class="add nextButton" type="submit" id="nextButton" value="Next" /> --}}
+            </div>
+        </div>
+
+
+        {{-- Product Selection Modal --}}
+        <div id="productModal" class="" style="display:none;">
+            <div class="modal-content-delivery-next">
+                <span class="close closeModal" onclick="window.closeModal()">&times;</span>
+
+
+                <center>
+                    <h2 style="margin: 0%; color:#333; font-size: 1.4rem">Select Products to Deliver</h2>
+                </center>
+
+                {{-- Display products with checkboxes --}}
+                @foreach ($products as $index => $product)
+                    <label>
+                        <input type="checkbox" name="product[]" value="{{ $product->name }}" />
+                        {{ $product->name }}
+                    </label>
+                    @if ($loop->first)
+                        <!-- Display the first quantity input without any condition -->
+                        <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity" />
+                    @else
+                        <!-- Display the quantity input only if the checkbox is checked -->
+                        @if (old('product') && in_array($product->name, old('product')))
+                            <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity" required />
+                        @else
+                            <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity" />
+                        @endif
+                    @endif
+                @endforeach
+
+
+                <div class="buttons">
+                    <input class="add backButton" type="button" id="backButton" value="Back" />
+                    <input class="add" type="submit" value="Add" />
+                </div>
+            </div>
+        </div>
+    </form>

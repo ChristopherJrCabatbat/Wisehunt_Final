@@ -34,7 +34,7 @@
                             @csrf
                             {{-- <h2>Login</h2> --}}
                             <div class="input-field">
-                                <input type="email" class="has-value" name="email" id="email" value="{{ old('email') }}" required>
+                                <input type="email" class="has-value" autofocus name="email" id="email" value="{{ old('email') }}" required>
                                 <label>Enter your email</label>
                             </div>
                             {{-- <x-input-error :messages="$errors->get('email')" class="mt-2" /> --}}
