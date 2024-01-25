@@ -10,16 +10,12 @@ class Transaction extends Model
     use HasFactory;
     protected $fillable = [
         'customer_name',
-        // 'contact_num',
         'product_name',
         'qty',
+        'transacted_qty',
         'selling_price',
         'total_price',
-        // 'amount_tendered',
-        // 'change_due',
         'profit',
-
-        // Hindi pa na-migrate
         'created_at', 
         'updated_at',
     ];

@@ -61,8 +61,8 @@
 
 
                 <label for="selling_price">Selling Price:</label>
-                <input readonly required name="selling_price" id="selling_price" type="number" value="{{ old('selling_price') }}"
-                    class="selling_price">
+                <input readonly required name="selling_price" id="selling_price" type="number"
+                    value="{{ old('selling_price') }}" class="selling_price">
 
                 <label for="selling_price">Total Price:</label>
                 <input readonly name="total_price" id="total_price" type="number" value="{{ $totalPrice }}"
@@ -114,7 +114,7 @@
 
         </div>
     </div>
-    
+
 @endsection
 
 @section('side-navbar')
@@ -198,41 +198,20 @@
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
                             Product Name</option>
                         <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity</option>
-                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>Selling Price
+                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>
+                            Selling Price
                         </option>
                         <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
                             Total Price</option>
                         <option value="profit_asc" {{ request('sort') === 'profit_asc' ? 'selected' : '' }}>
                             Profit</option>
-                            
-                            <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>
-                                Date (Asc)</option>
-                            <option value="date_desc" {{ request('sort') === 'date_desc' ? 'selected' : '' }}>
-                                Date (Desc)</option>
-                            
+
+                        <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>
+                            Date (Asc)</option>
+                        <option value="date_desc" {{ request('sort') === 'date_desc' ? 'selected' : '' }}>
+                            Date (Desc)</option>
+
                     </select>
-                    {{-- <select name="sort" id="sortSelect">
-                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
-                            Default Sorting --</option>
-                        <option value="customer_name_asc" {{ request('sort') === 'customer_name_asc' ? 'selected' : '' }}>
-                            Customer
-                            (A-Z)</option>
-                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
-                            Product Name (A-Z)
-                        </option>
-                        <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity
-                            (ascending)</option>
-                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>Unit
-                            Price (ascending)
-                        </option>
-                        <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
-                            Total
-                            Price
-                            (ascending)</option>
-                        <option value="profit_asc" {{ request('sort') === 'profit_asc' ? 'selected' : '' }}>
-                            Profit
-                            (descending)</option>
-                    </select> --}}
                 </form>
             </div>
 

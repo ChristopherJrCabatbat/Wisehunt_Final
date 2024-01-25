@@ -883,6 +883,7 @@ class AdminController extends Controller
                 $transaction->customer_name = $customerName;
                 $transaction->product_name = $productName;
                 $transaction->qty = $qty;
+                $transaction->transacted_qty += $qty; // Increment transacted_qty
                 $transaction->selling_price = $selling_price;
                 $transaction->total_price = $totalPrice;
                 $transaction->profit = $profit;
@@ -1340,40 +1341,6 @@ class AdminController extends Controller
         ] + $notifications);
     }
 
-    // public function deliveryStore(Request $request)
-    // {
-    //     $request->validate([
-    //         'delivery_id' => ['required', 'unique:' . Delivery::class],
-    //         'name' => ['required'],
-    //         'product' => ['required'],
-    //         'quantity' => ['required'],
-    //         'address' => ['required'],
-    //         'status' => ['required'],
-    //     ]);
-
-    //     $deliveries = new Delivery;
-    //     $deliveries->delivery_id = $request->input('delivery_id');
-    //     $deliveries->name = $request->input('name');
-
-    //     // // Convert arrays to strings (you may adjust this logic based on your requirements)
-    //     // $deliveries->product = implode(', ', $request->input('product'));
-    //     // $deliveries->quantity = implode(', ', $request->input('quantity'));
-
-    //     $deliveries->product = json_encode($request->input('product'));
-    //     $deliveries->quantity = json_encode($request->input('quantity'));
-
-    //     // $deliveries->product = $request->input('product');
-    //     // $deliveries->quantity = $request->input('quantity');
-
-
-    //     $deliveries->address = $request->input('address');
-    //     $deliveries->status = $request->input('status');
-
-    //     $deliveries->save();
-
-    //     return back();
-    // }
-
     public function deliveryStore(Request $request)
     {
         $request->validate([
@@ -1397,6 +1364,18 @@ class AdminController extends Controller
         $deliveries->product = json_encode($request->input('product'));
         $deliveries->quantity = json_encode($filteredQuantity);
 
+        // $productList = json_decode($request->input('product'));
+        // $quantityList = json_decode($request->input('quantity'));
+
+        // foreach ($productList as $index => $productName) {
+        //     $transactedQty = Transaction::where('product_name', $productName)->sum('transacted_qty');
+
+        //     if ($quantityList[$index] > $transactedQty) {
+        //         return redirect()->back()
+        //             ->withErrors(['error_delivery' => "Delivery quantity for product '$productName' exceeds transacted quantity. Transacted quantity: $transactedQty"]);
+        //     }
+        // }
+
         $deliveries->address = $request->input('address');
         $deliveries->status = $request->input('status');
 
@@ -1404,6 +1383,53 @@ class AdminController extends Controller
 
         return back();
     }
+
+    // public function deliveryStore(Request $request)
+    // {
+    //     $request->validate([
+    //         'delivery_id' => ['required', 'unique:' . Delivery::class],
+    //         'name' => ['required'],
+    //         'product' => ['required'],
+    //         'quantity' => ['required'],
+    //         'address' => ['required'],
+    //         'status' => ['required'],
+    //     ]);
+
+    //     $deliveries = new Delivery;
+    //     $deliveries->delivery_id = $request->input('delivery_id');
+    //     $deliveries->name = $request->input('name');
+
+    //     // Remove null values from the quantity array
+    //     $filteredQuantity = array_filter($request->input('quantity'), function ($value) {
+    //         return $value !== null;
+    //     });
+
+    //     // Retrieve product and quantity arrays directly
+    //     $productList = $request->input('product');
+    //     $quantityList = $request->input($filteredQuantity);
+
+    //     // Iterate through products to check transacted quantity
+    //     foreach ($productList as $index => $productName) {
+    //         $transactedQty = Transaction::where('product_name', $productName)->sum('transacted_qty');
+
+    //         if ($quantityList[$index] > $transactedQty) {
+    //             return redirect()->back()
+    //                 ->withErrors(['error_delivery' => "Delivery quantity for product '$productName' exceeds transacted quantity. Transacted quantity: $transactedQty"]);
+    //         }
+    //     }
+
+    //     // Store product and quantity arrays directly
+    //     $deliveries->product = $productList;
+    //     $deliveries->quantity = $quantityList;
+
+    //     $deliveries->address = $request->input('address');
+    //     $deliveries->status = $request->input('status');
+
+    //     $deliveries->save();
+
+    //     return back();
+    // }
+
 
     public function deliveryUpdate(Request $request)
     {

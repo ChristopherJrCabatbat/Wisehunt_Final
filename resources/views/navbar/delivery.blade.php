@@ -203,6 +203,7 @@
 
                                 <td>
                                     @foreach (json_decode($delivery->product) as $index => $product)
+                                    {{-- @foreach ($delivery->product as $index => $product) --}}
                                         {{ $product }}
                                         @if (!$loop->last)
                                             ,
@@ -221,9 +222,11 @@
 
                                 <td>
                                     @foreach (json_decode($delivery->quantity) as $index => $quantity)
+                                    {{-- @foreach ($delivery->quantity as $index => $quantity) --}}
                                         @if ($quantity !== null)
                                             {{ $quantity }}
                                             @if (!$loop->last && count(json_decode($delivery->quantity)) > 1)
+                                            {{-- @if (!$loop->last && count($delivery->quantity) > 1) --}}
                                                 ,
                                             @endif
                                         @endif
