@@ -58,28 +58,29 @@
 
     <div class="container">
 
-       <!-- Notification -->
-<div id="notificationPanel" class="notification-panel" data-route="{{ route('admin.productEdit', ['id' => '__productId__']) }}">
-    <span class="close-notification" onclick="closeNotification()">&times;</span>
-    <h3 class="h3-notif">Notifications</h3>
-    <ul id="notificationList" class="notification-list">
-        <!-- Display low-quantity notifications -->
-        @foreach ($lowQuantityNotifications as $notification)
-            <li class="notification-item" onclick="navigateToProductView('{{ $notification['productId'] }}')">
-                {!! $notification['message'] !!}
-                <span class="dot"></span>
-            </li>
-        @endforeach
+        <!-- Notification -->
+        <div id="notificationPanel" class="notification-panel"
+            data-route="{{ route('admin.productEdit', ['id' => '__productId__']) }}">
+            <span class="close-notification" onclick="closeNotification()">&times;</span>
+            <h3 class="h3-notif">Notifications</h3>
+            <ul id="notificationList" class="notification-list">
+                <!-- Display low-quantity notifications -->
+                @foreach ($lowQuantityNotifications as $notification)
+                    <li class="notification-item" onclick="navigateToProductView('{{ $notification['productId'] }}')">
+                        {!! $notification['message'] !!}
+                        <span class="dot"></span>
+                    </li>
+                @endforeach
 
-        <!-- Display best-seller notifications -->
-        @foreach ($bestSellerNotifications as $notifications)
-            <li class="notification-item best-seller">
-                {!! $notifications['message'] !!}
-                <span class="dot"></span>
-            </li>
-        @endforeach
-    </ul>
-</div>
+                <!-- Display best-seller notifications -->
+                @foreach ($bestSellerNotifications as $notifications)
+                    <li class="notification-item best-seller">
+                        {!! $notifications['message'] !!}
+                        <span class="dot"></span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
 
 
         <header>
@@ -90,8 +91,8 @@
                 <div class="logo-container">
                     <img class="logo" src="{{ asset('images/logo-blue.jpg') }}" alt="" width="90"
                         height="auto" />
-                        <div class="company">WISEHUNT COMPANY</div> <img class="globo" src="{{ asset('images/globo.png') }}" alt="" width="90"
-                        height="auto">
+                    <div class="company">WISEHUNT COMPANY</div> <img class="globo"
+                        src="{{ asset('images/globo.png') }}" alt="" width="90" height="auto">
                 </div>
                 <div>
                     <div class="top-account">
@@ -126,7 +127,8 @@
                                 @if (auth()->user()->role === 'Staff')
                                     {{-- <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-usersss.png') }}"
                                         alt="" width="100" height="auto"> --}}
-                                        <i class="fa-solid fa-circle-user icon-user-staff" id="logoutBtn" style="color: #006181;"></i>
+                                    <i class="fa-solid fa-circle-user icon-user-staff" id="logoutBtn"
+                                        style="color: #006181;"></i>
                                 @endif
                             </label>
                             <input type="checkbox" id="logout">

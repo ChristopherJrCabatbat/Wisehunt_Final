@@ -100,6 +100,13 @@
         </li>
         <li>
             <div class="baba-container">
+                <a class="sidebar" href="{{ route('admin.delivery') }}">
+                    <img src="{{ asset('images/delivery.png') }}" class="delivery-i" alt="">
+                    DELIVERY</a>
+            </div>
+        </li>
+        <li>
+            <div class="baba-container">
                 <a class="sidebar active" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
                     USER</a>

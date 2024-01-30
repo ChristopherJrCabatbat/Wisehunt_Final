@@ -14,25 +14,32 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // // Close the productModal
+    // function closeProductModal() {
+    //     const form = document.querySelector(".modal-form");
+    //     // Loop through each form element except submit button and reset its value
+    //     form.querySelectorAll(
+    //         "input:not([type='submit']):not([type='button']), select, textarea"
+    //     ).forEach((element) => {
+    //         element.value = "";
+    //     });
+
+    //     // Clear validation messages
+    //     const validationMessages = document.querySelectorAll(".text-danger");
+    //     validationMessages.forEach((message) => {
+    //         message.innerHTML = "";
+    //     });
+
+    //     productModal.style.display = "none";
+    // }
+
     // Close the productModal
     function closeProductModal() {
-        const form = document.querySelector(".modal-form");
-        // Loop through each form element except submit button and reset its value
-        form.querySelectorAll(
-            "input:not([type='submit']):not([type='button']), select, textarea"
-        ).forEach((element) => {
-            element.value = "";
-        });
+        const productModal = document.getElementById("productModal"); // Ensure this ID matches your modal's ID
 
-        // Clear validation messages
-        const validationMessages = document.querySelectorAll(".text-danger");
-        validationMessages.forEach((message) => {
-            message.innerHTML = "";
-        });
-
+        // Do not reset the form values, only hide the modal
         productModal.style.display = "none";
     }
-
     // Attach click event handler for the Next button
     nextButton.addEventListener("click", function () {
         console.log("Next button clicked");
@@ -42,7 +49,9 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             // Validate the form before proceeding
             if (addDeliveryForm.reportValidity()) {
-                console.log("Fields complete. Opening Product Selection Modal.");
+                console.log(
+                    "Fields complete. Opening Product Selection Modal."
+                );
                 showProductModal(); // Show the productModal only if the form is complete
                 newModal.style.display = "none";
             } else {

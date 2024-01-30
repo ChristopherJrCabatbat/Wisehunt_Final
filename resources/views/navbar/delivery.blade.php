@@ -25,24 +25,25 @@
                     <h2 style="margin: 0%; color:#333; "><i class="fa-regular fa-plus"></i>Add Delivery</h2>
                 </center>
                 <label class="modal-tops" for="">Delivery ID:</label>
-                <input required autofocus type="text" name="delivery_id" id="autofocus" pattern="^.{5,15}$"
+                {{-- pattern="^.{5,15}$" --}}
+                <input required autofocus type="text" name="delivery_id" id="autofocus"
                     value="{{ old('delivery_id') }}" />
                 @if ($errors->has('delivery_id'))
                     <div class="text-danger">{{ $errors->first('delivery_id') }}</div>
                 @endif
-    
+
                 <label class="modal-tops" for="">Name:</label>
                 <input required type="text" name="name" id="" value="{{ old('name') }}" />
                 @if ($errors->has('name'))
                     <div class="text-danger">{{ $errors->first('name') }}</div>
                 @endif
-    
+
                 <label class="modal-tops" for="">Address:</label>
                 <input required type="text" name="address" id="" value="{{ old('address') }}" />
                 @if ($errors->has('address'))
                     <div class="text-danger">{{ $errors->first('address') }}</div>
                 @endif
-    
+
                 <label for="">Pending Status:</label>
                 <select required name="status" id="" class="">
                     <option disabled selected value="">-- Select Status --</option>
@@ -53,20 +54,35 @@
                 @if ($errors->has('status'))
                     <div class="text-danger">{{ $errors->first('status') }}</div>
                 @endif
-    
+
                 <input class="add nextButton" type="button" id="nextButton" value="Next" />
             </div>
         </div>
-    
+
+        @php
+        use App\Models\Transaction;
+
+            $transactedQuantities = Transaction::all()
+                ->pluck('transacted_qty', 'product_name')
+                ->toArray();
+        @endphp
+
         {{-- Product Selection Modal --}}
         <div id="productModal" class="" style="display:none;">
             <div class="modal-content-delivery-next">
                 <span class="close closeModal" onclick="window.closeModal()">&times;</span>
-    
+
                 <center>
                     <h2 style="margin: 0%; color:#333; font-size: 1.4rem">Select Products to Deliver</h2>
                 </center>
-    
+
+                {{-- Error message for delivery quantity --}}
+                @if ($errors->has('error_delivery'))
+                    <div class="text-danger">
+                        {{ $errors->first('error_delivery') }}
+                    </div>
+                @endif
+
                 {{-- Display products with checkboxes --}}
                 @foreach ($products as $index => $product)
                     <label>
@@ -85,7 +101,7 @@
                             {{ in_array($product->name, old('product', [])) ? 'required' : '' }} />
                     @endif
                 @endforeach
-    
+
                 <div class="buttons">
                     <input class="add backButton" type="button" id="backButton" value="Back" />
                     <input class="add" type="submit" value="Add" />
@@ -93,8 +109,8 @@
             </div>
         </div>
     </form>
-    
-    
+
+
 @endsection
 
 
@@ -203,7 +219,7 @@
 
                                 <td>
                                     @foreach (json_decode($delivery->product) as $index => $product)
-                                    {{-- @foreach ($delivery->product as $index => $product) --}}
+                                        {{-- @foreach ($delivery->product as $index => $product) --}}
                                         {{ $product }}
                                         @if (!$loop->last)
                                             ,
@@ -222,11 +238,11 @@
 
                                 <td>
                                     @foreach (json_decode($delivery->quantity) as $index => $quantity)
-                                    {{-- @foreach ($delivery->quantity as $index => $quantity) --}}
+                                        {{-- @foreach ($delivery->quantity as $index => $quantity) --}}
                                         @if ($quantity !== null)
                                             {{ $quantity }}
                                             @if (!$loop->last && count(json_decode($delivery->quantity)) > 1)
-                                            {{-- @if (!$loop->last && count($delivery->quantity) > 1) --}}
+                                                {{-- @if (!$loop->last && count($delivery->quantity) > 1) --}}
                                                 ,
                                             @endif
                                         @endif
@@ -392,5 +408,37 @@
         });
     </script>
 
-@endsection
+    <script>
+        var transactedQuantities = @json($transactedQuantities);
+    </script>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const quantityInputs = document.querySelectorAll('input[name^="quantity["]');
+
+            quantityInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    // Assuming you have a mapping from index to product name
+                    const index = this.name.match(/\[(.*?)\]/)[1];
+                    const productName = getProductFromIndex(
+                    index); // Implement this function based on your mapping
+                    const enteredQuantity = parseInt(this.value, 10);
+
+                    if (transactedQuantities[productName] !== undefined && enteredQuantity >
+                        transactedQuantities[productName]) {
+                        alert(
+                            `Quantity for ${productName} exceeds transacted quantity. Available: ${transactedQuantities[productName]}`);
+                        this.value = ''; // Reset the input value
+                    }
+                });
+            });
+
+            function getProductFromIndex(index) {
+                // Implement this function based on how you map indices to product names
+                // Example (you'll need to replace this with your actual logic):
+                return document.querySelector(`input[name="product[${index}]"]`).value;
+            }
+        });
+    </script>
+
+@endsection

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 class LiveSearchController extends Controller
@@ -53,47 +54,142 @@ class LiveSearchController extends Controller
         return response($output ?: '');
     }
 
+    // public function transactionSearch(Request $request)
+    // {
+    //     $rowNumber = 1;
+    //     $output = "";
+
+    //     // $searchTerm = $request->search;
+    //     // $formattedDate = date('Y-m-d', strtotime($searchTerm));
+
+    //     // $transactions = Transaction::where('customer_name', 'like', '%' . $searchTerm . '%')
+    //     //     ->orWhere('product_name', 'like', '%' . $searchTerm . '%')
+    //     //     ->orWhere(function ($query) use ($formattedDate) {
+    //     //         $query->whereDate('created_at', $formattedDate);
+    //     //     })
+    //     //     ->get();
+
+    //     $searchTerm = $request->search;
+    //     $formattedDate = date('Y-m-d', strtotime($searchTerm));
+
+    //     $transactions = Transaction::where('customer_name', 'like', '%' . $searchTerm . '%')
+    //         ->orWhere('product_name', 'like', '%' . $searchTerm . '%')
+    //         ->orWhereDate('created_at', $formattedDate)
+    //         // ->orWhere(function ($query) use ($formattedDate) {
+    //         //     // Check for a partial date match using LIKE
+    //         //     $query->where(DB::raw('DATE(created_at)'), 'LIKE', '%' . $formattedDate . '%');
+    //         // })
+    //         ->get();
+
+    //     foreach ($transactions as $transaction) {
+    //         $output .= '<tr>
+    //             <td class="transcact-td">' . $rowNumber++ . '</td>
+    //             <td class="transcact-td"> ' . $transaction->customer_name . ' </td>
+    //             <td class="transcact-td"> ' . $transaction->product_name . ' </td>
+    //             <td class="transcact-td"> ' . $transaction->qty . ' </td>
+    //             <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->selling_price) . ' </td>
+    //             <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->total_price) . ' </td>
+    //             <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->profit) . ' </td>
+    //             <td> ' . $transaction->created_at->format('M. d, Y') . ' </td>
+    //             </tr>';
+    //     }
+
+    //     return response($output ?: '');
+    // }
+
     public function transactionSearch(Request $request)
     {
         $rowNumber = 1;
         $output = "";
 
-        // $searchTerm = $request->search;
-        // $formattedDate = date('Y-m-d', strtotime($searchTerm));
-
-        // $transactions = Transaction::where('customer_name', 'like', '%' . $searchTerm . '%')
-        //     ->orWhere('product_name', 'like', '%' . $searchTerm . '%')
-        //     ->orWhere(function ($query) use ($formattedDate) {
-        //         $query->whereDate('created_at', $formattedDate);
-        //     })
-        //     ->get();
-
         $searchTerm = $request->search;
-        $formattedDate = date('Y-m-d', strtotime($searchTerm));
+
+        // Log the search term
+        Log::info('Search Term: ' . $searchTerm);
 
         $transactions = Transaction::where('customer_name', 'like', '%' . $searchTerm . '%')
             ->orWhere('product_name', 'like', '%' . $searchTerm . '%')
-            ->orWhere(function ($query) use ($formattedDate) {
-                // Check for a partial date match using LIKE
-                $query->where(DB::raw('DATE(created_at)'), 'LIKE', '%' . $formattedDate . '%');
+            ->orWhere(function ($query) use ($searchTerm) {
+                // Check if the search term is a valid date
+                $formattedDate = date('Y-m-d', strtotime($searchTerm));
+                if ($formattedDate && strtotime($formattedDate) === strtotime($searchTerm)) {
+                    // Use whereDate for an exact date match
+                    $query->orWhereDate('created_at', $formattedDate);
+                } else {
+                    // Use like for partial date match on both formats
+                    $query->orWhereRaw("DATE_FORMAT(created_at, '%b. %d, %Y') LIKE ?", ['%' . $searchTerm . '%'])
+                        ->orWhere('created_at', 'like', '%' . $formattedDate . '%');
+                }
             })
             ->get();
 
+        // Log the number of transactions retrieved
+        Log::info('Number of Transactions: ' . $transactions->count());
+
         foreach ($transactions as $transaction) {
             $output .= '<tr>
-                <td class="transcact-td">' . $rowNumber++ . '</td>
-                <td class="transcact-td"> ' . $transaction->customer_name . ' </td>
-                <td class="transcact-td"> ' . $transaction->product_name . ' </td>
-                <td class="transcact-td"> ' . $transaction->qty . ' </td>
-                <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->selling_price) . ' </td>
-                <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->total_price) . ' </td>
-                <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->profit) . ' </td>
-                <td> ' . $transaction->created_at->format('M. d, Y') . ' </td>
-                </tr>';
+            <td class="transcact-td">' . $rowNumber++ . '</td>
+            <td class="transcact-td"> ' . $transaction->customer_name . ' </td>
+            <td class="transcact-td"> ' . $transaction->product_name . ' </td>
+            <td class="transcact-td"> ' . $transaction->qty . ' </td>
+            <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->selling_price) . ' </td>
+            <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->total_price) . ' </td>
+            <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->profit) . ' </td>
+            <td> ' . $transaction->created_at->format('M. d, Y') . ' </td>
+            </tr>';
         }
 
         return response($output ?: '');
     }
+
+
+    // public function transactionSearch(Request $request)
+    // {
+    //     $rowNumber = 1;
+    //     $output = "";
+
+    //     $searchTerm = $request->search;
+
+    //     // Log the search term
+    //     Log::info('Search Term: ' . $searchTerm);
+
+    //     $transactions = Transaction::where('customer_name', 'like', '%' . $searchTerm . '%')
+    //         ->orWhere('product_name', 'like', '%' . $searchTerm . '%')
+    //         ->orWhere(function ($query) use ($searchTerm) {
+    //             // Check if the search term is a valid date
+    //             $formattedDate = date('Y-m-d', strtotime($searchTerm));
+    //             if ($formattedDate && strtotime($formattedDate) === strtotime($searchTerm)) {
+    //                 // Use whereDate for an exact date match
+    //                 $query->orWhereDate('created_at', $formattedDate);
+    //             } else {
+    //                 // Use like for partial date match
+    //                 $query->orWhereRaw("DATE_FORMAT(created_at, '%b. %d, %Y') LIKE ?", ['%' . $searchTerm . '%']);
+    //             }
+    //         })
+    //         ->get();
+
+    //     // Log the number of transactions retrieved
+    //     Log::info('Number of Transactions: ' . $transactions->count());
+
+    //     foreach ($transactions as $transaction) {
+    //         $output .= '<tr>
+    //         <td class="transcact-td">' . $rowNumber++ . '</td>
+    //         <td class="transcact-td"> ' . $transaction->customer_name . ' </td>
+    //         <td class="transcact-td"> ' . $transaction->product_name . ' </td>
+    //         <td class="transcact-td"> ' . $transaction->qty . ' </td>
+    //         <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->selling_price) . ' </td>
+    //         <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->total_price) . ' </td>
+    //         <td class="nowrap transcact-td"> ₱ ' . number_format($transaction->profit) . ' </td>
+    //         <td> ' . $transaction->created_at->format('M. d, Y') . ' </td>
+    //         </tr>';
+    //     }
+
+    //     return response($output ?: '');
+    // }
+
+
+
+
 
 
     public function supplierSearch(Request $request)

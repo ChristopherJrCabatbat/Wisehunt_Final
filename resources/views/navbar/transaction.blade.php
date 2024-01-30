@@ -332,7 +332,7 @@
     </script>
 
     {{-- Live Search --}}
-    <script type="text/javascript">
+    {{-- <script type="text/javascript">
         $('#search').on('input', function() {
 
             const contentContainer = $('#content');
@@ -369,7 +369,47 @@
                 }
             });
         });
+    </script> --}}
+
+    <script type="text/javascript">
+        $('#search').on('input', function() {
+    
+            const contentContainer = $('#content');
+            $value = $(this).val();
+    
+            if ($value) {
+                $('.all-data').hide();
+                $('.search-data').show();
+            } else {
+                $('.all-data').show();
+                $('.search-data').hide();
+            }
+    
+            // Clear the existing results instantly
+            contentContainer.html('');
+    
+            $.ajax({
+                type: 'get',
+                url: '{{ route('admin.transactionSearch') }}',
+                data: {
+                    'search': $value
+                },
+                success: function(data) {
+                    console.log('AJAX Success:', data);
+                    if (data.trim() === "") {
+                        contentContainer.html(
+                            '<tr><td colspan="11" class="id">No Result Found</td></tr>');
+                    } else {
+                        contentContainer.html(data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        });
     </script>
+    
 
     <!-- Auto Selling Price Script -->
     <script>

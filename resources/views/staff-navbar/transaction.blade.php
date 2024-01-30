@@ -199,7 +199,7 @@
                 <div class="searchs">
                     <div class="form-search">
                         <input type="text" name="search" id="search" required class="search-prod"
-                            placeholder="Search product..." value="{{ $searchQuery }}" />
+                            placeholder="Search transaction..." value="{{ $searchQuery }}" />
                         <i class="fa fa-search search-icon"></i>
                     </div>
                 </div>
