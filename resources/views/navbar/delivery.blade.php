@@ -60,7 +60,7 @@
         </div>
 
         @php
-        use App\Models\Transaction;
+            use App\Models\Transaction;
 
             $transactedQuantities = Transaction::all()
                 ->pluck('transacted_qty', 'product_name')
@@ -104,7 +104,7 @@
 
                 <div class="buttons">
                     <input class="add backButton" type="button" id="backButton" value="Back" />
-                    <input class="add" type="submit" value="Add" />
+                    <input class="add" type="submit" value="Add" id="submit" />
                 </div>
             </div>
         </div>
@@ -315,6 +315,7 @@
 @section('script')
     <script src="{{ asset('js/delivery.js') }}"></script>
 
+    {{-- Not let the user go to Next and submit if all the required fields are not filled. --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const checkboxes = document.querySelectorAll('input[name="product[]"]');
@@ -381,6 +382,7 @@
         });
     </script>
 
+    {{-- Auto Pending Status --}}
     <script>
         $(document).ready(function() {
             $('.status-select').on('change', function() {
@@ -412,25 +414,31 @@
         var transactedQuantities = @json($transactedQuantities);
     </script>
 
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form'); // Replace with your actual form selector
             const quantityInputs = document.querySelectorAll('input[name^="quantity["]');
+            const addButton = document.getElementById('submit');
 
-            quantityInputs.forEach(input => {
-                input.addEventListener('input', function() {
-                    // Assuming you have a mapping from index to product name
-                    const index = this.name.match(/\[(.*?)\]/)[1];
-                    const productName = getProductFromIndex(
-                    index); // Implement this function based on your mapping
-                    const enteredQuantity = parseInt(this.value, 10);
+            addButton.addEventListener('click', function(event) {
+                let isQuantityValid = true;
+
+                quantityInputs.forEach(input => {
+                    const index = input.name.match(/\[([^\]]+)\]/)[1]; // Extract index
+                    const productName = getProductFromIndex(index); // Get product name from index
+                    const enteredQuantity = parseInt(input.value, 10);
 
                     if (transactedQuantities[productName] !== undefined && enteredQuantity >
                         transactedQuantities[productName]) {
                         alert(
                             `Quantity for ${productName} exceeds transacted quantity. Available: ${transactedQuantities[productName]}`);
-                        this.value = ''; // Reset the input value
+                        isQuantityValid = false;
                     }
                 });
+
+                if (isQuantityValid) {
+                    form.submit(); // Only submit the form if all quantities are valid
+                }
             });
 
             function getProductFromIndex(index) {
@@ -439,6 +447,28 @@
                 return document.querySelector(`input[name="product[${index}]"]`).value;
             }
         });
+    </script> --}}
+
+    <script>
+        addButton.addEventListener('click', function(event) {
+    let isQuantityValid = true;
+
+    quantityInputs.forEach(input => {
+        const index = input.name.match(/\[([^\]]+)\]/)[1]; // Extract index
+        const productName = getProductFromIndex(index); // Get product name from index
+        const enteredQuantity = parseInt(input.value, 10);
+
+        if (transactedQuantities[productName] !== undefined && enteredQuantity > transactedQuantities[productName]) {
+            alert(`Quantity for ${productName} exceeds transacted quantity. Available: ${transactedQuantities[productName]}`);
+            isQuantityValid = false;
+        }
+    });
+
+    if (isQuantityValid) {
+        form.submit(); // Only submit the form if all quantities are valid
+    }
+});
+s
     </script>
 
 @endsection

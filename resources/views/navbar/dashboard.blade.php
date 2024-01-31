@@ -324,7 +324,7 @@
             <select name="transactions" id="transactions">
                 <option value="daily-transactions">Daily Transaction</option>
                 <option value="weekly-transactions">Transaction by Weeks</option>
-                <option value="monthly-transactions">Transaction by Months</option>
+                <option value="monthly-transactions">Transaction by Month</option>
                 <option value="yearly-transactions">Transaction by Year</option>
             </select>
 
@@ -397,7 +397,7 @@
             <table class="monthly-transactions">
                 <thead>
                     <tr>
-                        <th colspan="4" class="th">Transaction by Months</th>
+                        <th colspan="4" class="th">Transaction by Month</th>
                     </tr>
                     <tr>
                         <th>Date</th>
