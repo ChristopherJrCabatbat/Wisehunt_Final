@@ -31,7 +31,7 @@
                 <input required type="text" name="contact_name" id=""
                     value="{{ old('contact_name', $supplierss->contact_name) }}" />
                 <label for="">Contact Number:</label>
-                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number"
+                <input required type="text" pattern="{5,15}" title="Enter a valid contact number"
                     name="contact_num" name="contact_num" id=""
                     value="{{ old('contact_num', $supplierss->contact_num) }}" />
                 <label for="">Address:</label>

@@ -2466,3 +2466,6 @@ public function productSearch(Request $request)
             </div>
         </div>
     </form>
+
+
+    

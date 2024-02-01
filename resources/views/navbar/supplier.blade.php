@@ -28,7 +28,7 @@
                 <label for="">Contact Name:</label>
                 <input required type="text" name="contact_name" id="" />
                 <label for="">Contact Number:</label>
-                <input required type="text" pattern="[0-9]{5,11}" title="Enter a valid contact number" name="contact_num"
+                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
                     id="" value="">
                 <label for="">Address:</label>
                 <input required type="text" name="address" id="" />

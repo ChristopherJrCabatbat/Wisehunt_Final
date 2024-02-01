@@ -1341,113 +1341,48 @@ class AdminController extends Controller
         ] + $notifications);
     }
 
-    // public function deliveryStore(Request $request)
-    // {
-    //     $request->validate([
-    //         'delivery_id' => ['required', 'unique:' . Delivery::class],
-    //         'name' => ['required'],
-    //         'product' => ['required'],
-    //         'quantity' => ['required'],
-    //         'address' => ['required'],
-    //         'status' => ['required'],
-    //     ]);
-
-    //     $deliveries = new Delivery;
-    //     $deliveries->delivery_id = $request->input('delivery_id');
-    //     $deliveries->name = $request->input('name');
-
-    //     // Remove null values from the quantity array
-    //     $filteredQuantity = array_filter($request->input('quantity'), function ($value) {
-    //         return $value !== null;
-    //     });
-
-    //     $deliveries->product = json_encode($request->input('product'));
-    //     $deliveries->quantity = json_encode($filteredQuantity);
-
-    //     // $productList = json_decode($request->input('product'));
-    //     // $quantityList = json_decode($request->input('quantity'));
-
-    //     // foreach ($productList as $index => $productName) {
-    //     //     $transactedQty = Transaction::where('product_name', $productName)->sum('transacted_qty');
-
-    //     //     if ($quantityList[$index] > $transactedQty) {
-    //     //         return redirect()->back()
-    //     //             ->withErrors(['error_delivery' => "Delivery quantity for product '$productName' exceeds transacted quantity. Transacted quantity: $transactedQty"]);
-    //     //     }
-    //     // }
-
-    //     $deliveries->address = $request->input('address');
-    //     $deliveries->status = $request->input('status');
-
-    //     $deliveries->save();
-
-    //     return back();
-    // }
-
     public function deliveryStore(Request $request)
-{
-    $request->validate([
-        'delivery_id' => ['required', 'unique:' . Delivery::class],
-        'name' => ['required'],
-        'product' => ['required', 'array'],
-        'quantity' => ['required', 'array'],
-        'address' => ['required'],
-        'status' => ['required'],
-    ]);
+    {
+        $request->validate([
+            'delivery_id' => ['required', 'unique:' . Delivery::class],
+            'name' => ['required'],
+            'product' => ['required'],
+            'quantity' => ['required'],
+            'address' => ['required'],
+            'status' => ['required'],
+        ]);
 
-    $deliveries = new Delivery;
-    $deliveries->delivery_id = $request->input('delivery_id');
-    $deliveries->name = $request->input('name');
-    $deliveries->address = $request->input('address');
-    $deliveries->status = $request->input('status');
+        $deliveries = new Delivery;
+        $deliveries->delivery_id = $request->input('delivery_id');
+        $deliveries->name = $request->input('name');
 
-    $productList = $request->input('product');
-    $quantityList = $request->input('quantity');
+        // Remove null values from the quantity array
+        $filteredQuantity = array_filter($request->input('quantity'), function ($value) {
+            return $value !== null;
+        });
 
-    $filteredQuantity = array_filter($quantityList, function ($key) use ($productList) {
-        return in_array($key, array_keys($productList));
-    }, ARRAY_FILTER_USE_KEY);
+        $deliveries->product = json_encode($request->input('product'));
+        $deliveries->quantity = json_encode($filteredQuantity);
 
-    $errors = [];
-    foreach ($productList as $index => $productName) {
-        if (isset($filteredQuantity[$index])) {
-            $deliveryQuantity = $filteredQuantity[$index];
-            $transactions = Transaction::where('product_name', $productName)->get();
+        // $productList = json_decode($request->input('product'));
+        // $quantityList = json_decode($request->input('quantity'));
 
-            foreach ($transactions as $transaction) {
-                if ($deliveryQuantity <= 0) {
-                    break;
-                }
+        // foreach ($productList as $index => $productName) {
+        //     $transactedQty = Transaction::where('product_name', $productName)->sum('transacted_qty');
 
-                $deductibleQuantity = min($transaction->transacted_qty, $deliveryQuantity);
-                $transaction->transacted_qty -= $deductibleQuantity;
-                $transaction->save();
+        //     if ($quantityList[$index] > $transactedQty) {
+        //         return redirect()->back()
+        //             ->withErrors(['error_delivery' => "Delivery quantity for product '$productName' exceeds transacted quantity. Transacted quantity: $transactedQty"]);
+        //     }
+        // }
 
-                $deliveryQuantity -= $deductibleQuantity;
-            }
+        $deliveries->address = $request->input('address');
+        $deliveries->status = $request->input('status');
 
-            if ($deliveryQuantity > 0) {
-                // Collect the error message
-                $errors['error_delivery_' . $index] = "Delivery quantity for product '$productName' exceeds transacted quantity.";
-            }
-        }
+        $deliveries->save();
+
+        return back();
     }
-
-    if (!empty($errors)) {
-        // Return with all collected errors
-        return back()->withErrors($errors);
-    }
-
-    // If all quantities are valid, proceed with saving
-    $deliveries->product = json_encode($productList);
-    $deliveries->quantity = json_encode($filteredQuantity);
-
-    $deliveries->save();
-
-    return back()->with('success', 'Delivery created successfully');
-}
-
-
 
     // public function deliveryStore(Request $request)
     // {
@@ -1469,11 +1404,11 @@ class AdminController extends Controller
     //     $productList = $request->input('product');
     //     $quantityList = $request->input('quantity');
 
-    //     // Ensure the quantities array only contains values for selected products
     //     $filteredQuantity = array_filter($quantityList, function ($key) use ($productList) {
     //         return in_array($key, array_keys($productList));
     //     }, ARRAY_FILTER_USE_KEY);
 
+    //     $errors = [];
     //     foreach ($productList as $index => $productName) {
     //         if (isset($filteredQuantity[$index])) {
     //             $deliveryQuantity = $filteredQuantity[$index];
@@ -1492,10 +1427,15 @@ class AdminController extends Controller
     //             }
 
     //             if ($deliveryQuantity > 0) {
-    //                 // Handle the case where there is not enough transacted_qty
-    //                 return back()->withErrors(['error_delivery' => "Delivery quantity for product '$productName' exceeds transacted quantity."]);
+    //                 // Collect the error message
+    //                 $errors['error_delivery_' . $index] = "Delivery quantity for product '$productName' exceeds transacted quantity.";
     //             }
     //         }
+    //     }
+
+    //     if (!empty($errors)) {
+    //         // Return with all collected errors
+    //         return back()->withErrors($errors);
     //     }
 
     //     // If all quantities are valid, proceed with saving
