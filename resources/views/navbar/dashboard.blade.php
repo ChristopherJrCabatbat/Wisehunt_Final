@@ -4,6 +4,7 @@
 
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/dashboard-styles.css') }}">
+
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
     {{-- Line Chart --}}
@@ -45,19 +46,37 @@
 
             var monthsWithData = [];
             var latestMonthWithData = null;
+            var baseAlpha = 0.39; // Move the declaration outside the loop
 
             @for ($i = 1; $i <= 12; $i++)
                 var month = new Date('{{ date('Y-m', mktime(0, 0, 0, $i, 1)) }}');
-                var currentMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
+                var currentYearSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
                     ->whereYear('created_at', today()->year)
                     ->sum(DB::raw('total_price')) ?? 0; ?>;
 
-                var currentMonthSalesLabel = '₱' + currentMonthSales;
+                var previousYearSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
+                    ->whereYear('created_at', today()->year - 1)
+                    ->sum(DB::raw('total_price')) ?? 0; ?>;
 
-                if (currentMonthSales > 0) {
+                var currentMonthSalesLabel = '₱' + currentYearSales;
+
+                if (currentYearSales > 0) {
+                    var forecastedSales = null; // Initialize forecastedSales to null
+
+                    if (previousYearSales > 0) {
+                        // Compare with the same month of the previous year
+                        var growthRate = (currentYearSales - previousYearSales) / previousYearSales;
+                        forecastedSales = currentYearSales * (1 + growthRate);
+                    } else {
+                        // Handle the case when there are no transactions in the same month last year
+                        // You can set a default growth rate or exclude the month from the forecast
+                        var growthRate = 0; // Set a default growth rate to zero
+                        var forecastedSales = currentYearSales;
+                    }
+
                     data.addRow([month.toLocaleString('default', {
                         month: 'long'
-                    }), currentMonthSales, null]);
+                    }), currentYearSales, forecastedSales]);
                     monthsWithData.push(month.toLocaleString('default', {
                         month: 'long'
                     }));
@@ -66,32 +85,41 @@
             @endfor
 
             // Include the next month based on the current date
-            var currentDate = new Date();
-            var nextMonth = new Date(currentDate);
-            nextMonth.setMonth(nextMonth.getMonth() + 1);
-            var nextMonthString = nextMonth.toLocaleString('default', {
-                month: 'long'
-            });
+            @php
+                $nextMonth = date('Y-m', strtotime('+1 month'));
+                $nextMonthString = date('F', strtotime($nextMonth));
+            @endphp
 
             // Check if the next month is not already in the array before adding it
-            if (!monthsWithData.includes(nextMonthString)) {
-                monthsWithData.push(nextMonthString);
+            if (!monthsWithData.includes('{{ $nextMonthString }}')) {
+                monthsWithData.push('{{ $nextMonthString }}');
 
-                // Set the base alpha parameter for weighted average
-                // var baseAlpha = .2; // You can adjust this value
-                var baseAlpha = .39; // You can adjust this value
+                var nextMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', date('m', strtotime($nextMonth)))
+                    ->whereYear('created_at', date('Y', strtotime($nextMonth)))
+                    ->sum(DB::raw('total_price')) ?? 0; ?>;
 
-                // Calculate dynamic alpha based on recent trend
-                var dynamicAlpha = calculateDynamicAlpha(data, data.getNumberOfRows() - 1, baseAlpha, 0.1);
+                var previousYearNextMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', date('m', strtotime($nextMonth)))
+                    ->whereYear('created_at', date('Y', strtotime($nextMonth)) - 1)
+                    ->sum(DB::raw('total_price')) ?? 0; ?>;
 
-                // Calculate forecasted sales using weighted average with dynamic alpha
-                // var growthRate = 0.1; // You can adjust this value
-                var growthRate = 2; // You can adjust this value
-                var forecastedSales = currentMonthSales * (1 + growthRate);
-                var forecastedSalesLabel = '₱' + forecastedSales;
+                var forecastedSalesNextMonth = null;
+
+                if (nextMonthSales > 0) {
+                    if (previousYearNextMonthSales > 0) {
+                        // Compare with the same month of the previous year
+                        var growthRateNextMonth = (nextMonthSales - previousYearNextMonthSales) /
+                            previousYearNextMonthSales;
+                        forecastedSalesNextMonth = nextMonthSales * (1 + growthRateNextMonth);
+                    } else {
+                        // Handle the case when there are no transactions in the same month last year
+                        // You can set a default growth rate or exclude the month from the forecast
+                        var growthRateNextMonth = 0; // Set a default growth rate to zero
+                        forecastedSalesNextMonth = nextMonthSales;
+                    }
+                }
 
                 // Add the data for the next month
-                data.addRow([nextMonthString, null, forecastedSales]);
+                data.addRow(['{{ $nextMonthString }}', null, forecastedSalesNextMonth]);
             }
 
 
@@ -137,10 +165,10 @@
                 console.error('Error drawing the chart:', error);
             }
         }
+        console.log(month.toLocaleString('default', {
+            month: 'long'
+        }), currentYearSales, forecastedSales);
     </script>
-
-
-
 
 
 
@@ -477,41 +505,7 @@
 
 
 @section('script')
-    {{-- var productLabels = {!! json_encode($productLabels) !!};
-     var productDatasets = {!! json_encode($productDatasets) !!}; --}}
 
-    {{-- <script>
-        fetch('/get-monthly-earnings-forecast')
-            .then(response => response.json())
-            .then(data => { 
-                // Data received, create the line chart
-                createLineChart(data.forecastedSales);
-            })
-            .catch(error => console.error('Error fetching data:', error));
-
-        function createLineChart(forecastedSales) {
-            // Assuming you have a canvas element with id="monthlyEarningsChart"
-            var ctx = document.getElementById('monthlyEarningsChart').getContext('2d');
-
-            var chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Current Month', 'Next Month'],
-                    datasets: [{
-                        label: 'Monthly Earnings Forecast',
-                        borderColor: 'rgb(75, 192, 192)',
-                        data: [getCurrentMonthEarnings(), forecastedSales],
-                    }],
-                },
-            });
-        }
-
-        function getCurrentMonthEarnings() {
-            // You might need to fetch or calculate the current month earnings here
-            // For simplicity, assume it's 0 for the current example
-            return 0;
-        }
-    </script> --}}
 
     <script>
         var labels = {!! json_encode($labels) !!};

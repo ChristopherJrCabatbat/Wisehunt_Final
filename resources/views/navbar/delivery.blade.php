@@ -77,11 +77,11 @@
                 </center>
 
                 {{-- Error message for delivery quantity --}}
-                @if ($errors->has('error_delivery'))
+                {{-- @if ($errors->has('error_delivery'))
                     <div class="text-danger">
                         {{ $errors->first('error_delivery') }}
                     </div>
-                @endif
+                @endif --}}
 
                 {{-- Display products with checkboxes --}}
                 @foreach ($products as $index => $product)
@@ -315,6 +315,15 @@
 @section('script')
     <script src="{{ asset('js/delivery.js') }}"></script>
 
+    {{-- <script>
+        var modalContent = document.querySelector('.modal-content-delivery-next');
+        if (modalContent.clientHeight >= 609) {
+            modalContent.classList.add('two-column-layout');
+        } else {
+            modalContent.classList.remove('two-column-layout');
+        } --}}
+    </script>
+
     {{-- Not let the user go to Next and submit if all the required fields are not filled. --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -451,24 +460,27 @@
 
     <script>
         addButton.addEventListener('click', function(event) {
-    let isQuantityValid = true;
+            let isQuantityValid = true;
 
-    quantityInputs.forEach(input => {
-        const index = input.name.match(/\[([^\]]+)\]/)[1]; // Extract index
-        const productName = getProductFromIndex(index); // Get product name from index
-        const enteredQuantity = parseInt(input.value, 10);
+            quantityInputs.forEach(input => {
+                const index = input.name.match(/\[([^\]]+)\]/)[1]; // Extract index
+                const productName = getProductFromIndex(index); // Get product name from index
+                const enteredQuantity = parseInt(input.value, 10);
 
-        if (transactedQuantities[productName] !== undefined && enteredQuantity > transactedQuantities[productName]) {
-            alert(`Quantity for ${productName} exceeds transacted quantity. Available: ${transactedQuantities[productName]}`);
-            isQuantityValid = false;
-        }
-    });
+                if (transactedQuantities[productName] !== undefined && enteredQuantity >
+                    transactedQuantities[productName]) {
+                    alert(
+                        `Quantity for ${productName} exceeds transacted quantity. Available: ${transactedQuantities[productName]}`
+                        );
+                    isQuantityValid = false;
+                }
+            });
 
-    if (isQuantityValid) {
-        form.submit(); // Only submit the form if all quantities are valid
-    }
-});
-s
+            if (isQuantityValid) {
+                form.submit(); // Only submit the form if all quantities are valid
+            }
+        });
+        s
     </script>
 
 @endsection
