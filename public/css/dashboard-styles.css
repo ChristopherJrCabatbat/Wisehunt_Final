@@ -111,11 +111,16 @@ label {
 #curve_chart {
     position: absolute;
     top: 160px;
-    left: 85px;
+    left: 215px;
     overflow: hidden;
-    overflow-x: hidden; /* Hide horizontal overflow */
-    min-width: 1240px;
+    /* overflow-x: hidden; */
+    min-width: 1110px;
     min-height: 600px;
+    z-index: inherit;
+}
+
+.bar-graph {
+    margin-top: 20px;
 }
 
 .sales {
@@ -138,6 +143,7 @@ div div div div div svg rect {
 
 div.graph div.line-graph div#curve_chart div div div svg g g g text {
     font-size: 14px;
+    /* margin-left: 20px; */
 }
 
 /* div div div div div svg  {

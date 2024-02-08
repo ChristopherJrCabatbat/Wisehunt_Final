@@ -2614,3 +2614,357 @@ public function productSearch(Request $request)
             }
         }
     </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     // var options = {
+            //     title: 'Sales Forecasting',
+            //     curveType: 'function',
+            //     legend: {
+            //         position: 'bottom'
+            //     },
+            //     series: {
+            //         0: {
+            //             pointShape: 'circle',
+            //             pointSize: 5,
+            //             lineWidth: 2
+            //         },
+            //         1: {
+            //             pointShape: 'circle',
+            //             pointSize: 5,
+            //             lineWidth: 2
+            //         } 
+            //     },
+            //     vAxis: {
+            //         format: 'currency'
+            //     }
+            // };
+
+
+
+
+
+
+// Line Chart na may next month
+     <script type="text/javascript">
+        google.charts.load('current', {
+            'packages': ['corechart']
+        });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function calculateWeightedAverage(data, currentIndex, alpha) {
+            var weightedTotal = 0;
+            var weightSum = 0;
+
+            for (var i = currentIndex; i >= 0; i--) {
+                var weight = Math.pow(alpha, currentIndex - i);
+                weightedTotal += weight * data.getValue(i, 1);
+                weightSum += weight;
+            }
+
+            return weightedTotal / weightSum;
+        }
+
+        function calculateDynamicAlpha(data, currentIndex, baseAlpha, sensitivity) {
+            // If there's not enough data points to calculate the trend, use the base alpha
+            if (currentIndex < 2) {
+                return baseAlpha;
+            }
+
+            var recentTrend = data.getValue(currentIndex, 1) - data.getValue(currentIndex - 1, 1);
+            var alpha = baseAlpha * (1 + sensitivity * recentTrend);
+            return Math.max(0, Math.min(1, alpha)); // Ensure alpha is between 0 and 1
+        }
+
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Month');
+            data.addColumn('number', 'Current Sales');
+            data.addColumn('number', 'Forecasted Sales');
+
+            var monthsWithData = [];
+            var latestMonthWithData = null;
+            var baseAlpha = 0.39; // Move the declaration outside the loop
+
+            @for ($i = 1; $i <= 12; $i++)
+                var month = new Date('{{ date('Y-m', mktime(0, 0, 0, $i, 1)) }}');
+                var currentYearSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
+                    ->whereYear('created_at', today()->year)
+                    ->sum(DB::raw('total_price')) ?? 0; ?>;
+
+                var previousYearSales = <?php echo App\Models\Transaction::whereMonth('created_at', $i)
+                    ->whereYear('created_at', today()->year - 1)
+                    ->sum(DB::raw('total_price')) ?? 0; ?>;
+
+                var currentMonthSalesLabel = '₱' + currentYearSales;
+
+                if (currentYearSales > 0) {
+                    var forecastedSales = null; // Initialize forecastedSales to null
+
+                    if (previousYearSales > 0) {
+                        // Compare with the same month of the previous year
+                        var growthRate = (currentYearSales - previousYearSales) / previousYearSales;
+                        forecastedSales = currentYearSales * (1 + growthRate);
+                    } else {
+                        // Handle the case when there are no transactions in the same month last year
+                        // You can set a default growth rate or exclude the month from the forecast
+                        var growthRate = 0; // Set a default growth rate to zero
+                        var forecastedSales = currentYearSales;
+                    }
+
+                    data.addRow([month.toLocaleString('default', {
+                        month: 'long'
+                    }), currentYearSales, forecastedSales]);
+                    monthsWithData.push(month.toLocaleString('default', {
+                        month: 'long'
+                    }));
+                    latestMonthWithData = month;
+                }
+            @endfor
+
+            // Include the next month based on the current date
+            @php
+                $nextMonth = date('Y-m', strtotime('+1 month'));
+                $nextMonthString = date('F', strtotime($nextMonth));
+            @endphp
+
+            // Check if the next month is not already in the array before adding it
+            if (!monthsWithData.includes('{{ $nextMonthString }}')) {
+                monthsWithData.push('{{ $nextMonthString }}');
+
+                var nextMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', date('m', strtotime($nextMonth)))
+                    ->whereYear('created_at', date('Y', strtotime($nextMonth)))
+                    ->sum(DB::raw('total_price')) ?? 0; ?>;
+
+                var previousYearNextMonthSales = <?php echo App\Models\Transaction::whereMonth('created_at', date('m', strtotime($nextMonth)))
+                    ->whereYear('created_at', date('Y', strtotime($nextMonth)) - 1)
+                    ->sum(DB::raw('total_price')) ?? 0; ?>;
+
+                var forecastedSalesNextMonth = null;
+
+                if (nextMonthSales > 0) {
+                    if (previousYearNextMonthSales > 0) {
+                        // Compare with the same month of the previous year
+                        var growthRateNextMonth = (nextMonthSales - previousYearNextMonthSales) /
+                            previousYearNextMonthSales;
+                        forecastedSalesNextMonth = nextMonthSales * (1 + growthRateNextMonth);
+                    } else {
+                        // Handle the case when there are no transactions in the same month last year
+                        // You can set a default growth rate or exclude the month from the forecast
+                        var growthRateNextMonth = 0; // Set a default growth rate to zero
+                        forecastedSalesNextMonth = nextMonthSales;
+                    }
+                }
+
+                // Add the data for the next month
+                data.addRow(['{{ $nextMonthString }}', null, forecastedSalesNextMonth]);
+            }
+
+
+            // Add the weighted average for the Future Sales line
+            for (var i = 0; i < data.getNumberOfRows(); i++) {
+                var weightedAverage = calculateWeightedAverage(data, i, baseAlpha);
+                data.setValue(i, 2, weightedAverage);
+            }
+
+            var options = {
+                title: 'Sales Forecasting',
+                titleTextStyle: {
+                    color: '#414141',
+                    fontSize: 28,
+                    bold: true,
+                    fontFamily: 'Arial, Helvetica, sans-serif',
+                },
+                curveType: 'function',
+                legend: {
+                    position: 'bottom'
+                },
+                series: {
+                    0: {
+                        pointShape: 'circle',
+                        pointSize: 5,
+                        lineWidth: 2
+                    },
+                    1: {
+                        pointShape: 'circle',
+                        pointSize: 5,
+                        lineWidth: 2
+                    },
+                },
+                vAxis: {
+                    format: '₱ ', // Format vertical axis labels as currency
+                }
+            };
+
+            try {
+                var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                chart.draw(data, options);
+            } catch (error) {
+                console.error('Error drawing the chart:', error);
+            }
+        }
+        console.log(month.toLocaleString('default', {
+            month: 'long'
+        }), currentYearSales, forecastedSales);
+    </script>
+
+     {{-- Line Chart --}}
+    //  Line chart na lahat ng month
+     <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+    
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Month');
+            data.addColumn('number', 'Current Sales');
+            data.addColumn('number', 'Forecasted Sales');
+    
+            <?php
+            for ($i = 1; $i <= 12; $i++) {
+                $month = date('Y-m', mktime(0, 0, 0, $i, 1));
+                $currentYearSales = App\Models\Transaction::whereMonth('created_at', $i)->whereYear('created_at', date('Y'))->sum('total_price') ?? 0;
+                $previousYearSales =
+                    App\Models\Transaction::whereMonth('created_at', $i)
+                        ->whereYear('created_at', date('Y') - 1)
+                        ->sum('total_price') ?? 0;
+                echo "data.addRow(['" . date('F', mktime(0, 0, 0, $i, 1)) . "', $currentYearSales, $previousYearSales]);";
+            }
+            ?>
+
+            var options = {
+            title: 'Sales Forecasting',
+            curveType: 'function',
+            legend: { position: 'bottom' },
+            series: {
+                0: { pointShape: 'circle', pointSize: 5, lineWidth: 2 },
+                1: { pointShape: 'circle', pointSize: 5, lineWidth: 2, lineDashStyle: [4, 4] } // This makes the line dotted
+            },
+            vAxis: { format: '₱ ' },
+            hAxis: {
+                textStyle : {
+                    fontSize: 12 // Adjust as needed
+                },
+                slantedText: true,
+                slantedTextAngle: 45
+            },
+            chartArea: { width: '90%', height: '70%' } // Adjust as needed
+        };
+    
+            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+            chart.draw(data, options);
+        }
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+    
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Month');
+            data.addColumn('number', 'Current Sales');
+            data.addColumn('number', 'Forecasted Sales');
+    
+            <?php
+                $lastYearSales = [];
+                $currentYearSalesData = [];
+                $forecastedSales = [];
+        
+                for ($i = 1; $i <= 12; $i++) {
+                    $currentYearSales = App\Models\Transaction::whereMonth('created_at', $i)->whereYear('created_at', date('Y'))->sum('total_price') ?? 0;
+                    $previousYearSales = App\Models\Transaction::whereMonth('created_at', $i)->whereYear('created_at', date('Y') - 1)->sum('total_price') ?? 0;
+        
+                    $currentYearSalesData[$i] = $currentYearSales;
+                    $lastYearSales[$i] = $previousYearSales;
+        
+                    if ($i == 1) {
+                        $forecastedSales[$i] = $lastYearSales[$i];
+                    } else {
+                        $lastMonthActualSales = $currentYearSalesData[$i - 1];
+                        $lastMonthForecastedSales = $forecastedSales[$i - 1];
+                        // Check if the current sales and forecasted sales of the previous month are the same
+                        if ($lastMonthActualSales == $lastMonthForecastedSales) {
+                            // Make the forecasted sales for the current month equal to the sales of the same month last year
+                            $forecastedSales[$i] = $lastYearSales[$i];
+                        } else if ($lastMonthForecastedSales > 0) {
+                            $differenceRatio = ($lastMonthActualSales - $lastMonthForecastedSales) / $lastMonthForecastedSales;
+                            $adjustmentFactor = 1 + ($differenceRatio * 0.1);
+                            $forecastedSales[$i] = max(0, $lastYearSales[$i] * $adjustmentFactor);
+                        } else {
+                            $forecastedSales[$i] = $lastYearSales[$i];
+                        }
+                    }
+        
+                    // Only add the row if there's current year sales data
+                    if ($currentYearSales > 0) {
+                        echo "data.addRow(['" . date('F', mktime(0, 0, 0, $i, 1)) . "', $currentYearSales, $forecastedSales[$i]]);";
+                    }
+                }
+            ?>
+    
+            var options = {
+                title: 'Sales Forecasting',
+                curveType: 'function',
+                legend: { position: 'bottom' },
+                series: {
+                    0: { pointShape: 'circle', pointSize: 5, lineWidth: 2 },
+                    1: { pointShape: 'circle', pointSize: 5, lineWidth: 2, lineDashStyle: [4, 4] }
+                },
+                vAxis: { format: '₱ ' },
+                hAxis: {
+                    textStyle : {
+                        fontSize: 12
+                    },
+                    slantedText: true,
+                    slantedTextAngle: 45
+                },
+                chartArea: { width: '90%', height: '70%' }
+            };
+    
+            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+            chart.draw(data, options);
+        }
+    </script>
