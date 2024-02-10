@@ -231,6 +231,40 @@ img {
 
 
 /* Log out */
+.logout-container {
+    /* position: absolute; */
+    margin-top: 197px;
+    /* border: 1px solid white; */
+    padding: 10px 62px;
+    bottom: 0;
+    left: 0;
+    user-select: none;
+    transition: all 0.3s;
+}
+
+.logout-container-staff {
+    /* position: absolute; */
+    margin-top: 409px;
+    /* border: 1px solid white; */
+    padding: 10px 62px;
+    bottom: 0;
+    left: 0;
+    user-select: none;
+    transition: all 0.3s;
+}
+
+.logout-container:hover {
+    cursor: pointer;
+    background-color: #a3a3a3;
+    border-color: #a3a3a3;
+}
+
+.logout-container-staff:hover {
+    cursor: pointer;
+    background-color: #a3a3a3;
+    border-color: #a3a3a3;
+}
+
 .icon-user {
     width: 35px;
     position: relative;
@@ -255,12 +289,26 @@ img {
     display: none;
     position: absolute;
     right: 0;
+    top: 66%;
     /* top: 22px; */
     background-color: #f9f9f9;
     /* min-width: 120px; */
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
+
+.dropdown-menu-staff {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 82%;
+    /* top: 22px; */
+    background-color: #f9f9f9;
+    /* min-width: 120px; */
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
 
 
 .dropdown input[type="checkbox"] {
@@ -274,12 +322,14 @@ img {
 } */
 
 .dropdown-item {
-    padding: 12px 35px 12px 16px;
+    padding: 12px 25px 12px 16px;
     white-space: nowrap;
     text-decoration: none;
     display: block;
     color: #006181;
-    background-color: white;
+    /* background-color: white; */
+    /* position: relative; */
+    /* top: 53%; */
 }
 
 .dropdown-item:hover {

@@ -1227,12 +1227,14 @@ class AdminController extends Controller
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
         $suppliers = $query->paginate(8);
+        $products = Product::all();
         // $suppliers = Supplier::paginate(8);
 
         return view('navbar.supplier', [
             'suppliers' => $suppliers,
             'totalNotifications' => $totalNotifications,
             'username' => $nm,
+            'products' => $products,
         ] + $notifications);
     }
 
@@ -1273,6 +1275,7 @@ class AdminController extends Controller
         $request->validate([
             "company_name" => "required",
             "contact_name" => "required|min:1",
+            "product_name" => "required",
             "address" => "required",
             "contact_num" => "required|numeric|digits_between:5,11",
         ]);
@@ -1287,6 +1290,41 @@ class AdminController extends Controller
         // return redirect()->route('admin.supplier');
         return back();
     }
+
+    public function supplierStoreQty(Request $request)
+    {
+        $request->validate([
+            "company_name" => "required",
+            "contact_name" => "required|min:1",
+            "address" => "required",
+            "contact_num" => "required|numeric|digits_between:5,11",
+            "product_name" => "required",
+            "quantity" => "required", 
+        ]);
+
+        // Save supplier information
+        $supplier = new Supplier;
+        $supplier->company_name = $request->input('company_name');
+        $supplier->contact_name = $request->input('contact_name');
+        $supplier->address = $request->input('address');
+        $supplier->product_name = $request->input('product_name');
+        $supplier->contact_num = $request->input('contact_num');
+        $supplier->quantity = $request->input('quantity');
+        $supplier->save();
+
+        // Find the matching product by name and update its quantity
+        $product = Product::where('name', $request->input('product_name'))->first();
+        if ($product) {
+            $product->quantity += $request->input('quantity');
+            $product->save();
+        }
+
+        // Optionally, you might want to handle the case where no matching product is found
+        // This could involve logging a warning, creating a new product, or informing the user
+
+        return back();
+    }
+
 
     public function supplierUpdate(Request $request, string $id)
     {

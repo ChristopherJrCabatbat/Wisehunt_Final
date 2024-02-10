@@ -86,6 +86,52 @@
         <header>
             <div class="side-navbar">
                 @yield('side-navbar')
+
+                <div class="logout-bottom-left dropdown">
+                    @if (auth()->user()->role === 'Admin')
+                        <div class="logout-container" id="logoutBtn">
+                            Log out <i class="fas fa-sign-out"></i>
+                        </div>
+                    @endif
+                    @if (auth()->user()->role === 'Staff')
+                        <div class="logout-container-staff" id="logoutBtn">
+                            Log out <i class="fas fa-sign-out"></i>
+                        </div>
+                    @endif
+                    <input type="checkbox" id="logout">
+                    
+                    @if (auth()->user()->role === 'Admin')
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+
+                                <x-dropdown-link :href="route('logout')"
+                                    onclick="event.preventDefault();
+                                                            this.closest('form').submit();"
+                                    class="dropdown-item">
+                                    {{ __('Confirm Log Out') }}
+                                </x-dropdown-link>
+                            </form>
+                        </div>
+                    @endif
+
+                    @if (auth()->user()->role === 'Staff')
+                        <div class="dropdown-menu-staff" id="dropdownMenu">
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+
+                                <x-dropdown-link :href="route('logout')"
+                                    onclick="event.preventDefault();
+                                                            this.closest('form').submit();"
+                                    class="dropdown-item">
+                                    {{ __('Confirm Log Out') }}
+                                </x-dropdown-link>
+                            </form>
+                        </div>
+                    @endif
+                </div>
+
+
             </div>
             <div class="top-navbar">
                 <div class="logo-container">
@@ -118,38 +164,19 @@
                         @endif
 
                         <!-- Log out -->
-                        <div class="dropdown">
-                            <label for="logout">
+                        <div class="">
+                            <label for="">
                                 @if (auth()->user()->role === 'Admin')
-                                    <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-user.png') }}"
+                                    <img class="icon-user" id="" src="{{ asset('images/icon-user.png') }}"
                                         alt="" width="100" height="auto">
                                 @endif
                                 @if (auth()->user()->role === 'Staff')
-                                    {{-- <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-usersss.png') }}"
+                                    {{-- <img class="icon-user" id="" src="{{ asset('images/icon-usersss.png') }}"
                                         alt="" width="100" height="auto"> --}}
-                                    <i class="fa-solid fa-circle-user icon-user-staff" id="logoutBtn"
+                                    <i class="fa-solid fa-circle-user icon-user-staff" id=""
                                         style="color: #006181;"></i>
                                 @endif
                             </label>
-                            <input type="checkbox" id="logout">
-                            <div class="dropdown-menu" id="dropdownMenu">
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-
-                                    <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault();
-                                                        this.closest('form').submit();"
-                                        class="dropdown-item">
-                                        {{ __('Log Out') }}
-                                    </x-dropdown-link>
-                                </form>
-                                {{-- <form method="POST" action="{{ route('logout') }}" >
-                                    <button type="submit" class="dropdown-item" onclick="event.preventDefault();
-                                    this.closest('form').submit();">Log out</button>
-                                </form> --}}
-                                {{-- <a method="POST" class="dropdown-item" href="{{ route('logout') }}"
-                                    onclick="return confirm('Are you sure you want to log out?')">Log out</a> --}}
-                            </div>
                         </div>
 
                     </div>

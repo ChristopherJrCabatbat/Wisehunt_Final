@@ -207,9 +207,9 @@
                             Profit</option>
 
                         <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>
-                            Date (Asc)</option>
+                            Date (Ascending)</option>
                         <option value="date_desc" {{ request('sort') === 'date_desc' ? 'selected' : '' }}>
-                            Date (Desc)</option>
+                            Date (Descending)</option>
 
                     </select>
                 </form>

@@ -2968,3 +2968,113 @@ public function productSearch(Request $request)
             chart.draw(data, options);
         }
     </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="dropdown">
+                            <label for="logout">
+                                @if (auth()->user()->role === 'Admin')
+                                    <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-user.png') }}"
+                                        alt="" width="100" height="auto">
+                                @endif
+                                @if (auth()->user()->role === 'Staff')
+                                    {{-- <img class="icon-user" id="logoutBtn" src="{{ asset('images/icon-usersss.png') }}"
+                                        alt="" width="100" height="auto"> --}}
+                                    <i class="fa-solid fa-circle-user icon-user-staff" id="logoutBtn"
+                                        style="color: #006181;"></i>
+                                @endif
+                            </label>
+                            <input type="checkbox" id="logout">
+                            <div class="dropdown-menu" id="dropdownMenu">
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+
+                                    <x-dropdown-link :href="route('logout')"
+                                        onclick="event.preventDefault();
+                                                        this.closest('form').submit();"
+                                        class="dropdown-item">
+                                        {{ __('Log Out') }}
+                                    </x-dropdown-link>
+                                </form>
+                                {{-- <form method="POST" action="{{ route('logout') }}" >
+                                    <button type="submit" class="dropdown-item" onclick="event.preventDefault();
+                                    this.closest('form').submit();">Log out</button>
+                                </form> --}}
+                                {{-- <a method="POST" class="dropdown-item" href="{{ route('logout') }}"
+                                    onclick="return confirm('Are you sure you want to log out?')">Log out</a> --}}
+                            </div>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{-- Add Modal Quantity --}}
+    {{-- <div id="newModal" class="modal">
+        <div class="modal-content">
+            <span class="close closeModal">&times;</span>
+
+            <form class="modal-form" action="{{ route('admin.supplierStore') }}" method="POST">
+                @csrf
+                <center>
+                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Supplier</h2>
+                </center>
+                <label class="modal-tops" for="">Company Name:</label>
+                <input required autofocus type="text" name="company_name" id="autofocus" />
+                <label for="">Contact Name:</label>
+                <input required type="text" name="contact_name" id="" />
+                <label for="">Contact Number:</label>
+                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+                    id="" value="">
+                <label for="">Address:</label>
+                <input required type="text" name="address" id="" />
+
+                <label for="">Product:</label>
+                <select required class="select_product" name="product_name" id="product_name">
+                    <option value="" disabled selected>-- Select a Product --</option>
+                    @foreach ($products as $product)
+                        <option value="{{ $product->name }}"
+                            {{ old('product_name') === $product->name ? 'selected' : '' }}>
+                            {{ $product->name }}
+                        </option>
+                    @endforeach
+                </select>
+                {{-- <input required type="text" name="product_name" id="" /> --}}
+
+
+                <input class="add" type="submit" value="Add" />
+            </form>
+        </div>
+    </div> --}}

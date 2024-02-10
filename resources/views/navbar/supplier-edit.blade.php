@@ -109,7 +109,10 @@
 
     <div class="content">
         <div class="taas">
-            <button class="add" type="button" id="newButton">Add Supplier</button>
+            <div class="buttons-quantity">
+                <button class="add" type="button" id="newButton">Add Supplier</button>
+                <button class="add" type="button" id="newButtonQty">Add Quantity of an Existing Product</button>
+            </div>
 
 
 

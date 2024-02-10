@@ -88,10 +88,15 @@ td {
     padding: 6px;
 }
 
+.buttons-quantity {
+    display: flex;
+    gap: 13px;
+}
+
 .taas {
     display: flex;
     justify-content: flex-start;
-    gap: 23%;
+    gap: 12%;
     margin-bottom: 20px;
     height: 33px;
 }

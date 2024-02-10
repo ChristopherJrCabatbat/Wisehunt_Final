@@ -19,6 +19,7 @@ return new class extends Migration
             $table->char('contact_num');
             $table->string('address');
             $table->string('product_name');
+            $table->string('quantity')->nullable();
             $table->timestamps();
         });
     }

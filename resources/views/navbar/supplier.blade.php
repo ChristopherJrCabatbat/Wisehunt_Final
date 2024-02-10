@@ -41,6 +41,45 @@
         </div>
     </div>
 
+    <div id="newModalQty" class="modal">
+        <div class="modal-content">
+            <span class="close closeModal">&times;</span>
+
+            <form class="modal-form" action="{{ route('admin.supplierStoreQty') }}" method="POST">
+                @csrf
+                <center>
+                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Supplier</h2>
+                </center>
+                <label class="modal-tops" for="">Company Name:</label>
+                <input required autofocus type="text" name="company_name" id="autofocus" />
+                <label for="">Contact Name:</label>
+                <input required type="text" name="contact_name" id="" />
+                <label for="">Contact Number:</label>
+                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+                    id="" value="">
+                <label for="">Address:</label>
+                <input required type="text" name="address" id="" />
+
+                <label for="">Product:</label>
+                <select required class="select_product" name="product_name" id="product_name">
+                    <option value="" disabled selected>-- Select a Product --</option>
+                    @foreach ($products as $product)
+                        <option value="{{ $product->name }}" {{ old('product_name') === $product->name ? 'selected' : '' }}>
+                            {{ $product->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                <label for="">Quantity:</label>
+                <input required type="number" name="quantity" />
+
+                {{-- <input required type="text" name="product_name" id="" /> --}}
+
+                <input class="add" type="submit" value="Add" />
+            </form>
+        </div>
+    </div>
+
 @endsection
 
 @section('side-navbar')
@@ -103,7 +142,11 @@
 
     <div class="content">
         <div class="taas">
-            <button class="add" type="button" id="newButton">Add Supplier</button>
+            <div class="buttons-quantity">
+                <button class="add" type="button" id="newButton">Add Supplier</button>
+                <button class="add" type="button" id="newButtonQty">Add Quantity of an Existing Product</button>
+            </div>
+
 
 
 
@@ -117,13 +160,12 @@
                             Default Sorting --</option>
                         <option value="company_name_asc" {{ request('sort') === 'company_name_asc' ? 'selected' : '' }}>
                             Company Name</option>
-                        <option value="contact_name_asc"
-                            {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>
+                        <option value="contact_name_asc" {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>
                             Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
-                           Product
+                            Product
                         </option>
 
                     </select>
@@ -291,5 +333,7 @@
             });
         });
     </script>
+
+    <script src="{{ asset('js/supplier.js') }}"></script>
 
 @endsection

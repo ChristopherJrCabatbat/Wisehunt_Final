@@ -75,6 +75,7 @@ Route::group([
     // Supplier Routes
     Route::get('/supplier', [AdminController::class, 'supplier'])->name('supplier');
     Route::post('/supplierStore', [AdminController::class, 'supplierStore'])->name('supplierStore');
+    Route::post('/supplierStoreQty', [AdminController::class, 'supplierStoreQty'])->name('supplierStoreQty');
     Route::get('/supplierEdit/{id}', [AdminController::class, 'supplierEdit'])->name('supplierEdit');
     Route::put('/supplierUpdate/{id}', [AdminController::class, 'supplierUpdate'])->name('supplierUpdate');
     Route::delete('/supplierDestroy/{id}', [AdminController::class, 'supplierDestroy'])->name('supplierDestroy');
