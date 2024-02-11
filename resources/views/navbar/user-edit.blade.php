@@ -17,7 +17,7 @@
         <div class="modal-content">
             <a href="{{ route('admin.user') }}"><span class="close closeEditModal">&times;</span></a>
 
-            <form class="edit-modal-form" action="{{ route('admin.userUpdate', $userss->id) }}" method="POST">
+            <form class="edit-modal-form" action="{{ route('admin.userUpdate', $userss->id) }}" enctype="multipart/form-data" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -45,6 +45,16 @@
                 @endif
                 <label for="password_confirmation">Confirm New Password:</label>
                 <input required type="password" name="password_confirmation" id="password_confirmation" />
+
+                <div class="image">
+                    <label for="">Current Image:</label>
+                    <img class="img-edit" src="{{ asset($userss->photo) }}" alt="" width="50px"
+                        height="auto">
+                    <label for="">Change Image:</label>
+                    <div class="input_container_edit">
+                        <input type="file" name="photo" id="fileUpload">
+                    </div>
+                </div>
 
                 <label for="role">Role:</label>
                 <select required name="role" id="role">

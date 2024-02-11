@@ -321,14 +321,14 @@
                                 <td>₱ {{ number_format($product->selling_price) }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
-                                        {{-- <form action="{{ route('admin.productEdit', $product->id) }}" method="POST">
+                                        <form action="{{ route('admin.productEdit', $product->id) }}" method="POST">
                                             @csrf
                                             @method('GET')
 
                                             <button type="submit" class="edit" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
-                                        </form> --}}
+                                        </form>
                                         <form action="{{ route('admin.productDestroy', $product->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')

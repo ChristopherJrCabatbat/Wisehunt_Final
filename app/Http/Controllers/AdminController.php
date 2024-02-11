@@ -1515,7 +1515,7 @@ class AdminController extends Controller
 
 
     // User Controllers
-    public function user()
+    public function user($id)
     {
         $nm = Session::get('name');
 
@@ -1535,9 +1535,11 @@ class AdminController extends Controller
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
         $users = User::paginate(8);
+        $usersss = User::find($id);
 
         return view('navbar.user', [
             'users' => $users,
+            'usersss' => $usersss,
             'totalNotifications' => $totalNotifications,
             'username' => $nm,
         ] + $notifications);
@@ -1589,6 +1591,12 @@ class AdminController extends Controller
         $users->email = $request->input('email');
         $users->role = $request->input('role');
         $users->password = Hash::make($request->input('password'));
+
+        if ($request->hasFile('photo')) {
+            $fileName = time() . $request->file('photo')->getClientOriginalName();
+            $path = $request->file('photo')->storeAs('images', $fileName, 'public');
+            $users->photo = '/storage/' . $path;
+        }
 
         $users->save();
 

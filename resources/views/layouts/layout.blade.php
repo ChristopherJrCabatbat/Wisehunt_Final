@@ -99,7 +99,7 @@
                         </div>
                     @endif
                     <input type="checkbox" id="logout">
-                    
+
                     @if (auth()->user()->role === 'Admin')
                         <div class="dropdown-menu" id="dropdownMenu">
                             <form method="POST" action="{{ route('logout') }}">
@@ -169,6 +169,8 @@
                                 @if (auth()->user()->role === 'Admin')
                                     <img class="icon-user" id="" src="{{ asset('images/icon-user.png') }}"
                                         alt="" width="100" height="auto">
+                                    {{-- <img class="icon-user" src="{{ asset($usersss->photo) }}" alt="admin-pic"
+                                        width="100" height="auto"> --}}
                                 @endif
                                 @if (auth()->user()->role === 'Staff')
                                     {{-- <img class="icon-user" id="" src="{{ asset('images/icon-usersss.png') }}"
@@ -215,33 +217,37 @@
 
     @yield('script')
 
-    {{-- <script>
-        function navigateToProductView(productId) {
-            showNotificationPanel();
+    //
+    <script>
+        //    function navigateToProductView(productId) {
+        //        showNotificationPanel();
+        //
+        //        setTimeout(function() {
+        //            window.location.href = `@url('productEdit', ['id' => '__productId__'])`.replace('__productId__', productId);
+        //        }, 2000);
+        //    }
+        //
+        //    function showNotificationPanel() {
+        //        var notificationPanel = document.getElementById('notificationPanel');
+        //        if (notificationPanel) {
+        //            notificationPanel.style.display = 'block';
+        //        }
+        //    }
+        //
+        //    function closeNotification() {
+        //        var notificationPanel = document.getElementById('notificationPanel');
+        //        if (notificationPanel) {
+        //            notificationPanel.style.display = 'none';
+        //        }
+        //    }
+        //
+    </script>
 
-            setTimeout(function() {
-                window.location.href = `@url('productEdit', ['id' => '__productId__'])`.replace('__productId__', productId);
-            }, 2000);
-        }
-
-        function showNotificationPanel() {
-            var notificationPanel = document.getElementById('notificationPanel');
-            if (notificationPanel) {
-                notificationPanel.style.display = 'block';
-            }
-        }
-
-        function closeNotification() {
-            var notificationPanel = document.getElementById('notificationPanel');
-            if (notificationPanel) {
-                notificationPanel.style.display = 'none';
-            }
-        }
-    </script> --}}
-
-    {{-- <script>
-        // Pass lowQuantityNotifications to JavaScript
-        const lowQuantityNotifications = @json($lowQuantityNotifications);
+    //
+    <script>
+        //    // Pass lowQuantityNotifications to JavaScript
+        //    const lowQuantityNotifications = @json($lowQuantityNotifications);
+        //
     </script> --}}
 
     <script src="{{ asset('js/notification.js') }}"></script>

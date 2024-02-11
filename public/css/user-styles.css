@@ -3,3 +3,55 @@
     font-size: 14px;
     position: relative;
 }
+
+.input_container {
+    border: 1px solid #787878;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 1px;
+    margin-top: 8px;
+    width: 100%;
+  }
+.input_container_edit {
+    border: 1px solid #787878;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 1px;
+    margin-top: 8px;
+    /* width: 255px; */
+  }
+  
+.input_container_ginaya {
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 1px;
+    margin-top: 8px;
+  }
+.input_container_ginaya_edit {
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 1px;
+    margin-top: 8px;
+  }
+  .input_container_ginaya input {
+    padding: 7.5px;
+    width: 272px;
+  }
+  .input_container_ginaya_edit input{
+    padding: 7.5px;
+    width: 257px;
+  }
+  
+  input[type=file]::file-selector-button {
+    background-color: #fff;
+    color: #000;
+    border: 0px;
+    border-right: 1px solid #e5e5e5;
+    padding: 5px;
+    margin-right: 50px;
+    font-family: Arial, Helvetica, sans-serif;
+    transition: .2s;
+  }
+  
+  input[type=file]::file-selector-button:hover {
+    background-color: rgb(174, 174, 174);
+    border: 0px;
+    border-right: 1px solid #e5e5e5;
+    cursor: pointer;
+  }

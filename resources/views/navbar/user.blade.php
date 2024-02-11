@@ -18,7 +18,7 @@
         <div class="modal-content">
             <span class="close closeModal">&times;</span>
 
-            <form class="modal-form" action="{{ route('admin.userStore') }}" method="POST">
+            <form class="modal-form" action="{{ route('admin.userStore') }}" enctype="multipart/form-data" method="POST">
                 @csrf
                 <center>
                     <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add User</h2>
@@ -40,6 +40,11 @@
 
                 <label for="">Confirm Password:</label>
                 <input required type="password" name="password_confirmation" id="">
+
+                <label for="">Image:</label>
+                <div class="input_container">
+                    <input type="file" name="photo" id="fileUpload">
+                </div>
 
                 <label for="">Role:</label>
                 <select required name="role" id="" class="">
@@ -158,7 +163,7 @@
                                     <div class="actions-container">
                                         <form action="{{ route('admin.userEdit', $user->id) }}" method="POST">
                                             @csrf
-                                            @method('GET')  
+                                            @method('GET')
                                             <button type="submit" class="edit editButton" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
