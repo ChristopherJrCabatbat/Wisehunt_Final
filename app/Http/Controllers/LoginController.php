@@ -15,7 +15,7 @@ class LoginController extends Controller
     public function login()
     {
         // Session::forget('user');
-        return view('login');
+        return view('loginss');
     }
 
     
