@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules;
+
 
 use App\Models\Product;
 use App\Models\Customer;
@@ -277,6 +280,162 @@ class StaffController extends Controller
             'nextMonthStartDate' => $nextMonthStartDate,
             'nextMonthEndDate' => $nextMonthEndDate,
         ] + $notifications);
+    }
+
+    public function userEdit(Request $request, $id)
+    {
+       
+        $nm = Session::get('name');
+        $acc = Session::get('acc');
+
+        // Count the total quantity sold for the day
+        $totalSalesQty = Transaction::selectRaw('SUM(qty) as total_qty')
+            ->whereDate('created_at', today()) // Change this to match your date format
+            ->value('total_qty') ?? 0;
+
+        $productCount = Product::count();
+        $transactionCount = Transaction::count();
+        $totalEarnings = Transaction::sum(DB::raw('total_price'));
+
+        // Bar Chart/Graph
+        $currentYear = date('Y');
+
+        $earnings = Transaction::selectRaw('MONTH(created_at) as month, SUM(profit) as profit')
+            ->whereYear('created_at', $currentYear)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $labels = [];
+        $data = [];
+        $colors = ['#2c5c78', '#2dc0d0', '#6c6c6c', '#2c5c78', '#2dc0d0', '#6c6c6c', '#2c5c78', '#2dc0d0', '#6c6c6c', '#2c5c78', '#2dc0d0', '#6c6c6c'];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $month = date('F', mktime(0, 0, 0, $i, 1));
+            $earningsPerMonth = 0;
+
+            foreach ($earnings as $earning) {
+                if ($earning->month == $i) {
+                    $earningsPerMonth = $earning->profit;
+                    break;
+                }
+            }
+
+            array_push($labels, $month);
+            array_push($data, $earningsPerMonth);
+        }
+
+        $datasets = [
+            [
+                'label' => 'Monthly earnings (' . $currentYear . ')',
+                'data' => $data,
+                'backgroundColor' => $colors,
+            ]
+        ];
+
+        // Pie Chart Logic
+        $highDemandProducts = DB::table('transactions')
+            ->select('product_name', DB::raw('SUM(qty) as total_qty'))
+            ->groupBy('product_name')
+            ->orderByDesc('total_qty')
+            ->limit(5)
+            ->get();
+
+        $pieChartData = "";
+        foreach ($highDemandProducts as $product) {
+            $pieChartData .= "['" . $product->product_name . "', " . $product->total_qty . "],";
+        }
+
+        $arr['pieChartData'] = rtrim($pieChartData, ",");
+
+        $nextMonthStartDate = now()->addMonth()->startOfMonth();
+        $nextMonthEndDate = now()->addMonth()->endOfMonth();
+
+        // Assuming you retrieve $productsss and $forecasts here or from another method
+        $productsss = Product::all();
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Call the method to generate notifications
+        $notifications = $this->generateNotifications($productsss, $forecasts);
+
+        // Extract total counts from the generated notifications
+        $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+        $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+        $totalForecastMessages = $notifications['totalForecastMessages'];
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+        $userss = User::find($id);
+
+
+        // Pass both arrays to the view
+        return view('staff-navbar.user-edit', $arr + [
+            'username' => $nm,
+            'productCount' => $productCount,
+            'transactionCount' => $transactionCount,
+            'totalSalesQty' => $totalSalesQty,
+            'totalEarnings' => $totalEarnings,
+            'datasets' => $datasets, // Adding the datasets for the bar chart
+            'labels' => $labels, // Adding the labels for the bar chart
+            'totalNotifications' => $totalNotifications,
+            'nextMonthStartDate' => $nextMonthStartDate,
+            'nextMonthEndDate' => $nextMonthEndDate,
+            'userss' => $userss,
+        ] + $notifications);
+    }
+
+
+    // // Assuming you retrieve $productsss and $forecasts here or from another method
+    // $productsss = Product::all();
+    // $forecasts = $this->forecastSalesForAllCustomers();
+
+    // // Call the method to generate notifications
+    // $notifications = $this->generateNotifications($productsss, $forecasts);
+
+    // // Extract total counts from the generated notifications
+    // $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+    // $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+    // $totalForecastMessages = $notifications['totalForecastMessages'];
+
+    // // Calculate the total number of notifications
+    // $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+    // $userss = User::find($id);
+    // $users = User::paginate(8);
+
+    // return view('staff-navbar.user-edit', [
+    //     'users' => $users,
+    //     'userss' => $userss,
+    //     'totalNotifications' => $totalNotifications,
+    //     'username' => $nm,
+    // ] + $notifications);
+
+    public function userUpdate(Request $request, string $id)
+    {
+        $request->validate([
+            'name' => ['required'],
+            'email' => ['required', 'email', 'unique:users,email,' . $id],
+            // 'email' => ['required','unique:'.User::class],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required'],
+        ]);
+
+        $users = User::find($id);
+        $users->name = $request->name;
+        $users->email = $request->email;
+        $users->role = $request->role;
+        $users->password = Hash::make($request->password);
+
+        if ($request->hasFile('photo')) {
+            $fileName = time() . $request->file('photo')->getClientOriginalName();
+            $path = $request->file('photo')->storeAs('images', $fileName, 'public');
+            $users->photo = '/storage/' . $path;
+        }
+
+        $users->save();
+
+        return redirect()->route('staff.dashboard');
     }
 
     public function getEarningsForecast()

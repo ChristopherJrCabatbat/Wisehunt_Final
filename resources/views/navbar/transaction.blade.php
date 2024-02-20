@@ -371,6 +371,7 @@
         });
     </script> --}}
 
+    {{-- Live Search --}}
     <script type="text/javascript">
         $('#search').on('input', function() {
     

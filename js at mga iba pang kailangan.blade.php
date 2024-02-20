@@ -3078,3 +3078,61 @@ public function productSearch(Request $request)
             </form>
         </div>
     </div> --}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Lumang Log out
+
+    <!-- Log out -->
+                        <div class="">
+                            <label for="">
+                                @if (auth()->user()->role === 'Admin')
+                                    {{-- <img class="icon-user" id="" src="{{ asset('images/icon-user.png') }}"
+                                        alt="" width="100" height="auto"> --}}
+                                    {{-- <img class="icon-user" src="{{ asset($usersss->photo) }}" alt="pic"
+                                        width="100" height="auto"> --}}
+                                        <img class="icon-user" src="{{ asset($userPhoto) }}" alt="" width="100" height="auto">
+
+
+                                {{-- @foreach ($usersss as $user)
+                                    <img src="{{ asset($user->photo) }}" alt="{{ $user->name }}" class="icon-user" width="100" height="auto">
+                                @endforeach --}}
+
+                                @endif
+                                {{-- @if (auth()->user()->role === 'Staff')
+                                    
+                                    <i class="fa-solid fa-circle-user icon-user-staff" id=""
+                                        style="color: #006181;"></i>
+                                @endif --}}
+                            </label>
+                        </div>
+
+
+
+
+                        // Current change profile
+                        <div class="">
+                            <label for="edit-profile">
+                                {{-- @if (auth()->user()->role === 'Admin') --}}
+                                        <img class="icon-user" src="{{ asset($userPhoto) }}" alt="" width="100" height="auto">
+                                {{-- @endif --}}
+                            </label>
+                        </div>

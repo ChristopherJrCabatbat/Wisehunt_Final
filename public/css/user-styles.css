@@ -14,7 +14,7 @@
 .input_container_edit {
     border: 1px solid #787878;
     font-family: Arial, Helvetica, sans-serif;
-    border-radius: 1px;
+    border-radius: 5px;
     margin-top: 8px;
     /* width: 255px; */
   }
@@ -54,4 +54,23 @@
     border: 0px;
     border-right: 1px solid #e5e5e5;
     cursor: pointer;
+  }
+
+  .image-container {
+    display: flex;
+    gap: 5px;
+  }
+
+  .change-image {
+    margin-left: 65px;
+  }
+
+  .image-column {
+    display: flex;
+    flex-direction: column;
+  }
+
+  input#fileUpload {
+    max-width: 229px;
+    border-radius: 5px;
   }

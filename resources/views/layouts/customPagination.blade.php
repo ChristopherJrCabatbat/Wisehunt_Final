@@ -1,6 +1,6 @@
    <style>
     .pagination {
-        margin: 2px 6px 7px 0;
+        /* margin: 2px 6px 7px 0; */
         display: flex;
         justify-content: center;
         position: relative;

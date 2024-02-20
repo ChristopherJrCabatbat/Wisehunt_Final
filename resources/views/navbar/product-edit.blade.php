@@ -209,59 +209,16 @@
         <div class="taas">
             <button type="button" id="newButton">Add Product</button>
 
-            {{-- <div class="sort-by">
-                <form id="sortForm" action="#" method="GET">
-                    <input type="hidden" name="sort" id="sortInput" value="{{ request('sort') }}">
-            
-                    <label for="sort">Sort by:</label>
-                    <select name="sort" id="sortSelect" onchange="handleSortChange()">
-                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
-                            Default Sorting --</option>
-                        <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product
-                            Name (A-Z)</option>
-                        <option value="category_asc" {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category
-                        </option>
-                        <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Quantity
-                            in Stock (ascending)</option>
-                        <option value="purchase_price_asc" {{ request('sort') === 'purchase_price_asc' ? 'selected' : '' }}>
-                            Capital (ascending)</option>
-                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>Unit
-                            Price
-                            (ascending)
-                        </option>
-                    </select>
-                </form>
-            </div> --}}
-
             <div class="sort-by">
                 <form id="sortForm" action="#" method="GET">
                     <input type="hidden" name="sort" id="sortInput" value="{{ request('sort') }}">
 
                     <label for="sort">Sort by:</label>
-                    {{-- <select name="sort" id="sortSelect" onchange="handleSortChange()">
-                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
-                            Default Sorting --</option>
-                        <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product
-                            Name (A-Z)</option>
-                        <option value="category_asc" data-toggle="modal" data-target="#categoryModal"
-                            {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category
-                        </option>
-                        <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Stock Quantity (ascending)</option>
-                        <option value="purchase_price_asc" {{ request('sort') === 'purchase_price_asc' ? 'selected' : '' }}>
-                            Capital (ascending)</option>
-                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>Unit
-                            Price
-                            (ascending)
-                        </option>
-                    </select> --}}
                     <select name="sort" id="sortSelect" onchange="handleSortChange()">
-                        <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>-- Default Sorting --</option>
+                        <option value="default_asc" {{ request('sort') === 'default_asc' ? 'selected' : '' }}>-- Default Sorting --</option>
                         <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product Name</option>
                         <option value="category_asc" data-toggle="modal" data-target="#categoryModal"
                             {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category</option>
-                        <option value="quantity_asc" {{ request('sort') === 'quantity_asc' ? 'selected' : '' }}>Stock Quantity</option>
-                        <option value="purchase_price_asc" {{ request('sort') === 'purchase_price_asc' ? 'selected' : '' }}>Capital</option>
-                        <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>Unit Price</option>
                     </select>
                     
                 </form>
@@ -300,9 +257,9 @@
                     <th>Category</th>
                     <th>Image</th>
                     <th>Stock Quantity</th>
-                    <th>Capital</th>
-                    <th>Unit Price</th>
-                    <th>Actions</th>
+                    <th>Purchase Price</th>
+                    <th>Selling Price</th>
+                    <th>Delete</th>
                 </tr>
                 <tbody class="all-data">
                     @if ($products->isEmpty())

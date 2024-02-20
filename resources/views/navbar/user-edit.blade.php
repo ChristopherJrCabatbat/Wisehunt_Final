@@ -47,12 +47,18 @@
                 <input required type="password" name="password_confirmation" id="password_confirmation" />
 
                 <div class="image">
-                    <label for="">Current Image:</label>
-                    <img class="img-edit" src="{{ asset($userss->photo) }}" alt="" width="50px"
-                        height="auto">
-                    <label for="">Change Image:</label>
-                    <div class="input_container_edit">
-                        <input type="file" name="photo" id="fileUpload">
+                    <div class="image-container">
+                        <div class="image-column">
+                            <label for="">Current Image:</label>
+                            <img class="img-edit" src="{{ asset($userss->photo) }}" alt="image" width="50px"
+                                height="auto">
+                        </div>
+                        <div class="image-column">
+                            <label for="" class="change-image">Change Image:</label>
+                            <div class="input_container_edit">
+                                <input type="file" name="photo" id="fileUpload">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -147,7 +153,7 @@
                 @endphp
 
                 <tr>
-                    <th>No.</th>
+                    {{-- <th>No.</th> --}}
                     <th>Name</th>
                     <th>Email</th>
                     {{-- <th>Password</th> --}}
@@ -163,7 +169,7 @@
                     @else
                         @foreach ($users as $user)
                             <tr>
-                                <td>{{ $rowNumber++ }}</td>
+                                {{-- <td>{{ $rowNumber++ }}</td> --}}
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 {{-- <td>{{ Crypt::decryptString($user->password) }}</td> --}}
@@ -173,7 +179,7 @@
                                     <div class="actions-container">
                                         <form action="{{ route('admin.userEdit', $user->id) }}" method="POST">
                                             @csrf
-                                            @method('GET')  
+                                            @method('GET')
                                             <button type="submit" class="edit editButton" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>

@@ -107,9 +107,10 @@
         </li>
         <li>
             <div class="baba-container">
-                <a class="sidebar active" href="{{ route('admin.user') }}">
-                    <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
-                    USER</a>
+                    <a class="sidebar active" href="{{ route('admin.user') }}">
+                        <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
+                        USER</a>
+
             </div>
         </li>
     </ul>
@@ -141,6 +142,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     {{-- <th>Password</th> --}}
+                    <th>Photo</th>
                     <th>Role</th>
                     <th>Actions</th>
                 </tr>
@@ -157,6 +159,10 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 {{-- <td>{{ Crypt::decryptString($user->password) }}</td> --}}
+                                <td>
+                                    <img src="{{ asset($user->photo) }}" alt="{{ $user->name }}" width="auto"
+                                        height="50px" style="background-color: transparent">
+                                </td>
                                 <td>{{ $user->role }}</td>
 
                                 <td class="actions">

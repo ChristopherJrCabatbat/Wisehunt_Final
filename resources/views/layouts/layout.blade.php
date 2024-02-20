@@ -163,23 +163,26 @@
                             <div class="username" style="margin-left: 12px; margin-right: 12px">Staff</div>
                         @endif
 
-                        <!-- Log out -->
-                        <div class="">
-                            <label for="">
-                                @if (auth()->user()->role === 'Admin')
-                                    <img class="icon-user" id="" src="{{ asset('images/icon-user.png') }}"
-                                        alt="" width="100" height="auto">
-                                    {{-- <img class="icon-user" src="{{ asset($usersss->photo) }}" alt="admin-pic"
-                                        width="100" height="auto"> --}}
-                                @endif
-                                @if (auth()->user()->role === 'Staff')
-                                    {{-- <img class="icon-user" id="" src="{{ asset('images/icon-usersss.png') }}"
-                                        alt="" width="100" height="auto"> --}}
-                                    <i class="fa-solid fa-circle-user icon-user-staff" id=""
-                                        style="color: #006181;"></i>
-                                @endif
-                            </label>
+
+                        <!-- User Profile Dropdown -->
+                        <div class="user-photo-dropdown">
+                            <img class="icon-user" src="{{ asset($userPhoto) }}" alt="User Photo" width="100"
+                                height="auto">
+                                
+                        @if (auth()->user()->role === 'Admin')
+                            <div class="dropdown-content">
+                                <a href="{{ route('admin.userEdit', auth()->user()->id) }}">Edit user profile</a>
+                            </div>
+                        @endif
+                        
+                        @if (auth()->user()->role === 'Staff')
+                            <div class="dropdown-content">
+                                <a href="{{ route('staff.userEdit', auth()->user()->id) }}">Edit user profile</a>
+                            </div>
+                        @endif
+
                         </div>
+
 
                     </div>
                 </div>
@@ -215,9 +218,32 @@
     </script>
 
 
+    {{-- Edit Profile --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var userPhoto = document.querySelector('.icon-user');
+            var dropdownContent = document.querySelector('.dropdown-content');
+        
+            // Toggle dropdown display on photo click
+            userPhoto.addEventListener('click', function(event) {
+                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+                event.stopPropagation(); // Prevent click from immediately propagating to document
+            });
+        
+            // Clicking outside the dropdown hides it
+            document.addEventListener('click', function(event) {
+                if (event.target !== userPhoto) {
+                    dropdownContent.style.display = 'none';
+                }
+            });
+        });
+        </script>
+        
+
+
     @yield('script')
 
-    //
+
     <script>
         //    function navigateToProductView(productId) {
         //        showNotificationPanel();
@@ -243,12 +269,12 @@
         //
     </script>
 
-    //
+
     <script>
         //    // Pass lowQuantityNotifications to JavaScript
         //    const lowQuantityNotifications = @json($lowQuantityNotifications);
         //
-    </script> --}}
+    </script>
 
     <script src="{{ asset('js/notification.js') }}"></script>
 

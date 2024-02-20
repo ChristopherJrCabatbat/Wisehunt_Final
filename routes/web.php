@@ -92,6 +92,8 @@ Route::group([
     
     // User Routes
     Route::get('/user', [AdminController::class, 'user'])->name('user');
+    // Route::get('/user/{id}', [AdminController::class, 'user'])->name('user');
+
     Route::post('/userStore', [AdminController::class, 'userStore'])->name('userStore');
     Route::get('/userEdit/{id}', [AdminController::class, 'userEdit'])->name('userEdit');
     Route::put('/userUpdate/{id}', [AdminController::class, 'userUpdate'])->name('userUpdate');
@@ -109,6 +111,9 @@ Route::group([
 
     // Dashboard
     Route::get('/dashboard', [StaffController::class, 'dashboard'])->name('dashboard');
+    Route::get('/userEdit/{id}', [StaffController::class, 'userEdit'])->name('userEdit');
+    Route::put('/userUpdate/{id}', [StaffController::class, 'userUpdate'])->name('userUpdate');
+
     
 
     // Product Routes

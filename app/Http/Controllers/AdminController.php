@@ -14,8 +14,8 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Auth;
 use App\Rules\MatchOldPassword;
 
 use App\Models\Product;
@@ -1515,7 +1515,9 @@ class AdminController extends Controller
 
 
     // User Controllers
-    public function user($id)
+    
+    public function user()
+    // public function user($id)
     {
         $nm = Session::get('name');
 
@@ -1535,11 +1537,11 @@ class AdminController extends Controller
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
         $users = User::paginate(8);
-        $usersss = User::find($id);
+        // $usersss = User::find($id);
 
         return view('navbar.user', [
             'users' => $users,
-            'usersss' => $usersss,
+            // 'usersss' => $usersss,
             'totalNotifications' => $totalNotifications,
             'username' => $nm,
         ] + $notifications);
@@ -1642,6 +1644,12 @@ class AdminController extends Controller
         $users->email = $request->email;
         $users->role = $request->role;
         $users->password = Hash::make($request->password);
+
+        if ($request->hasFile('photo')) {
+            $fileName = time() . $request->file('photo')->getClientOriginalName();
+            $path = $request->file('photo')->storeAs('images', $fileName, 'public');
+            $users->photo = '/storage/' . $path;
+        }
 
         $users->save();
 
