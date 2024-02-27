@@ -278,7 +278,7 @@
         <div class="table" id="search-results">
             <table>
                 <tr>
-                    <th colspan="11" class="table-th">PRODUCT</th>
+                    <th colspan="15" class="table-th">PRODUCT</th>
                 </tr>
                 @php
                     // Calculate the initial row number based on the current page
@@ -291,6 +291,7 @@
                     <th>Product Name</th>
                     <th>Brand Name</th>
                     <th>Product Description</th>
+                    <th>Unit</th>
                     <th>Category</th>
                     <th>Image</th>
                     <th>Stock Quantity</th>
@@ -312,6 +313,7 @@
                                 <td>{{ $product->brand_name }}</td>
                                 <td>{{ $product->description }}</td>
                                 <td>{{ $product->category }}</td>
+                                <td>{{ $product->category }}</td>
                                 <td>
                                     <img src="{{ asset($product->photo) }}" alt="{{ $product->name }}" width="auto"
                                         height="50px" style="background-color: transparent">
@@ -325,9 +327,9 @@
                                             @csrf
                                             @method('GET')
 
-                                            <button type="submit" class="edit" id="edit">
+                                            {{-- <button type="submit" class="edit" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                            </button>
+                                            </button> --}}
                                         </form>
                                         <form action="{{ route('admin.productDestroy', $product->id) }}" method="POST">
                                             @csrf

@@ -311,8 +311,6 @@ img {
     z-index: 1;
 }
 
-
-
 .dropdown input[type="checkbox"] {
     display: none;
 }
@@ -336,6 +334,10 @@ img {
 
 .dropdown-item:hover {
     background-color: #a3a3a3;
+}
+
+i.fa-sign-out {
+    transform: rotate(180deg);
 }
 
 

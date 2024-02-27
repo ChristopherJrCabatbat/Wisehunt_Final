@@ -46,9 +46,9 @@
 
                 <label for="">Pending Status:</label>
                 <select required name="status" id="" class="">
-                    <option disabled selected value="">-- Select Status --</option>
-                    <option value="Delivered" {{ old('status') === 'Delivered' ? 'selected' : '' }}>Delivered</option>
                     <option value="Not Delivered" {{ old('status') === 'Not Delivered' ? 'selected' : '' }}>Not Delivered
+                        <option value="Delivered" {{ old('status') === 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                        {{-- <option disabled selected value="">-- Select Status --</option> --}}
                     </option>
                 </select>
                 @if ($errors->has('status'))
@@ -194,9 +194,9 @@
                     <th>No.</th>
                     <th>Delivery ID</th>
                     <th>Name</th>
-                    <th>Product/s</th>
-                    <th>Quantity</th>
-                    <th>Address</th>
+                    {{-- <th>Product/s</th>
+                    <th>Quantity</th> --}}
+                    {{-- <th>Address</th> --}}
                     <th>Pending Status</th>
                     {{-- <th>Delete</th> --}}
                 </tr>
@@ -212,20 +212,20 @@
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
                                 <td>{{ $delivery->delivery_id }}</td>
-                                <td>{{ $delivery->name }}</td>
+                                <td class="delivery-name">{{ $delivery->name }}</td>
 
                                 {{-- <td>{{ $delivery->product }}</td>
                                 <td>{{ $delivery->quantity }}</td> --}}
 
-                                <td>
-                                    @foreach (json_decode($delivery->product) as $index => $product)
+                                {{-- <td>
+                                    @foreach (json_decode($delivery->product) as $index => $product) --}}
                                         {{-- @foreach ($delivery->product as $index => $product) --}}
-                                        {{ $product }}
+                                        {{-- {{ $product }}
                                         @if (!$loop->last)
                                             ,
                                         @endif
                                     @endforeach
-                                </td>
+                                </td> --}}
 
                                 {{-- <td>
                                     @foreach (json_decode($delivery->quantity) as $index => $quantity)
@@ -236,20 +236,20 @@
                                     @endforeach
                                 </td> --}}
 
-                                <td>
-                                    @foreach (json_decode($delivery->quantity) as $index => $quantity)
+                                {{-- <td>
+                                    @foreach (json_decode($delivery->quantity) as $index => $quantity) --}}
                                         {{-- @foreach ($delivery->quantity as $index => $quantity) --}}
-                                        @if ($quantity !== null)
+                                        {{-- @if ($quantity !== null)
                                             {{ $quantity }}
-                                            @if (!$loop->last && count(json_decode($delivery->quantity)) > 1)
+                                            @if (!$loop->last && count(json_decode($delivery->quantity)) > 1) --}}
                                                 {{-- @if (!$loop->last && count($delivery->quantity) > 1) --}}
-                                                ,
+                                                {{-- ,
                                             @endif
                                         @endif
                                     @endforeach
-                                </td>
+                                </td> --}}
 
-                                <td>{{ $delivery->address }}</td>
+                                {{-- <td>{{ $delivery->address }}</td> --}}
                                 <td class="status">
                                     {{-- {{ $delivery->address }} --}}
                                     {{-- <form action="">

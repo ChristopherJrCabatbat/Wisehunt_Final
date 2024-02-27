@@ -97,7 +97,7 @@
                 </div>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                <select required name="customer_name" class="select customer">
+                <select required name="customer_name" class="select customer report">
                     <option value="" disabled selected>-- Select a Customer --</option>
                     @foreach ($customers as $customer)
                         <option value="{{ $customer->name }}"

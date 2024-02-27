@@ -181,7 +181,7 @@ select {
 
 select.select {
     max-width: 100%;
-    min-width: 104%;
+    /* min-width: 104%; */
 }
 
 
@@ -201,4 +201,8 @@ i.fa-plus, i.edt-taas  {
     font-size: 25px;
     margin-right: 9px;
     margin-top: 3px;
+}
+
+select.report {
+    min-width: 104%;
 }

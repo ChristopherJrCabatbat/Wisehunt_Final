@@ -72,3 +72,11 @@ span.close {
     position: absolute;
     right: 5%;
 }
+
+.delivery-name {
+    color: rgb(0, 0, 241);
+}
+.delivery-name:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
