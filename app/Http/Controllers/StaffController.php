@@ -180,7 +180,7 @@ class StaffController extends Controller
         ];
     }
 
-    
+
 
     // Dashboard Controller
 
@@ -284,7 +284,7 @@ class StaffController extends Controller
 
     public function userEdit(Request $request, $id)
     {
-       
+
         $nm = Session::get('name');
         $acc = Session::get('acc');
 
@@ -752,72 +752,6 @@ class StaffController extends Controller
     }
 
 
-    // public function transactionStore(Request $request)
-        // {
-        //     // Retrieve data from the request
-        //     $productName = $request->input('product_name');
-        //     $selling_price = $request->input('selling_price');
-        //     $qty = $request->input('qty');
-        //     $customerName = $request->input('customer_name');
-
-        //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-        //     $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
-
-        //     if ($product) {
-        //         // Check if there's enough quantity to subtract
-        //         if ($product->quantity >= $qty) {
-        //             // Calculate total price
-        //             $totalPrice = $selling_price * $qty;
-
-        //             // Calculate total earned
-        //             $purchase_price = $product->purchase_price;
-        //             $profit = ($selling_price - $purchase_price) * $qty;
-
-        //             // Create a new Transactions record and save it to the database
-        //             $transaction = new Transaction;
-        //             $transaction->customer_name = $customerName;
-        //             $transaction->product_name = $productName;
-        //             $transaction->qty = $qty;
-        //             $transaction->selling_price = $selling_price;
-        //             $transaction->total_price = $totalPrice;
-        //             $transaction->profit = $profit;
-        //             $transaction->save();
-
-        //             // Update the product quantity by subtracting the sold quantity
-        //             $product->quantity -= $qty;
-        //             $product->save();
-
-        //             // Fetch past transactions for the current day
-        //             $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
-
-        //             // Perform sales forecasting logic based on the past transactions
-        //             $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
-
-        //             // Display alert with forecasted sales
-        //             if ($forecastedSales !== null) {
-        //                 // You can customize the alert message based on your requirements
-        //                 // Here, I'm using the basic alert() function for demonstration purposes
-        //                 // echo "<script>alert('Forecasted Sales for the day: $forecastedSales');</script>";
-        //                 return back()->with('forecastedSales', $forecastedSales);
-
-        //             }
-
-        //             return back();
-        //         } else {
-        //             // Handle the case where the quantity is insufficient
-        //             return redirect()->back()
-        //                 ->withInput()
-        //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
-        //         }
-        //     } else {
-        //         // Keep the form data and repopulate the fields
-        //         return redirect()->back()
-        //             ->withInput()
-        //             ->withErrors(['error' => 'Selected product and unit price did not match.']);
-        //     }
-        // }
-
-
     public function transactionStore(Request $request)
     {
         // Validation rules
@@ -842,78 +776,155 @@ class StaffController extends Controller
         $qty = $request->input('qty');
         $customerName = $request->input('customer_name');
 
-        // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
+        // Retrieve the product's information from the Products table
         $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
 
         if ($product) {
-            // Check if there's enough quantity to subtract
-            if ($product->quantity >= $qty) {
-                // Calculate total price
-                $totalPrice = $selling_price * $qty;
+            // Calculate total price
+            $totalPrice = $selling_price * $qty;
 
-                // Calculate total earned
-                $purchase_price = $product->purchase_price;
-                $profit = ($selling_price - $purchase_price) * $qty;
+            // Calculate total earned
+            $purchase_price = $product->purchase_price;
+            $profit = ($selling_price - $purchase_price) * $qty;
 
-                // Create a new Transactions record and save it to the database
-                $transaction = new Transaction;
-                $transaction->customer_name = $customerName;
-                $transaction->product_name = $productName;
-                $transaction->qty = $qty;
-                $transaction->selling_price = $selling_price;
-                $transaction->total_price = $totalPrice;
-                $transaction->profit = $profit;
-                $transaction->save();
+            // Create a new Transactions record and save it to the database
+            $transaction = new Transaction;
+            $transaction->customer_name = $customerName;
+            $transaction->product_name = $productName;
+            $transaction->qty = $qty;
+            $transaction->transacted_qty += $qty; // Assuming this is intended to increment a total, otherwise just assign $qty
+            $transaction->selling_price = $selling_price;
+            $transaction->total_price = $totalPrice;
+            $transaction->profit = $profit;
+            $transaction->save();
 
-                // Update the product quantity by subtracting the sold quantity
-                $product->quantity -= $qty;
-                $product->save();
+            // Update the product quantity by subtracting the sold quantity, allowing it to go negative
+            $product->quantity -= $qty;
+            $product->save();
 
-                // Fetch past transactions for the current day
-                $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
+            // Additional logic for forecasts, session management, etc.
+            // Assuming these methods (calculateForecastedSales, calculateLastMonthSales, calculateMonthlyForecastedSales) are defined elsewhere in your controller
 
-                // Perform sales forecasting logic based on the past transactions
-                $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
+            // $transactionCount = session('transactionCount', 0) + 1;
+            // session(['transactionCount' => $transactionCount]);
 
-                $transactionCount = session('transactionCount', 0) + 1;
-                session(['transactionCount' => $transactionCount]);
+            // $monthlyTransactionCount = session('monthlyTransactionCount', 0) + 1;
+            // session(['monthlyTransactionCount' => $monthlyTransactionCount]);
 
-                // Increment the monthly transaction count in the session
-                $monthlyTransactionCount = session('monthlyTransactionCount', 0) + 1;
-                session(['monthlyTransactionCount' => $monthlyTransactionCount]);
+            // if ($transactionCount % 2 === 0) {
+            //     // Logic to handle forecasted sales alert
+            // }
 
-                // Display alert with forecasted sales after every five transactions
-                if ($forecastedSales !== null && $transactionCount % 2 === 0) {
-                    $message = "Forecasted Sales for the day: ₱" . number_format($forecastedSales, 2);
-                    session()->flash('forecastedSalesAlert', $message);
-                }
+            // if ($monthlyTransactionCount % 5 === 0) {
+            //     // Logic to handle monthly forecasted sales alert
+            // }
 
-                // Display alert with forecasted sales after every 5 transactions for monthly forecasting
-                if ($forecastedSales !== null && $monthlyTransactionCount % 5 === 0) {
-                    // Fetch all transactions for the current month
-                    $allTransactions = Transaction::whereYear('created_at', now()->year)
-                        ->whereMonth('created_at', now()->month)
-                        ->get();
-
-                    $monthlyForecastedSales = $this->calculateMonthlyForecastedSales($allTransactions);
-                    $monthlyMessage = "Forecasted Sales for the month: ₱" . number_format($monthlyForecastedSales, 2);
-                    session()->flash('monthlyForecastedSalesAlert', $monthlyMessage);
-                }
-
-                return back();
-            } else {
-                // Handle the case where the quantity is insufficient
-                return redirect()->back()
-                    ->withInput()
-                    ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
-            }
+            return back();
         } else {
-            // Keep the form data and repopulate the fields
+            // If product is not found or another error occurs
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['error' => 'Selected product and unit price did not match.']);
         }
     }
+
+
+    // public function transactionStore(Request $request)
+    // {
+    //     // Validation rules
+    //     $rules = [
+    //         'product_name' => 'required|string',
+    //         'selling_price' => 'required|numeric|min:0',
+    //         'qty' => 'required|integer|min:1',
+    //         'customer_name' => 'required|string',
+    //     ];
+
+    //     // Custom error messages
+    //     $messages = [
+    //         'qty.min' => 'The quantity must be at least :min.',
+    //     ];
+
+    //     // Validate the request
+    //     $request->validate($rules, $messages);
+
+    //     // Retrieve data from the request
+    //     $productName = $request->input('product_name');
+    //     $selling_price = $request->input('selling_price');
+    //     $qty = $request->input('qty');
+    //     $customerName = $request->input('customer_name');
+
+    //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
+    //     $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
+
+    //     if ($product) {
+    //         // Check if there's enough quantity to subtract
+    //         if ($product->quantity >= $qty) {
+    //             // Calculate total price
+    //             $totalPrice = $selling_price * $qty;
+
+    //             // Calculate total earned
+    //             $purchase_price = $product->purchase_price;
+    //             $profit = ($selling_price - $purchase_price) * $qty;
+
+    //             // Create a new Transactions record and save it to the database
+    //             $transaction = new Transaction;
+    //             $transaction->customer_name = $customerName;
+    //             $transaction->product_name = $productName;
+    //             $transaction->qty = $qty;
+    //             $transaction->selling_price = $selling_price;
+    //             $transaction->total_price = $totalPrice;
+    //             $transaction->profit = $profit;
+    //             $transaction->save();
+
+    //             // Update the product quantity by subtracting the sold quantity
+    //             $product->quantity -= $qty;
+    //             $product->save();
+
+    //             // Fetch past transactions for the current day
+    //             $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
+
+    //             // Perform sales forecasting logic based on the past transactions
+    //             $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
+
+    //             $transactionCount = session('transactionCount', 0) + 1;
+    //             session(['transactionCount' => $transactionCount]);
+
+    //             // Increment the monthly transaction count in the session
+    //             $monthlyTransactionCount = session('monthlyTransactionCount', 0) + 1;
+    //             session(['monthlyTransactionCount' => $monthlyTransactionCount]);
+
+    //             // Display alert with forecasted sales after every five transactions
+    //             if ($forecastedSales !== null && $transactionCount % 2 === 0) {
+    //                 $message = "Forecasted Sales for the day: ₱" . number_format($forecastedSales, 2);
+    //                 session()->flash('forecastedSalesAlert', $message);
+    //             }
+
+    //             // Display alert with forecasted sales after every 5 transactions for monthly forecasting
+    //             if ($forecastedSales !== null && $monthlyTransactionCount % 5 === 0) {
+    //                 // Fetch all transactions for the current month
+    //                 $allTransactions = Transaction::whereYear('created_at', now()->year)
+    //                     ->whereMonth('created_at', now()->month)
+    //                     ->get();
+
+    //                 $monthlyForecastedSales = $this->calculateMonthlyForecastedSales($allTransactions);
+    //                 $monthlyMessage = "Forecasted Sales for the month: ₱" . number_format($monthlyForecastedSales, 2);
+    //                 session()->flash('monthlyForecastedSalesAlert', $monthlyMessage);
+    //             }
+
+    //             return back();
+    //         } else {
+    //             // Handle the case where the quantity is insufficient
+    //             return redirect()->back()
+    //                 ->withInput()
+    //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
+    //         }
+    //     } else {
+    //         // Keep the form data and repopulate the fields
+    //         return redirect()->back()
+    //             ->withInput()
+    //             ->withErrors(['error' => 'Selected product and unit price did not match.']);
+    //     }
+    // }
 
 
     private function calculateForecastedSales($transactions)
@@ -1144,5 +1155,4 @@ class StaffController extends Controller
         $customers->delete();
         return redirect()->route('staff.customer')->withSuccess('Account deleted successfully!');
     }
-
 }

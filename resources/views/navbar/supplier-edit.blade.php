@@ -22,24 +22,43 @@
                 @method('PUT')
 
                 <center>
-                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-pen-to-square edt-taas"></i>Edit Supplier</h2>
+                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-pen-to-square edt-taas"></i>Edit Supplier
+                    </h2>
                 </center>
                 <label class="modal-top" for="">Company Name:</label>
                 <input required type="text" class="autofocus" name="company_name" id="" autofocus
                     value="{{ old('company_name', $supplierss->company_name) }}" />
+                    @if ($errors->has('company_name'))
+                    <div class="text-danger">{{ $errors->first('company_name') }}</div>
+                @endif
+
                 <label for="">Contact Name:</label>
                 <input required type="text" name="contact_name" id=""
                     value="{{ old('contact_name', $supplierss->contact_name) }}" />
+                    @if ($errors->has('contact_name'))
+                    <div class="text-danger">{{ $errors->first('contact_name') }}</div>
+                @endif
+
                 <label for="">Contact Number:</label>
-                <input required type="text" pattern="{5,15}" title="Enter a valid contact number"
-                    name="contact_num" name="contact_num" id=""
-                    value="{{ old('contact_num', $supplierss->contact_num) }}" />
+                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+                    name="contact_num" id="" value="{{ old('contact_num', $supplierss->contact_num) }}" />
+                    @if ($errors->has('contact_num'))
+                    <div class="text-danger">{{ $errors->first('contact_num') }}</div>
+                @endif
+
                 <label for="">Address:</label>
                 <input required type="text" name="address" id=""
                     value="{{ old('address', $supplierss->address) }}" />
+                    @if ($errors->has('address'))
+                    <div class="text-danger">{{ $errors->first('address') }}</div>
+                @endif
+
                 <label for="">Product/s:</label>
-                <input required type="text" name="product_name" id=""
+                <input required type="text" name="product_name" id="" class="product-supp"
                     value="{{ old('product_name', $supplierss->product_name) }}" />
+
+                <label for="">Quantity:</label>
+                <input type="number" name="quantity" />
 
 
                 <input class="add" type="submit" value="Update" />
@@ -111,8 +130,9 @@
         <div class="taas">
             <div class="buttons-quantity">
                 <button class="add" type="button" id="newButton">Add Supplier</button>
-                <button class="add" type="button" id="newButtonQty">Add Quantity of an Existing Product</button>
+                {{-- <button class="add" type="button" id="newButtonQty">Add Quantity of an Existing Product</button> --}}
             </div>
+
 
 
 
@@ -126,13 +146,12 @@
                             Default Sorting --</option>
                         <option value="company_name_asc" {{ request('sort') === 'company_name_asc' ? 'selected' : '' }}>
                             Company Name</option>
-                        <option value="contact_name_asc"
-                            {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>
+                        <option value="contact_name_asc" {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>
                             Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
-                           Product/s
+                            Product
                         </option>
 
                     </select>
@@ -146,14 +165,14 @@
                     <select name="sort" id="sortSelect">
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>-- Default Sorting
                             --</option>
-                        <option value="supplier_asc" {{ request('sort') === 'supplier_asc' ? 'selected' : '' }}>Company
+                        <option value="company_name_asc" {{ request('sort') === 'company_name_asc' ? 'selected' : '' }}>Company
                             Name</option>
                         <option value="contact_name_asc"
                             {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
-                            Product/s</option>
+                            Product</option>
                     </select>
                 </form>
 

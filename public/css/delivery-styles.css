@@ -3,7 +3,8 @@
 }
 
 .status {
-    padding: 1px;
+    max-width: 5vw;
+    /* padding: 1px; */
 }
 
 #newModal {
@@ -80,3 +81,12 @@ span.close {
     text-decoration: underline;
     cursor: pointer;
 }
+
+.text-danger {
+    color: red;
+    font-size: 14px;
+    /* margin-top: 0; */
+    position: relative;
+    bottom: 8px;
+}
+

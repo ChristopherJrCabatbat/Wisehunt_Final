@@ -17,10 +17,10 @@
     {{-- Add Modal --}}
 
     <form class="modal-form" id="addDeliveryForm" action="{{ route('admin.deliveryStore') }}" method="POST">
+        @csrf
         <div id="newModal" class="modal" style="@if ($errors->any()) display:block; @endif">
             <div class="modal-content-delivery">
                 <span class="close closeModal" onclick="window.closeModal()">&times;</span>
-                @csrf
                 <center>
                     <h2 style="margin: 0%; color:#333; "><i class="fa-regular fa-plus"></i>Add Delivery</h2>
                 </center>
@@ -38,17 +38,35 @@
                     <div class="text-danger">{{ $errors->first('name') }}</div>
                 @endif
 
-                <label class="modal-tops" for="">Address:</label>
+                <label for="">Mode of Payment:</label>
+                <select required name="mode_of_payment" id="" class="">
+                    <option disabled selected value="">-- Select Mode of Payment --</option>
+                    <option value="Cash on Delivery" {{ old('mode_of_payment') === 'Cash on Delivery' ? 'selected' : '' }}>
+                        Cash on Delivery
+                    <option value="Mobile Payment / E-Wallets"
+                        {{ old('mode_of_payment') === 'Mobile Payment / E-Wallets' ? 'selected' : '' }}>Mobile Payment /
+                        E-Wallets</option>
+                    <option value="Credit and Debit Cards"
+                        {{ old('mode_of_payment') === 'Credit and Debit Cards' ? 'selected' : '' }}>Credit and Debit Cards
+                    <option value="Bank Transfers" {{ old('mode_of_payment') === 'Bank Transfers' ? 'selected' : '' }}>Bank
+                        Transfers
+                    </option>
+                </select>
+                @if ($errors->has('mode_of_payment'))
+                    <div class="text-danger">{{ $errors->first('mode_of_payment') }}</div>
+                @endif
+
+                {{-- <label class="modal-tops" for="">Address:</label>
                 <input required type="text" name="address" id="" value="{{ old('address') }}" />
                 @if ($errors->has('address'))
                     <div class="text-danger">{{ $errors->first('address') }}</div>
-                @endif
+                @endif --}}
 
                 <label for="">Pending Status:</label>
                 <select required name="status" id="" class="">
                     <option value="Not Delivered" {{ old('status') === 'Not Delivered' ? 'selected' : '' }}>Not Delivered
-                        <option value="Delivered" {{ old('status') === 'Delivered' ? 'selected' : '' }}>Delivered</option>
-                        {{-- <option disabled selected value="">-- Select Status --</option> --}}
+                    <option value="Delivered" {{ old('status') === 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                    {{-- <option disabled selected value="">-- Select Status --</option> --}}
                     </option>
                 </select>
                 @if ($errors->has('status'))
@@ -62,9 +80,7 @@
         @php
             use App\Models\Transaction;
 
-            $transactedQuantities = Transaction::all()
-                ->pluck('transacted_qty', 'product_name')
-                ->toArray();
+            $transactedQuantities = Transaction::all()->pluck('transacted_qty', 'product_name')->toArray();
         @endphp
 
         {{-- Product Selection Modal --}}
@@ -194,10 +210,11 @@
                     <th>No.</th>
                     <th>Delivery ID</th>
                     <th>Name</th>
+                    <th>Mode of Payement</th>
                     {{-- <th>Product/s</th>
                     <th>Quantity</th> --}}
                     {{-- <th>Address</th> --}}
-                    <th>Pending Status</th>
+                    <th class="status">Pending Status</th>
                     {{-- <th>Delete</th> --}}
                 </tr>
 
@@ -213,14 +230,15 @@
                                 <td>{{ $rowNumber++ }}</td>
                                 <td>{{ $delivery->delivery_id }}</td>
                                 <td class="delivery-name">{{ $delivery->name }}</td>
+                                <td>{{ $delivery->mode_of_payment }}</td>
 
                                 {{-- <td>{{ $delivery->product }}</td>
                                 <td>{{ $delivery->quantity }}</td> --}}
 
                                 {{-- <td>
                                     @foreach (json_decode($delivery->product) as $index => $product) --}}
-                                        {{-- @foreach ($delivery->product as $index => $product) --}}
-                                        {{-- {{ $product }}
+                                {{-- @foreach ($delivery->product as $index => $product) --}}
+                                {{-- {{ $product }}
                                         @if (!$loop->last)
                                             ,
                                         @endif
@@ -238,27 +256,26 @@
 
                                 {{-- <td>
                                     @foreach (json_decode($delivery->quantity) as $index => $quantity) --}}
-                                        {{-- @foreach ($delivery->quantity as $index => $quantity) --}}
-                                        {{-- @if ($quantity !== null)
+                                {{-- @foreach ($delivery->quantity as $index => $quantity) --}}
+                                {{-- @if ($quantity !== null)
                                             {{ $quantity }}
                                             @if (!$loop->last && count(json_decode($delivery->quantity)) > 1) --}}
-                                                {{-- @if (!$loop->last && count($delivery->quantity) > 1) --}}
-                                                {{-- ,
+                                {{-- @if (!$loop->last && count($delivery->quantity) > 1) --}}
+                                {{-- ,
                                             @endif
                                         @endif
                                     @endforeach
                                 </td> --}}
 
-                                {{-- <td>{{ $delivery->address }}</td> --}}
-                                <td class="status">
-                                    {{-- {{ $delivery->address }} --}}
-                                    {{-- <form action="">
-                                        <select required name="status" id="" class="">
-                                            <option value="Delivered" {{ old('status') === 'Delivered' ? 'selected' : '' }}>Delivered</option>
-                                            <option value="Not Delivered" {{ old('status') === 'Not Delivered' ? 'selected' : '' }}>Not Delivered</option>
-                                        </select>
-                                    </form> --}}
+                                {{-- {{ $delivery->address }} --}}
+                                {{-- <form action="">
+                                    <select required name="status" id="" class="">
+                                        <option value="Delivered" {{ old('status') === 'Delivered' ? 'selected' : '' }}>Delivered</option>
+                                        <option value="Not Delivered" {{ old('status') === 'Not Delivered' ? 'selected' : '' }}>Not Delivered</option>
+                                    </select>
+                                </form> --}}
 
+                                <td class="status">
                                     <form id="statusForm">
                                         <select required name="status" id="status" class="status-select"
                                             data-delivery-id="{{ $delivery->id }}">
@@ -272,28 +289,6 @@
                                     </form>
 
                                 </td>
-
-
-                                {{-- <td class="actions">
-                                    <div class="actions-container">
-                                        <form action="{{ route('admin.deliveryEdit', $delivery->id) }}" method="POST">
-                                            @csrf
-                                            @method('GET')  
-                                            <button type="submit" class="edit editButton" id="edit">
-                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                            </button>
-                                        </form>
-
-                                        <form action="{{ route('admin.deliveryDestroy', $delivery->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button onclick="return confirm('Are you sure you want to delete this?')"
-                                                type="submit" class="delete" id="delete">
-                                                <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td> --}}
 
                             </tr>
                         @endforeach
@@ -344,7 +339,7 @@
 
             const deliveryIdInput = document.getElementById('autofocus');
             const nameInput = document.getElementsByName('name')[0];
-            const addressInput = document.getElementsByName('address')[0];
+            const addressInput = document.getElementsByName('mode_of_payment')[0];
             const statusSelect = document.getElementsByName('status')[0];
             const nextButton = document.getElementById('nextButton');
 
@@ -352,7 +347,8 @@
             function checkFormCompleteness() {
                 const isComplete = deliveryIdInput.value.trim() !== '' &&
                     nameInput.value.trim() !== '' &&
-                    addressInput.value.trim() !== '' &&
+                    // addressInput.value.trim() !== '' &&
+                    addressInput.value !== '';
                     statusSelect.value !== '';
 
                 console.log('isComplete:', isComplete); // Log isComplete value
@@ -365,7 +361,8 @@
             // Event listeners for input changes
             deliveryIdInput.addEventListener('input', checkFormCompleteness);
             nameInput.addEventListener('input', checkFormCompleteness);
-            addressInput.addEventListener('input', checkFormCompleteness);
+            // addressInput.addEventListener('input', checkFormCompleteness);
+            addressInput.addEventListener('change', checkFormCompleteness);
             statusSelect.addEventListener('change', checkFormCompleteness);
 
             // Handle Next button click
@@ -471,7 +468,7 @@
                     transactedQuantities[productName]) {
                     alert(
                         `Quantity for ${productName} exceeds transacted quantity. Available: ${transactedQuantities[productName]}`
-                        );
+                    );
                     isQuantityValid = false;
                 }
             });

@@ -187,9 +187,9 @@
                             Total
                             Price
                             (ascending)</option>
-                        <option value="profit_asc" {{ request('sort') === 'profit_asc' ? 'selected' : '' }}>
+                        {{-- <option value="profit_asc" {{ request('sort') === 'profit_asc' ? 'selected' : '' }}>
                             Profit
-                            (descending)</option>
+                            (descending)</option> --}}
                     </select>
                 </form>
             </div>
@@ -221,9 +221,9 @@
                     <th>Customer</th>
                     <th>Product</th>
                     <th>Quantity</th>
-                    <th>Selling Price</th>
+                    <th>Price</th>
                     <th>Total Price</th>
-                    <th>Profit</th>
+                    {{-- <th>Profit</th> --}}
                     <th>Date</th>
                     {{-- <th>Actions</th> --}}
                 </tr>
@@ -248,7 +248,7 @@
                                     <td class="nowrap transcact-td">₱ {{ number_format($transaction->selling_price) }}
                                     </td>
                                     <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_price) }}</td>
-                                    <td class="nowrap transcact-td">₱ {{ number_format($transaction->profit) }}</td>
+                                    {{-- <td class="nowrap transcact-td">₱ {{ number_format($transaction->profit) }}</td> --}}
                                     <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                                     
                                     {{-- <td class="actions">

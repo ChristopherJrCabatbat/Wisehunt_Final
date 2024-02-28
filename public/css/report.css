@@ -26,18 +26,34 @@ table tr th {
     font-weight: bold;
 }
 
-button {
+.button-container {
     float: right;
+}
+
+button.print {
     margin-top: 12px;
     padding: 12px;
     background-color: #157392;
     color: white;
     cursor: pointer;
-    border-radius: 1px;
+    border-radius: 2px;
     border: none;
     transition: all 0.3s;
 }
 
-button:hover {
+button.back {
+    margin-top: 12px;
+    margin-right: 10px;
+    padding: 12px;
+    background-color: #157392;
+    color: white;
+    cursor: pointer;
+    border-radius: 2px;
+    border: none;
+    transition: all 0.3s;
+}
+
+button.print:hover, button.back:hover {
     background-color: #0d495c;
 }
+

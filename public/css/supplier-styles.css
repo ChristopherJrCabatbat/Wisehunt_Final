@@ -1,0 +1,41 @@
+.text-danger {
+    color: red;
+    font-size: 14px;
+    /* margin-top: 0; */
+    position: relative;
+    bottom: 8px;
+}
+
+.product-plus {
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    min-width: 100%;
+    /* gap: 1px; */
+}
+
+input#product-supp {
+    min-width: 87%;
+}
+
+#plusSupplier {
+    /* display: inline-block; */
+    display: flex;
+    text-decoration: none;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    background-color: #006181;
+    color: white;
+    padding: 3px 3px 3px 13px;
+    margin-left: -2px;
+    /* padding-left: 9px; */
+}
+
+#plusSupplier:hover {
+    background-color: #333;
+}
+
+.modal-content {
+    bottom: 160px;
+}

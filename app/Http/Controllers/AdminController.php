@@ -827,19 +827,19 @@ class AdminController extends Controller
             // Additional logic for forecasts, session management, etc.
             // Assuming these methods (calculateForecastedSales, calculateLastMonthSales, calculateMonthlyForecastedSales) are defined elsewhere in your controller
 
-            $transactionCount = session('transactionCount', 0) + 1;
-            session(['transactionCount' => $transactionCount]);
+            // $transactionCount = session('transactionCount', 0) + 1;
+            // session(['transactionCount' => $transactionCount]);
 
-            $monthlyTransactionCount = session('monthlyTransactionCount', 0) + 1;
-            session(['monthlyTransactionCount' => $monthlyTransactionCount]);
+            // $monthlyTransactionCount = session('monthlyTransactionCount', 0) + 1;
+            // session(['monthlyTransactionCount' => $monthlyTransactionCount]);
 
-            if ($transactionCount % 2 === 0) {
-                // Logic to handle forecasted sales alert
-            }
+            // if ($transactionCount % 2 === 0) {
+            //     // Logic to handle forecasted sales alert
+            // }
 
-            if ($monthlyTransactionCount % 5 === 0) {
-                // Logic to handle monthly forecasted sales alert
-            }
+            // if ($monthlyTransactionCount % 5 === 0) {
+            //     // Logic to handle monthly forecasted sales alert
+            // }
 
             return back();
         } else {
@@ -1093,6 +1093,7 @@ class AdminController extends Controller
 
         return view('navbar.report', [
             'transactions' => $transactions,
+            'customerName' => $customerName,
             'fromDate' => Carbon::parse($fromDate),
             'toDate' => Carbon::parse($toDate),
         ]);
@@ -1162,13 +1163,12 @@ class AdminController extends Controller
     public function customerStore(Request $request)
     {
 
-        // $request -> validate([
-        //     "fname"=>"required",
-        //     "mname"=>"required|min:2|max:20",
-        //     "lname"=>"required|min:2|max:30",
-        //     "address"=>"required",
-        //     "contact_num"=>"required|numeric|digits_between:5,11",
-        // ]);
+        $request->validate([
+            "name" => "required",
+            "contact_name" => "required",
+            "contact_num" => "required|digits_between:5,11",
+            "address" => "required",
+        ]);
 
         $customers = new Customer;
         $customers->name = $request->input('name');
@@ -1286,7 +1286,7 @@ class AdminController extends Controller
             "contact_name" => "required|min:1",
             "product_name" => "required",
             "address" => "required",
-            "contact_num" => "required|numeric|digits_between:5,11",
+            "contact_num" => "required|digits_between:5,11",
         ]);
 
         $suppliers = new Supplier;
@@ -1300,6 +1300,34 @@ class AdminController extends Controller
         return back();
     }
 
+    public function supplierStoreProduct(Request $request)
+    {
+        // Your validation and storage logic here
+
+        $request->validate([
+            "company_name" => "required",
+            "contact_name" => "required|min:1",
+            "product_name" => "required",
+            "address" => "required",
+            "contact_num" => "required|digits_between:5,11",
+        ]);
+
+        if ($request->has('keepModalOpen')) {
+            return redirect()->back()->withInput($request->except(['keepModalOpen', 'product_name']))->with('reopenModal', true);
+        }
+
+        $suppliers = new Supplier;
+        $suppliers->company_name = $request->input('company_name');
+        $suppliers->contact_name = $request->input('contact_name');
+        $suppliers->address = $request->input('address');
+        $suppliers->product_name = $request->input('product_name');
+        $suppliers->contact_num = $request->input('contact_num');
+        $suppliers->save();
+        // return redirect()->route('admin.supplier');
+        return back();
+    }
+
+
     public function supplierStoreQty(Request $request)
     {
         $request->validate([
@@ -1308,7 +1336,7 @@ class AdminController extends Controller
             "address" => "required",
             "contact_num" => "required|numeric|digits_between:5,11",
             "product_name" => "required",
-            "quantity" => "required", 
+            "quantity" => "required",
         ]);
 
         // Save supplier information
@@ -1343,7 +1371,21 @@ class AdminController extends Controller
         $suppliers->address = $request->address;
         $suppliers->product_name = $request->product_name;
         $suppliers->contact_num = $request->contact_num;
+        $suppliers->quantity = $request->input('quantity');
         $suppliers->save();
+
+        // Find the matching product by name and update its quantity
+        $product = Product::where('name', $request->input('product_name'))->first();
+        if ($product) {
+            $product->quantity += $request->input('quantity');
+            $product->save();
+        }
+
+        // Optionally, you might want to handle the case where no matching product is found
+        // This could involve logging a warning, creating a new product, or informing the user
+
+        return back();
+        // $suppliers->save();
         return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
         // return back();
     }
@@ -1395,7 +1437,7 @@ class AdminController extends Controller
             'name' => ['required'],
             'product' => ['required'],
             'quantity' => ['required'],
-            'address' => ['required'],
+            'mode_of_payment' => ['required'],
             'status' => ['required'],
         ]);
 
@@ -1423,7 +1465,7 @@ class AdminController extends Controller
         //     }
         // }
 
-        $deliveries->address = $request->input('address');
+        $deliveries->mode_of_payment = $request->input('mode_of_payment');
         $deliveries->status = $request->input('status');
 
         $deliveries->save();
@@ -1515,7 +1557,7 @@ class AdminController extends Controller
 
 
     // User Controllers
-    
+
     public function user()
     // public function user($id)
     {

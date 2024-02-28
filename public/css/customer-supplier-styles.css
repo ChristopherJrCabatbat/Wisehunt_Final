@@ -96,7 +96,8 @@ td {
 .taas {
     display: flex;
     justify-content: flex-start;
-    gap: 12%;
+    gap: 20vw;
+    /* gap: 12%; Kung may Add Quantity of an Existing Product */
     margin-bottom: 20px;
     height: 33px;
 }

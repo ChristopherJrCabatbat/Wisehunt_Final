@@ -14,7 +14,9 @@
     <div class="overlay"></div>
 
     {{-- Add Modal --}}
-    <div id="newModal" class="modal">
+    {{-- <div id="newModal" class="modal"> --}}
+        <div id="newModal" class="modal" style="{{ session('reopenModal') ? 'display:block;' : 'display:none;' }}">
+
         <div class="modal-content">
             <span class="close closeModal">&times;</span>
 
@@ -24,16 +26,44 @@
                     <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Supplier</h2>
                 </center>
                 <label class="modal-tops" for="">Company Name:</label>
-                <input required autofocus type="text" name="company_name" id="autofocus" />
+                <input value="{{ old('company_name') }}" required autofocus type="text" name="company_name"
+                    id="autofocus" />
+                @if ($errors->has('company_name'))
+                    <div class="text-danger">{{ $errors->first('company_name') }}</div>
+                @endif
+
                 <label for="">Contact Name:</label>
-                <input required type="text" name="contact_name" id="" />
+                <input value="{{ old('contact_name') }}" required type="text" name="contact_name" id="" />
+                @if ($errors->has('contact_name'))
+                    <div class="text-danger">{{ $errors->first('contact_name') }}</div>
+                @endif
+
                 <label for="">Contact Number:</label>
-                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
-                    id="" value="">
+                <input value="{{ old('contact_num') }}" required type="text" pattern="{5,15}"
+                    title="Enter a valid contact number" name="contact_num" id="" value="">
+                @if ($errors->has('contact_num'))
+                    <div class="text-danger">{{ $errors->first('contact_num') }}</div>
+                @endif
+
                 <label for="">Address:</label>
-                <input required type="text" name="address" id="" />
-                <label for="">Product:</label>
-                <input required type="text" name="product_name" id="" />
+                <input value="{{ old('address') }}" required type="text" name="address" id="" />
+                @if ($errors->has('address'))
+                    <div class="text-danger">{{ $errors->first('address') }}</div>
+                @endif
+
+                <label for="">Product/s:</label>
+                <div class="product-plus">
+                    <input required type="text" name="product_name"
+                        id="product-supp" />
+                    {{-- <a href="#" id="plusSupplier"><i class="fa-regular fa-plus"></i></a> --}}
+                    {{-- <button type="submit" id="plusSupplier"><i class="fa-regular fa-plus"></i></button> --}}
+                    <button type="button" id="plusSupplier" onclick="submitFormAndReopenModal()"><i
+                            class="fa-regular fa-plus"></i></button>
+                </div>
+                @if ($errors->has('product_name'))
+                    <div class="text-danger">{{ $errors->first('product_name') }}</div>
+                @endif
+
 
 
                 <input class="add" type="submit" value="Add" />
@@ -41,6 +71,7 @@
         </div>
     </div>
 
+    {{-- Add Existing Quantity
     <div id="newModalQty" class="modal">
         <div class="modal-content">
             <span class="close closeModal">&times;</span>
@@ -73,12 +104,11 @@
                 <label for="">Quantity:</label>
                 <input required type="number" name="quantity" />
 
-                {{-- <input required type="text" name="product_name" id="" /> --}}
 
                 <input class="add" type="submit" value="Add" />
             </form>
         </div>
-    </div>
+    </div> --}}
 
 @endsection
 
@@ -144,7 +174,7 @@
         <div class="taas">
             <div class="buttons-quantity">
                 <button class="add" type="button" id="newButton">Add Supplier</button>
-                <button class="add" type="button" id="newButtonQty">Add Quantity of an Existing Product</button>
+                {{-- <button class="add" type="button" id="newButtonQty">Add Quantity of an Existing Product</button> --}}
             </div>
 
 
@@ -223,7 +253,7 @@
                     <th>Contact Name</th>
                     <th>Contact Number</th>
                     <th>Address</th>
-                    <th>Product</th>
+                    <th>Product/s</th>
                     <th>Actions</th>
                 </tr>
 
@@ -332,6 +362,21 @@
                 }
             });
         });
+    </script>
+
+    {{-- Plus product  --}}
+    <script>
+        function submitFormAndReopenModal() {
+            const form = document.querySelector('.modal-form'); // Adjust the selector as needed
+            // Optionally, add a hidden input to indicate the modal should stay open
+            const keepModalOpenInput = document.createElement('input');
+            keepModalOpenInput.type = 'hidden';
+            keepModalOpenInput.name = 'keepModalOpen';
+            keepModalOpenInput.value = '1';
+            form.appendChild(keepModalOpenInput);
+
+            form.submit(); // Submit the form
+        }
     </script>
 
     <script src="{{ asset('js/supplier.js') }}"></script>

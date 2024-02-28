@@ -60,7 +60,7 @@
                 @endif
 
 
-                <label for="selling_price">Selling Price:</label>
+                <label for="selling_price">Price:</label>
                 <input readonly required name="selling_price" id="selling_price" type="number"
                     value="{{ old('selling_price') }}" class="selling_price">
 
@@ -199,7 +199,7 @@
                             Product Name</option>
                         <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity</option>
                         <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>
-                            Selling Price
+                            Price
                         </option>
                         <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
                             Total Price</option>
@@ -242,7 +242,7 @@
                     <th>Customer</th>
                     <th>Product</th>
                     <th>Quantity</th>
-                    <th>Selling Price</th>
+                    <th>Price</th>
                     <th>Total Price</th>
                     <th>Profit</th>
                     <th>Date</th>
@@ -412,7 +412,7 @@
     </script>
     
 
-    <!-- Auto Selling Price Script -->
+    <!-- Auto Price Script -->
     <script>
         function updateUnitPrice(elementId) {
             var productSelect = document.querySelector('#' + elementId + ' .product-select');

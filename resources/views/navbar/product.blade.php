@@ -138,7 +138,7 @@
                 </div>
                 <div class="row4">
                     <label for="">Product Description:</label>
-                    <textarea required name="description" rows="5" placeholder="Eg. size..." cols="5" class=""
+                    <textarea required name="description" rows="3" placeholder="Eg. size..." cols="5" class=""
                         value="{{ old('description') }}">{{ old('description') }}</textarea>
                 </div>
 

@@ -25,16 +25,28 @@
                 </center>
                 
                 <label class="modal-tops" for="">Company Name:</label>
-                <input required autofocus type="text" name="name" id="autofocus" />
+                <input required autofocus type="text" name="name" value="{{ old('name') }}" id="autofocus" />
+                 @if ($errors->has('name'))
+                    <div class="text-danger">{{ $errors->first('name') }}</div>
+                @endif
 
                 <label for="">Contact Name:</label>
-                <input required type="text" name="contact_name" id="" />
+                <input required type="text" name="contact_name" value="{{ old('contact_name') }}" id="" />
+                 @if ($errors->has('contact_name'))
+                    <div class="text-danger">{{ $errors->first('contact_name') }}</div>
+                @endif
 
                 <label for="">Contact Number:</label>
-                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num" id="" value="">
+                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num" value="{{ old('contact_num') }}" id="">
+                 @if ($errors->has('contact_num'))
+                    <div class="text-danger">{{ $errors->first('contact_num') }}</div>
+                @endif
 
                 <label for="">Address:</label>
-                <input required type="text" name="address" id="" />
+                <input required type="text" name="address" value="{{ old('address') }}" id="" />
+                 @if ($errors->has('address'))
+                    <div class="text-danger">{{ $errors->first('address') }}</div>
+                @endif
 
                 <input class="add" type="submit" value="Add" />
             </form>

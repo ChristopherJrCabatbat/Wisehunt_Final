@@ -22,7 +22,8 @@ return new class extends Migration
             $table->text('product'); // Change the data type to TEXT
             $table->text('quantity'); // Change the data type to TEXT
 
-            $table->string('address');
+            $table->string('mode_of_payment');
+            // $table->string('address');
             $table->string('status');
             $table->timestamps();
         });

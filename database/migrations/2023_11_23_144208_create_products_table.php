@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('brand_name');
             $table->string('description');
+            $table->string('unit');
             $table->string('category');
             $table->string('photo')->nullable();
             $table->integer('quantity');

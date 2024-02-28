@@ -13,31 +13,33 @@
     {{-- <center>
         <h2>Transactions between {{ $fromDate->format('M. d, Y') }} and {{ $toDate->format('M. d, Y') }}</h2>
     </center> --}}
+
     <center>
         <h2>Transactions between {{ $fromDate->format('M. d, Y') }} and {{ $toDate->format('M. d, Y') }}
-            for {{ $transactions->isEmpty() ? '' : $transactions[0]->customer_name }}</h2>
+            for {{ $customerName }}</h2>
     </center>
     <center>
         <table>
+            <tr>
+                <th colspan="13" class="table-th">TRANSACTIONS</th>
+            </tr>
             @php
                 $rowNumber = 1;
             @endphp
-            <tr>
-                {{-- <th colspan="13" class="table-th">Transactions between {{ $fromDate->format('M. d, Y') }} and
-                    {{ $toDate->format('M. d, Y') }}</th> --}}
-                <th colspan="13" class="table-th">TRANSACTIONS</th>
-            </tr>
+
             <tr>
                 <th>No.</th>
                 <th>Customer</th>
-                <th>Product Sold</th>
+                <th>Product</th>
                 <th>Quantity</th>
-                <th>Unit Price</th>
+                <th>Price</th>
                 <th>Total Price</th>
-                <th>Total Earn</th>
+                {{-- <th>Profit</th> --}}
                 <th>Date</th>
+                {{-- <th>Actions</th> --}}
             </tr>
-            <tbody>
+
+            <tbody class="all-data">
                 @if ($transactions->isEmpty())
                     <tr>
                         <td colspan="11">No transactions were made on the chosen date.</td>
@@ -45,22 +47,55 @@
                 @else
                     @foreach ($transactions as $transaction)
                         <tr>
-                            <td>{{ $rowNumber++ }}</td>
-                            <td>{{ $transaction->customer_name }}</td>
-                            <td>{{ $transaction->product_name }}</td>
-                            <td>{{ $transaction->qty }}</td>
-                            <td class="nowrap">₱ {{ number_format($transaction->selling_price) }}</td>
-                            <td class="nowrap">₱ {{ number_format($transaction->total_price) }}</td>
-                            <td class="nowrap">₱ {{ number_format($transaction->profit) }}</td>
-                            <td>{{ $transaction->created_at->format('M. d, Y') }}</td>
+                            <td class="transcact-td">{{ $rowNumber++ }}</td>
+                            <td class="transcact-td">{{ $transaction->customer_name }}</td>
+                            <td class="transcact-td">{{ $transaction->product_name }}</td>
+                            <td class="transcact-td">{{ $transaction->qty }}</td>
+                            <td class="nowrap transcact-td">₱ {{ number_format($transaction->selling_price) }}</td>
+                            <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_price) }}</td>
+                            {{-- <td class="nowrap transcact-td">₱ {{ number_format($transaction->profit) }}</td> --}}
+                            <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
+                            {{-- <td class="actions">
+                                <div class="actions-container">
+                                    <form action="{{ route('admin.transactionEdit', $transaction->id) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('GET')
+                                        <button type="submit" class="edit" id="edit">
+                                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('admin.transactionDestroy', $transaction->id) }}"
+                                        method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button onclick="return confirm('Are you sure you want to delete this?')"
+                                            type="submit" class="delete" id="delete">
+                                            <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td> --}}
                         </tr>
                     @endforeach
+                @endif
             </tbody>
-            @endif
-        </table>
-    </center>
-    <button onclick="window.print()">Print Report</button>
+            <tbody id="content" class="search-data"></tbody>
 
+        </table>
+
+    </center>
+
+    <div class="button-container">
+        <button type="button" class="back" onclick="closeTab()">Go back</button>
+        <button class="print" onclick="window.print()">Print Report</button>
+    </div>
+
+    <script>
+        function closeTab() {
+            window.close();
+        }
+    </script>
 
 </body>
 
