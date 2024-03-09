@@ -5,6 +5,12 @@
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/product-transaction-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/customer-supplier-styles.css') }}">
+
+    <style>
+        .delivery-i {
+            top: 259px;
+        }
+    </style>
 @endsection
 
 @section('modals')
@@ -22,7 +28,7 @@
                 <center>
                     <h2 style="margin: 0%; color:#333;">Add Customer</h2>
                 </center>
-                
+
                 <label class="modal-top" for="">Company Name:</label>
                 <input required autofocus type="text" name="name" id="autofocus" />
 
@@ -30,7 +36,8 @@
                 <input required type="text" name="contact_name" id="" />
 
                 <label for="">Contact Number:</label>
-                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num" id="" value="">
+                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
+                    id="" value="">
 
                 <label for="">Address:</label>
                 <input required type="text" name="address" id="" />
@@ -72,6 +79,13 @@
                 <a class="sidebar active" href="{{ route('staff.customer') }}">
                     <img src="{{ asset('images/customer.png') }}" class="staff-customer-i" alt="">
                     CUSTOMER</a>
+            </div>
+        </li>
+        <li>
+            <div class="baba-container">
+                <a class="sidebar" href="{{ route('staff.delivery') }}">
+                    <img src="{{ asset('images/delivery.png') }}" class="delivery-i" alt="">
+                    DELIVERY</a>
             </div>
         </li>
     </ul>
@@ -123,13 +137,12 @@
                                     <div class="actions-container">
                                         <form action="{{ route('staff.customerEdit', $customer->id) }}" method="POST">
                                             @csrf
-                                            @method('GET')                                            
+                                            @method('GET')
                                             <button type="submit" class="edit editButton" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>
-                                        <form action="{{ route('staff.customerDestroy', $customer->id) }}"
-                                            method="POST">
+                                        <form action="{{ route('staff.customerDestroy', $customer->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <button onclick="return confirm('Are you sure you want to delete this?')"
@@ -156,7 +169,11 @@
 @endsection
 
 @section('footer')
-
+    @if (session('success'))
+        <script>
+            alert('{{ session('success') }}');
+        </script>
+    @endif
 @endsection
 
 @section('script')

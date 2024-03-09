@@ -23,28 +23,30 @@
                 <center>
                     <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Customer</h2>
                 </center>
-                
+
                 <label class="modal-tops" for="">Company Name:</label>
                 <input required autofocus type="text" name="name" value="{{ old('name') }}" id="autofocus" />
-                 @if ($errors->has('name'))
+                @if ($errors->has('name'))
                     <div class="text-danger">{{ $errors->first('name') }}</div>
                 @endif
 
                 <label for="">Contact Name:</label>
                 <input required type="text" name="contact_name" value="{{ old('contact_name') }}" id="" />
-                 @if ($errors->has('contact_name'))
+                @if ($errors->has('contact_name'))
                     <div class="text-danger">{{ $errors->first('contact_name') }}</div>
                 @endif
 
                 <label for="">Contact Number:</label>
-                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num" value="{{ old('contact_num') }}" id="">
-                 @if ($errors->has('contact_num'))
+                <input required type="tel" pattern="^\+?\d{4,14}$" title="Enter a valid contact number"
+                    name="contact_num" value="{{ old('contact_num') }}" id="">
+
+                @if ($errors->has('contact_num'))
                     <div class="text-danger">{{ $errors->first('contact_num') }}</div>
                 @endif
 
                 <label for="">Address:</label>
                 <input required type="text" name="address" value="{{ old('address') }}" id="" />
-                 @if ($errors->has('address'))
+                @if ($errors->has('address'))
                     <div class="text-danger">{{ $errors->first('address') }}</div>
                 @endif
 
@@ -158,7 +160,7 @@
                                     <div class="actions-container">
                                         <form action="{{ route('admin.customerEdit', $customer->id) }}" method="POST">
                                             @csrf
-                                            @method('GET')                                            
+                                            @method('GET')
                                             <button type="submit" class="edit editButton" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
@@ -191,7 +193,16 @@
 @endsection
 
 @section('footer')
-
+    @if (session('success'))
+        <script>
+            alert('{{ session('success') }}');
+        </script>
+    @endif
+    @if (session('message'))
+        <script>
+            alert('{{ session('message') }}');
+        </script>
+    @endif
 @endsection
 
 @section('script')

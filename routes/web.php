@@ -83,6 +83,7 @@ Route::group([
 
     // Delivery Routes
     Route::get('/delivery', [AdminController::class, 'delivery'])->name('delivery');
+    Route::get('/delivery/details/{id}', [AdminController::class, 'getDeliveryDetails'])->name('getDeliveryDetails');
     Route::post('/deliveryStore', [AdminController::class, 'deliveryStore'])->name('deliveryStore');
     Route::delete('/deliveryDestroy/{id}', [AdminController::class, 'deliveryDestroy'])->name('deliveryDestroy');
     Route::post('/deliveryUpdate', [AdminController::class, 'deliveryUpdate'])->name('deliveryUpdate');
@@ -142,6 +143,14 @@ Route::group([
     Route::put('/customerUpdate/{id}', [StaffController::class, 'customerUpdate'])->name('customerUpdate');
     Route::delete('/customerDestroy/{id}', [StaffController::class, 'customerDestroy'])->name('customerDestroy');
     Route::get('/customerSearch', [StaffLiveSearchController::class, 'customerSearch'])->name('customerSearch');
+
+
+    // Delivery Routes
+    Route::get('/delivery', [StaffController::class, 'delivery'])->name('delivery');
+    Route::get('/delivery/details/{id}', [StaffController::class, 'getDeliveryDetails'])->name('getDeliveryDetails');
+    Route::post('/deliveryStore', [StaffController::class, 'deliveryStore'])->name('deliveryStore');
+    Route::delete('/deliveryDestroy/{id}', [StaffController::class, 'deliveryDestroy'])->name('deliveryDestroy');
+    Route::post('/deliveryUpdate', [StaffController::class, 'deliveryUpdate'])->name('deliveryUpdate');
 
 });
 

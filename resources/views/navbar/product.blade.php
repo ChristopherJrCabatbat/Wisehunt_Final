@@ -5,10 +5,10 @@
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/product-transaction-styles.css') }}">
     <!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-<!-- Bootstrap JS (Popper.js included) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+    <!-- Bootstrap JS (Popper.js included) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
 
 @endsection
 
@@ -56,7 +56,7 @@
                         <input required type="text" name="brand_name" id="" value="{{ old('brand_name') }}"
                             class="row1-input" />
                     </div>
-                    
+
                     {{-- <div class="column">
                         <label for="">Stock Quantity:</label>
                         <input required type="number" name="quantity" id="" value="{{ old('quantity') }}"
@@ -77,20 +77,40 @@
                         @if ($errors->has('quantity'))
                             <div class="text-danger">{{ $errors->first('quantity') }}</div>
                         @endif
-                    </div>                 
+                    </div>
+
+                    <div class="column">
+                        <label for="">Unit:</label>
+                        <select required name="unit" id="" class="row1-input unit">
+                            <option value="" disabled selected>Select Unit</option>
+                            <option value="Per item" {{ old('unit') === 'Per item' ? 'selected' : '' }}>Per item
+                            </option>
+                            <option value="Per box" {{ old('unit') === 'Per box' ? 'selected' : '' }}>Per box
+                            </option>
+                            <option value="Per case" {{ old('unit') === 'Per case' ? 'selected' : '' }}>Per case
+                            </option>
+                            <option value="Per pack" {{ old('unit') === 'Per pack' ? 'selected' : '' }}>Per pack
+                            </option>
+                            <option value="Per set" {{ old('unit') === 'Per set' ? 'selected' : '' }}>
+                                Per set</option>
+                        </select>
+                        @if ($errors->has('unit'))
+                            <div class="text-danger">{{ $errors->first('unit') }}</div>
+                        @endif
+                    </div>
 
                     <div class="column">
                         <label for="">Purchase Price:</label>
-                        <input required type="number" name="purchase_price" id="" value="{{ old('purchase_price') }}"
-                            class="row2-input" />
+                        <input required type="number" name="purchase_price" id=""
+                            value="{{ old('purchase_price') }}" class="row2-input" />
                         @if ($errors->has('purchase_price'))
                             <div class="text-danger">{{ $errors->first('purchase_price') }}</div>
                         @endif
                     </div>
                     <div class="column">
                         <label for="">Selling Price:</label>
-                        <input required type="number" name="selling_price" id="" value="{{ old('selling_price') }}"
-                            class="row2-input" />
+                        <input required type="number" name="selling_price" id=""
+                            value="{{ old('selling_price') }}" class="row2-input" />
                         @if ($errors->has('selling_price'))
                             <div class="text-danger">{{ $errors->first('selling_price') }}</div>
                         @endif
@@ -156,26 +176,26 @@
     {{-- Category Modal --}}
     <div id="categoryModal" class="categoryModal">
         <div class="modal-content-category">
-                <form id="categoryForm">
-                    <h3>Choose Category</h3>
+            <form id="categoryForm">
+                <h3>Choose Category</h3>
 
-                    <div>
-                        <label for="category">Categories:</label>
-                        <select required name="category" id="category" class="form-control">
-                            <option value="Paper">Paper</option>
-                            <option value="Tape">Tape</option>
-                            <option value="Plastic">Plastic</option>
-                            <option value="Gloves">Gloves</option>
-                            <option value="Machine">Machine</option>
-                            <option value="Food Material">Food Material</option>
-                        </select>
-                    </div>
+                <div>
+                    <label for="category">Categories:</label>
+                    <select required name="category" id="category" class="form-control">
+                        <option value="Paper">Paper</option>
+                        <option value="Tape">Tape</option>
+                        <option value="Plastic">Plastic</option>
+                        <option value="Gloves">Gloves</option>
+                        <option value="Machine">Machine</option>
+                        <option value="Food Material">Food Material</option>
+                    </select>
+                </div>
 
-                    <div class="categ-baba">
-                        <button type="button" class="btn btn-primary" onclick="applyCategoryFilter()">Apply</button>
-                        <a href="{{ route('admin.product') }}" class="anchor-categ">Close</a>
-                    </div>
-                </form>
+                <div class="categ-baba">
+                    <button type="button" class="btn btn-primary" onclick="applyCategoryFilter()">Apply</button>
+                    <a href="{{ route('admin.product') }}" class="anchor-categ">Close</a>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -252,12 +272,15 @@
 
                     <label for="sort">Sort by:</label>
                     <select name="sort" id="sortSelect" onchange="handleSortChange()">
-                        <option value="default_asc" {{ request('sort') === 'default_asc' ? 'selected' : '' }}>-- Default Sorting --</option>
-                        <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product Name</option>
+                        <option selected value="">-- Click to sort --</option>
+                        <option value="default_asc" {{ request('sort') === 'default_asc' ? 'selected' : '' }}>Default
+                            Sorting</option>
+                        <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product Name
+                        </option>
                         <option value="category_asc" data-toggle="modal" data-target="#categoryModal"
                             {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category</option>
                     </select>
-                    
+
                 </form>
             </div>
 
@@ -302,7 +325,7 @@
                 <tbody class="all-data">
                     @if ($products->isEmpty())
                         <tr>
-                            <td colspan="11">No data found.</td>
+                            <td colspan="20">No data found.</td>
                         </tr>
                     @else
                         @foreach ($products as $product)
@@ -312,7 +335,7 @@
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->brand_name }}</td>
                                 <td>{{ $product->description }}</td>
-                                <td>{{ $product->category }}</td>
+                                <td>{{ $product->unit }}</td>
                                 <td>{{ $product->category }}</td>
                                 <td>
                                     <img src="{{ asset($product->photo) }}" alt="{{ $product->name }}" width="auto"
@@ -355,7 +378,11 @@
 @endsection
 
 @section('footer')
-
+    @if (session('success'))
+        <script>
+            alert('{{ session('success') }}');
+        </script>
+    @endif
 @endsection
 
 @section('script')
@@ -388,7 +415,7 @@
                     console.log(data);
                     if (data.trim() === "") {
                         contentContainer.html(
-                            '<tr><td colspan="11" class="id">No Result Found</td></tr>');
+                            '<tr><td colspan="20" class="id">No Result Found</td></tr>');
                     } else {
                         contentContainer.html(data);
                     }
@@ -411,9 +438,9 @@
     <script>
         function handleSortChange() {
             console.log('handleSortChange called');
-    
+
             var selectedSort = document.getElementById('sortSelect').value;
-    
+
             // Check if the selected sort is 'category_asc'
             if (selectedSort === 'category_asc') {
                 // Use jQuery to show the modal
@@ -440,12 +467,12 @@
         function applyCategoryFilter() {
             var selectedCategory = document.getElementById('category').value;
             var url = '/admin/products/filter/' + encodeURIComponent(selectedCategory);
-    
+
             // Redirect to the filtered products route
             window.location.href = url;
         }
     </script>
-    
+
 
 
 @endsection

@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="{{ asset('css/customer-supplier-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/user-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/delivery-styles.css') }}">
+
+    <style>
+        .delivery-i {
+            top: 258px;
+        }
+    </style>
 @endsection
 
 @section('modals')
@@ -16,7 +22,7 @@
 
     {{-- Add Modal --}}
 
-    <form class="modal-form" id="addDeliveryForm" action="{{ route('admin.deliveryStore') }}" method="POST">
+    <form class="modal-form" id="addDeliveryForm" action="{{ route('staff.deliveryStore') }}" method="POST">
         @csrf
         <div id="newModal" class="modal" style="@if ($errors->any()) display:block; @endif">
             <div class="modal-content-delivery">
@@ -127,33 +133,6 @@
     </form>
 
     <!-- Delivery Modal -->
-    {{-- <div id="deliveryModal" class="modal">
-        <div class="modal-content-delivery-name">
-            <span class="closes">&times;</span>
-            <h2>Delivery Details</h2>
-            <table id="modalTable">
-                @foreach ($deliveries as $delivery)
-                    <tr>
-                        <th colspan="2">Delivery ID: {{ $delivery->delivery_id }}</th>
-                    </tr>
-                    <tr>
-                        <th colspan="2">Customer: {{ $delivery->name }}</th>
-                    </tr>
-                    <tr>
-                        <th>Product</th>
-                        <th>Quantity</th>
-                    </tr>
-                    <tr>
-                        <td>{{ $delivery->product }}</td>
-                        <td>{{ $delivery->quantity }}</td>
-                    </tr>
-                @endforeach
-
-            </table>
-        </div>
-    </div> --}}
-
-    <!-- Delivery Modal -->
     <div id="deliveryModal" class="modal">
         <div class="modal-content-delivery-name">
             <span class="closes">&times;</span>
@@ -175,51 +154,30 @@
     <ul>
         <li>
             <div class="dashboard-container">
-                <a class="sidebar top" href="{{ route('admin.dashboard') }}">
+                <a class="sidebar top" href="{{ route('staff.dashboard') }}">
                     <img class="icons-taas" src="{{ asset('images/dashboard-xxl.png') }}" alt="">
                     DASHBOARD</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <a class="sidebar" href="{{ route('admin.product') }}">
-                    <img src="{{ asset('images/product-xxl.png') }}" class="product-i" alt="">
-                    PRODUCT</a>
-            </div>
-        </li>
-        <li>
-            <div class="baba-container">
-                <a class="sidebar" href="{{ route('admin.transaction') }}">
-                    <img src="{{ asset('images/transaction.png') }}" class="transaction-i" alt="">
+                <a class="sidebar" href="{{ route('staff.transaction') }}">
+                    <img src="{{ asset('images/transaction.png') }}" class="staff-transaction-i" alt="">
                     TRANSACTION</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <a class="sidebar" href="{{ route('admin.customer') }}">
-                    <img src="{{ asset('images/customer.png') }}" class="customer-i" alt="">
+                <a class="sidebar" href="{{ route('staff.customer') }}">
+                    <img src="{{ asset('images/customer.png') }}" class="staff-customer-i" alt="">
                     CUSTOMER</a>
             </div>
         </li>
         <li>
             <div class="baba-container">
-                <a class="sidebar" href="{{ route('admin.supplier') }}">
-                    <img src="{{ asset('images/supplier.png') }}" class="supplier-i" alt="">
-                    SUPPLIER</a>
-            </div>
-        </li>
-        <li>
-            <div class="baba-container">
-                <a class="sidebar active" href="{{ route('admin.delivery') }}">
+                <a class="sidebar active" href="{{ route('staff.delivery') }}">
                     <img src="{{ asset('images/delivery.png') }}" class="delivery-i" alt="">
                     DELIVERY</a>
-            </div>
-        </li>
-        <li>
-            <div class="baba-container">
-                <a class="sidebar" href="{{ route('admin.user') }}">
-                    <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
-                    USER</a>
             </div>
         </li>
     </ul>
@@ -348,9 +306,9 @@
 @endsection
 
 @section('footer')
-    @if (session('message'))
+    @if (session('success'))
         <script>
-            alert('{{ session('message') }}');
+            alert('{{ session('success') }}');
         </script>
     @endif
 @endsection
@@ -445,7 +403,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: '{{ route('admin.deliveryUpdate') }}', // Replace with your actual route
+                    url: '{{ route('staff.deliveryUpdate') }}', // Replace with your actual route
                     data: {
                         '_token': '{{ csrf_token() }}',
                         'delivery_id': deliveryId,
@@ -589,7 +547,7 @@
                     ); // Ensure each delivery name element has a data-delivery-id attribute
                     console.log(`Delivery name clicked: ${deliveryId}`);
 
-                    fetch(`/admin/delivery/details/${deliveryId}`)
+                    fetch(`/staff/delivery/details/${deliveryId}`)
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error(`HTTP error! status: ${response.status}`);

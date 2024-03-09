@@ -18,6 +18,7 @@ use App\Models\Customer;
 use App\Models\Transaction;
 use App\Models\Supplier;
 use App\Models\User;
+use App\Models\Delivery;
 use App\Models\UserAccount;
 
 use App\Notifications\SMSNotification;
@@ -693,6 +694,10 @@ class StaffController extends Controller
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
+        // Filter transactions by today's date
+        $today = Carbon::today();
+        $query->whereDate('created_at', $today);
+
         $products = Product::all();
         $customers = Customer::all();
         $searchQuery = $request->input('search');
@@ -819,7 +824,8 @@ class StaffController extends Controller
             //     // Logic to handle monthly forecasted sales alert
             // }
 
-            return back();
+            // return back();
+            return back()->with('success', 'Transaction recorded successfully.');
         } else {
             // If product is not found or another error occurs
             return redirect()->back()
@@ -1132,7 +1138,7 @@ class StaffController extends Controller
         $customers->contact_num = $request->input('contact_num');
         // $customers->item_sold = $request->input('item_sold');
         $customers->save();
-        return redirect()->route('staff.customer')->with("message", "Customer added successfully!");
+        return redirect()->route('staff.customer')->with("success", "Customer added successfully!");
     }
 
 
@@ -1146,13 +1152,119 @@ class StaffController extends Controller
         $customers->contact_num = $request->contact_num;
         // $customers->item_sold = $request->item_sold;
         $customers->save();
-        return redirect()->route('staff.customer')->with("message", "Customer updated successfully!");
+        return redirect()->route('staff.customer')->with("success", "Customer updated successfully!");
     }
 
     public function customerDestroy(string $id)
     {
         $customers = Customer::findOrFail($id);
         $customers->delete();
-        return redirect()->route('staff.customer')->withSuccess('Account deleted successfully!');
+        return redirect()->route('staff.customer');
+    }
+
+
+
+
+    // Delivery Controllers
+    public function delivery()
+    {
+        $nm = Session::get('name');
+
+        // Assuming you retrieve $productsss and $forecasts here or from another method
+        $productsss = Product::all();
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Call the method to generate notifications
+        $notifications = $this->generateNotifications($productsss, $forecasts);
+
+        // Extract total counts from the generated notifications
+        $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+        $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+        $totalForecastMessages = $notifications['totalForecastMessages'];
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+        $products = Product::all();
+        $deliveries = Delivery::paginate(6);
+
+
+        return view('staff-navbar.delivery', [
+            'deliveries' => $deliveries,
+            'products' => $products,
+            'totalNotifications' => $totalNotifications,
+            'username' => $nm,
+        ] + $notifications);
+    }
+
+    public function getDeliveryDetails($id)
+    {
+        $delivery = Delivery::find($id);
+        if (!$delivery) {
+            return response()->json(['error' => 'Delivery not found'], 404);
+        }
+        return response()->json($delivery);
+    }
+
+
+    public function deliveryStore(Request $request)
+    {
+        $request->validate([
+            'delivery_id' => ['required', 'unique:' . Delivery::class],
+            'name' => ['required'],
+            'product' => ['required'],
+            'quantity' => ['required'],
+            'mode_of_payment' => ['required'],
+            'status' => ['required'],
+        ]);
+
+        $deliveries = new Delivery;
+        $deliveries->delivery_id = $request->input('delivery_id');
+        $deliveries->name = $request->input('name');
+
+        // Remove null values from the quantity array
+        $filteredQuantity = array_filter($request->input('quantity'), function ($value) {
+            return $value !== null;
+        });
+
+        $deliveries->product = json_encode($request->input('product'));
+        $deliveries->quantity = json_encode($filteredQuantity);
+
+        // $productList = json_decode($request->input('product'));
+        // $quantityList = json_decode($request->input('quantity'));
+
+        // foreach ($productList as $index => $productName) {
+        //     $transactedQty = Transaction::where('product_name', $productName)->sum('transacted_qty');
+
+        //     if ($quantityList[$index] > $transactedQty) {
+        //         return redirect()->back()
+        //             ->withErrors(['error_delivery' => "Delivery quantity for product '$productName' exceeds transacted quantity. Transacted quantity: $transactedQty"]);
+        //     }
+        // }
+
+        $deliveries->mode_of_payment = $request->input('mode_of_payment');
+        $deliveries->status = $request->input('status');
+
+        $deliveries->save();
+
+        return back()->with('success', 'Delivery added successfully.');
+    }
+
+    public function deliveryUpdate(Request $request)
+    {
+        // Validate the request if needed
+
+        $delivery = Delivery::findOrFail($request->input('delivery_id'));
+        $delivery->status = $request->input('status');
+        $delivery->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function deliveryDestroy(string $id)
+    {
+        $deliveries = Delivery::findOrFail($id);
+        $deliveries->delete();
+        return back();
     }
 }

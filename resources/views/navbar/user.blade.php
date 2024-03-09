@@ -107,9 +107,9 @@
         </li>
         <li>
             <div class="baba-container">
-                    <a class="sidebar active" href="{{ route('admin.user') }}">
-                        <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
-                        USER</a>
+                <a class="sidebar active" href="{{ route('admin.user') }}">
+                    <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
+                    USER</a>
 
             </div>
         </li>
@@ -200,7 +200,11 @@
 @endsection
 
 @section('footer')
-
+    @if (session('success'))
+        <script>
+            alert('{{ session('success') }}');
+        </script>
+    @endif
 @endsection
 
 @section('script')

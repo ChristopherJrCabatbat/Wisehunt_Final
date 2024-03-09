@@ -490,6 +490,7 @@ class AdminController extends Controller
             'name' => 'required|unique:products,name,NULL,id',
             'brand_name' => 'required',
             'description' => 'required',
+            'unit' => 'required',
             'category' => 'required',
             'quantity' => 'required|numeric|min:1',
             'low_quantity_threshold' => 'required|numeric|min:1',
@@ -508,6 +509,7 @@ class AdminController extends Controller
         $products->name = $request->input('name');
         $products->brand_name = $request->input('brand_name');
         $products->description = $request->input('description');
+        $products->unit = $request->input('unit');
         $products->category = $request->input('category');
         $products->quantity = $request->input('quantity');
         $products->low_quantity_threshold = $request->input('low_quantity_threshold');
@@ -521,7 +523,7 @@ class AdminController extends Controller
         }
 
         $products->save();
-        return redirect()->route('admin.product')->with('success', 'Product created successfully.');
+        return redirect()->route('admin.product')->with('success', 'Product added successfully.');
     }
 
     public function productEdit(Request $request, $id)
@@ -566,6 +568,7 @@ class AdminController extends Controller
             'name' => 'required|unique:products,name,' . $id . ',id',
             'brand_name' => 'required',
             'description' => 'required',
+            'unit' => 'required',
             'category' => 'required',
             'quantity' => 'required|numeric|min:1',
             'low_quantity_threshold' => 'required|numeric|min:1',
@@ -589,6 +592,7 @@ class AdminController extends Controller
         $product->name = $request->name;
         $product->brand_name = $request->brand_name;
         $product->description = $request->description;
+        $product->unit = $request->unit;
         $product->category = $request->category;
         $product->quantity = $request->quantity;
         $product->low_quantity_threshold = $request->low_quantity_threshold;
@@ -841,7 +845,8 @@ class AdminController extends Controller
             //     // Logic to handle monthly forecasted sales alert
             // }
 
-            return back();
+            // return back();
+            return back()->with('success', 'Transaction recorded successfully.');
         } else {
             // If product is not found or another error occurs
             return redirect()->back()
@@ -1166,7 +1171,7 @@ class AdminController extends Controller
         $request->validate([
             "name" => "required",
             "contact_name" => "required",
-            "contact_num" => "required|digits_between:5,11",
+            // "contact_num" => "required|between:5,11",
             "address" => "required",
         ]);
 
@@ -1184,6 +1189,14 @@ class AdminController extends Controller
 
     public function customerUpdate(Request $request, string $id)
     {
+
+        $request->validate([
+            "name" => "required",
+            "contact_name" => "required",
+            // "contact_num" => "required|between:5,11",
+            "address" => "required",
+        ]);
+
         $customers = Customer::find($id);
         $customers->name = $request->name;
         $customers->contact_name = $request->contact_name;
@@ -1198,7 +1211,8 @@ class AdminController extends Controller
     {
         $customers = Customer::findOrFail($id);
         $customers->delete();
-        return redirect()->route('admin.customer')->withSuccess('Account deleted successfully!');
+        return back();
+        // return redirect()->route('admin.customer')->withSuccess('Account deleted successfully!');
     }
 
 
@@ -1286,7 +1300,7 @@ class AdminController extends Controller
             "contact_name" => "required|min:1",
             "product_name" => "required",
             "address" => "required",
-            "contact_num" => "required|digits_between:5,11",
+            // "contact_num" => "required|digits_between:5,11",
         ]);
 
         $suppliers = new Supplier;
@@ -1297,7 +1311,7 @@ class AdminController extends Controller
         $suppliers->contact_num = $request->input('contact_num');
         $suppliers->save();
         // return redirect()->route('admin.supplier');
-        return back();
+        return back()->with("message", "Supplier added successfully!");
     }
 
     public function supplierStoreProduct(Request $request)
@@ -1365,6 +1379,15 @@ class AdminController extends Controller
 
     public function supplierUpdate(Request $request, string $id)
     {
+
+        $request->validate([
+            "company_name" => "required",
+            "contact_name" => "required|min:1",
+            "product_name" => "required",
+            "address" => "required",
+            // "contact_num" => "required|digits_between:5,11",
+        ]);
+
         $suppliers = Supplier::find($id);
         $suppliers->company_name = $request->company_name;
         $suppliers->contact_name = $request->contact_name;
@@ -1384,9 +1407,9 @@ class AdminController extends Controller
         // Optionally, you might want to handle the case where no matching product is found
         // This could involve logging a warning, creating a new product, or informing the user
 
-        return back();
+        return back()->with("message", "Supplier updated successfully!");
         // $suppliers->save();
-        return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
+        // return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
         // return back();
     }
 
@@ -1419,7 +1442,7 @@ class AdminController extends Controller
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
         $products = Product::all();
-        $deliveries = Delivery::paginate(8);
+        $deliveries = Delivery::paginate(6);
 
 
         return view('navbar.delivery', [
@@ -1429,6 +1452,16 @@ class AdminController extends Controller
             'username' => $nm,
         ] + $notifications);
     }
+
+    public function getDeliveryDetails($id)
+    {
+        $delivery = Delivery::find($id);
+        if (!$delivery) {
+            return response()->json(['error' => 'Delivery not found'], 404);
+        }
+        return response()->json($delivery);
+    }
+
 
     public function deliveryStore(Request $request)
     {
@@ -1470,7 +1503,7 @@ class AdminController extends Controller
 
         $deliveries->save();
 
-        return back();
+        return back()->with("message", "Delivery added successfully!");
     }
 
     // public function deliveryStore(Request $request)
@@ -1645,7 +1678,7 @@ class AdminController extends Controller
         $users->save();
 
         // return redirect()->route('admin.user');
-        return back();
+        return back()->with('success', 'User added successfully');
     }
 
     // public function userStore(Request $request): RedirectResponse
@@ -1695,7 +1728,7 @@ class AdminController extends Controller
 
         $users->save();
 
-        return redirect()->route('admin.user');
+        return redirect()->route('admin.user')->with('success', 'User updated successfully');
     }
 
     // public function userUpdate(Request $request, string $id)

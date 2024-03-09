@@ -14,25 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // // Close the productModal
-    // function closeProductModal() {
-    //     const form = document.querySelector(".modal-form");
-    //     // Loop through each form element except submit button and reset its value
-    //     form.querySelectorAll(
-    //         "input:not([type='submit']):not([type='button']), select, textarea"
-    //     ).forEach((element) => {
-    //         element.value = "";
-    //     });
-
-    //     // Clear validation messages
-    //     const validationMessages = document.querySelectorAll(".text-danger");
-    //     validationMessages.forEach((message) => {
-    //         message.innerHTML = "";
-    //     });
-
-    //     productModal.style.display = "none";
-    // }
-
     // Close the productModal
     function closeProductModal() {
         const productModal = document.getElementById("productModal"); // Ensure this ID matches your modal's ID

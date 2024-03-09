@@ -27,8 +27,10 @@ class LiveSearchController extends Controller
                 '<tr>
                     <td>' . $rowNumber++ . '</td>
                     <td> ' . $product->code . ' </td>
+                    <td> ' . $product->name . ' </td>
                     <td> ' . $product->brand_name . ' </td>
                     <td> ' . $product->description . ' </td>
+                    <td> ' . $product->unit . ' </td>
                     <td> ' . $product->category . ' </td>
                     <td>
                         <img src="' . asset($product->photo) . '" alt="' . $product->name . '" width="auto" height="50px" style="background-color: transparent">

@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ asset('css/dashboard-styles.css') }}">
     <style>
         .taas-content {
-           justify-content: center;
+            justify-content: center;
         }
 
         .loob-box {
@@ -25,6 +25,10 @@
             left: 27px;
             top: 189px;
             position: absolute;
+        }
+
+        .delivery-i {
+            top: 241px;
         }
     </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -260,6 +264,13 @@
                     CUSTOMER</a>
             </div>
         </li>
+        <li>
+            <div class="baba-container">
+                <a class="sidebar" href="{{ route('staff.delivery') }}">
+                    <img src="{{ asset('images/delivery.png') }}" class="delivery-i" alt="">
+                    DELIVERY</a>
+            </div>
+        </li>
     </ul>
 
 @endsection
@@ -373,12 +384,8 @@
                 </thead>
                 <?php
                 // Calculate the start and end date for the current week
-                $startDate = now()
-                    ->startOfWeek()
-                    ->format('Y-m-d');
-                $endDate = now()
-                    ->endOfWeek()
-                    ->format('Y-m-d');
+                $startDate = now()->startOfWeek()->format('Y-m-d');
+                $endDate = now()->endOfWeek()->format('Y-m-d');
                 
                 // Query the database to get data for the current week
                 $weekQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
@@ -410,12 +417,8 @@
                 </thead>
                 <?php
                 // Calculate the start and end date for the current month
-                $startDate = now()
-                    ->startOfMonth()
-                    ->format('Y-m-d');
-                $endDate = now()
-                    ->endOfMonth()
-                    ->format('Y-m-d');
+                $startDate = now()->startOfMonth()->format('Y-m-d');
+                $endDate = now()->endOfMonth()->format('Y-m-d');
                 
                 // Query the database to get data for the current month
                 $monthQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
@@ -446,12 +449,8 @@
                 </thead>
                 <?php
                 // Calculate the start and end date for the current year
-                $startDate = now()
-                    ->startOfYear()
-                    ->format('Y-m-d');
-                $endDate = now()
-                    ->endOfYear()
-                    ->format('Y-m-d');
+                $startDate = now()->startOfYear()->format('Y-m-d');
+                $endDate = now()->endOfYear()->format('Y-m-d');
                 
                 // Query the database to get data for the current year
                 $yearQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');

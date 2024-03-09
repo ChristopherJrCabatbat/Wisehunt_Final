@@ -5,6 +5,11 @@
 @section('styles-links')
     <link rel="stylesheet" href="{{ asset('css/product-transaction-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/transaction-styles.css') }}">
+    <style>
+        .delivery-i {
+            top: 259px;
+        }
+    </style>
 @endsection
 
 @section('modals')
@@ -147,6 +152,13 @@
                     CUSTOMER</a>
             </div>
         </li>
+        <li>
+            <div class="baba-container">
+                <a class="sidebar" href="{{ route('staff.delivery') }}">
+                    <img src="{{ asset('images/delivery.png') }}" class="delivery-i" alt="">
+                    DELIVERY</a>
+            </div>
+        </li>
     </ul>
 
 @endsection
@@ -231,67 +243,31 @@
                 <tbody class="all-data">
                     @if ($transactions->isEmpty())
                         <tr>
-                            <td colspan="8">No data found.</td>
+                            <td colspan="7">No data found.</td>
                         </tr>
                     @else
-                        @php
-                            $today = now()->format('M. d, Y');
-                        @endphp
-
                         @foreach ($transactions as $transaction)
-                            @if (optional($transaction->created_at)->format('M. d, Y') === $today)
-                                <tr>
-                                    <td class="transcact-td">{{ $rowNumber++ }}</td>
-                                    <td class="transcact-td">{{ $transaction->customer_name }}</td>
-                                    <td class="transcact-td">{{ $transaction->product_name }}</td>
-                                    <td class="transcact-td">{{ $transaction->qty }}</td>
-                                    <td class="nowrap transcact-td">₱ {{ number_format($transaction->selling_price) }}
-                                    </td>
-                                    <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_price) }}</td>
-                                    {{-- <td class="nowrap transcact-td">₱ {{ number_format($transaction->profit) }}</td> --}}
-                                    <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
-                                    
-                                    {{-- <td class="actions">
-                                    <div class="actions-container">
-                                        <form action="{{ route('staff.transactionEdit', $transaction->id) }}"
-                                            method="POST">
-                                            @csrf
-                                            @method('GET')
-                                            <button type="submit" class="edit" id="edit">
-                                                <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                            </button>
-                                        </form>
-                                        <form action="{{ route('staff.transactionDestroy', $transaction->id) }}"
-                                            method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button onclick="return confirm('Are you sure you want to delete this?')"
-                                                type="submit" class="delete" id="delete">
-                                                <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td> --}}
-                                </tr>
-                            @endif
-                        @endforeach
-
-                        @if ($rowNumber === 1)
-                            {{-- No transactions for today --}}
                             <tr>
-                                <td colspan="8">No transactions for today.</td>
+                                <td class="transcact-td">{{ $rowNumber++ }}</td>
+                                <td class="transcact-td">{{ $transaction->customer_name }}</td>
+                                <td class="transcact-td">{{ $transaction->product_name }}</td>
+                                <td class="transcact-td">{{ $transaction->qty }}</td>
+                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->selling_price) }}</td>
+                                <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_price) }}</td>
+                                {{-- <td class="nowrap transcact-td">₱ {{ number_format($transaction->profit) }}</td> --}}
+                                <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
                             </tr>
-                        @endif
+                        @endforeach
                     @endif
                 </tbody>
 
-
                 <tbody id="content" class="search-data"></tbody>
-
             </table>
 
             <div class="pagination">
-                {{ $transactions->appends(['sort' => request('sort')])->links('layouts.customPagination') }}</div>
+                {{ $transactions->appends(['sort' => request('sort')])->links('layouts.customPagination') }}
+            </div>
+
 
         </div>
 
@@ -299,7 +275,11 @@
 @endsection
 
 @section('footer')
-
+    @if (session('success'))
+        <script>
+            alert('{{ session('success') }}');
+        </script>
+    @endif
 @endsection
 
 @section('script')

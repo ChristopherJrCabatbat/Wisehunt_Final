@@ -39,8 +39,7 @@
                 @endif
 
                 <label for="">Contact Number:</label>
-                <input value="{{ old('contact_num') }}" required type="text" pattern="{5,15}"
-                    title="Enter a valid contact number" name="contact_num" id="" value="">
+                <input value="{{ old('contact_num') }}" required type="tel" pattern="^\+?\d{4,14}$" title="Enter a valid contact number" name="contact_num" id="" value="">
                 @if ($errors->has('contact_num'))
                     <div class="text-danger">{{ $errors->first('contact_num') }}</div>
                 @endif
@@ -313,7 +312,11 @@
 @endsection
 
 @section('footer')
-
+@if (session('message'))
+        <script>
+            alert('{{ session('message') }}');
+        </script>
+    @endif
 @endsection
 
 @section('script')

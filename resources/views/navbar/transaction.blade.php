@@ -303,7 +303,11 @@
 @endsection
 
 @section('footer')
-
+    @if (session('success'))
+        <script>
+            alert('{{ session('success') }}');
+        </script>
+    @endif
 @endsection
 
 @section('script')
@@ -374,10 +378,10 @@
     {{-- Live Search --}}
     <script type="text/javascript">
         $('#search').on('input', function() {
-    
+
             const contentContainer = $('#content');
             $value = $(this).val();
-    
+
             if ($value) {
                 $('.all-data').hide();
                 $('.search-data').show();
@@ -385,10 +389,10 @@
                 $('.all-data').show();
                 $('.search-data').hide();
             }
-    
+
             // Clear the existing results instantly
             contentContainer.html('');
-    
+
             $.ajax({
                 type: 'get',
                 url: '{{ route('admin.transactionSearch') }}',
@@ -410,7 +414,7 @@
             });
         });
     </script>
-    
+
 
     <!-- Auto Price Script -->
     <script>
