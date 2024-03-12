@@ -631,25 +631,25 @@ class AdminController extends Controller
         // Return the results as JSON data
         return response()->json($results);
     }
-    public function searchProduct(Request $request)
-    {
-        $searchQuery = $request->input('search');
+    // public function searchProduct(Request $request)
+    // {
+    //     $searchQuery = $request->input('search');
 
-        $products = Product::where('code', 'LIKE', '%' . $searchQuery . '%')
-            ->orWhere('name', 'LIKE', '%' . $searchQuery . '%')
-            ->orWhere('description', 'LIKE', '%' . $searchQuery . '%')
-            ->orWhere('category', 'LIKE', '%' . $searchQuery . '%')
-            ->orWhere('quantity', 'LIKE', '%' . $searchQuery . '%')
-            ->orWhere('purchase_price', 'LIKE', '%' . $searchQuery . '%')
-            ->orWhere('selling_price', 'LIKE', '%' . $searchQuery . '%')
-            ->paginate(6);
+    //     $products = Product::where('code', 'LIKE', '%' . $searchQuery . '%')
+    //         ->orWhere('name', 'LIKE', '%' . $searchQuery . '%')
+    //         ->orWhere('description', 'LIKE', '%' . $searchQuery . '%')
+    //         ->orWhere('category', 'LIKE', '%' . $searchQuery . '%')
+    //         ->orWhere('quantity', 'LIKE', '%' . $searchQuery . '%')
+    //         ->orWhere('purchase_price', 'LIKE', '%' . $searchQuery . '%')
+    //         ->orWhere('selling_price', 'LIKE', '%' . $searchQuery . '%')
+    //         ->paginate(6);
 
-        return redirect()->route('admin.product')->with('products', $products);
+    //     return redirect()->route('admin.product')->with('products', $products);
 
 
-        // return redirect()->back()->with('products', $products);
-        // return view('product', ['products' => $products])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications)->with('searchQuery', $searchQuery);
-    }
+    //     // return redirect()->back()->with('products', $products);
+    //     // return view('product', ['products' => $products])->with('username', $nm)->with('lowQuantityNotifications', $lowQuantityNotifications)->with('searchQuery', $searchQuery);
+    // }
 
 
 
@@ -854,6 +854,16 @@ class AdminController extends Controller
                 ->withErrors(['error' => 'Selected product and unit price did not match.']);
         }
     }
+
+    public function searchProduct(Request $request)
+    {
+        $search = $request->input('query');
+        $products = Product::where('name', 'LIKE', "{$search}%") // Only starts with
+            ->get(['name as value', 'selling_price']);
+
+        return response()->json($products);
+    }
+
 
     // public function transactionStore(Request $request)
     // {
@@ -1294,7 +1304,6 @@ class AdminController extends Controller
 
     public function supplierStore(Request $request)
     {
-
         $request->validate([
             "company_name" => "required",
             "contact_name" => "required|min:1",
@@ -1314,67 +1323,111 @@ class AdminController extends Controller
         return back()->with("message", "Supplier added successfully!");
     }
 
-    public function supplierStoreProduct(Request $request)
-    {
-        // Your validation and storage logic here
+    // public function supplierStore(Request $request)
+    // {
+    //     $request->validate([
+    //         "company_name" => "required",
+    //         "contact_name" => "required|min:1",
+    //         "product_name" => "required",
+    //         "contact_num" => "required",
+    //         "address" => "required",
+    //         // "contact_num" => "required|digits_between:5,11", // Uncomment and adjust as per your actual validation rules
+    //     ]);
 
-        $request->validate([
-            "company_name" => "required",
-            "contact_name" => "required|min:1",
-            "product_name" => "required",
-            "address" => "required",
-            "contact_num" => "required|digits_between:5,11",
-        ]);
+    //     // Initialize or retrieve the session-stored products
+    //     $products = $request->session()->get('products', []);
 
-        if ($request->has('keepModalOpen')) {
-            return redirect()->back()->withInput($request->except(['keepModalOpen', 'product_name']))->with('reopenModal', true);
-        }
+    //     // Add the current product to the array
+    //     $products[] = $request->input('product_name');
 
-        $suppliers = new Supplier;
-        $suppliers->company_name = $request->input('company_name');
-        $suppliers->contact_name = $request->input('contact_name');
-        $suppliers->address = $request->input('address');
-        $suppliers->product_name = $request->input('product_name');
-        $suppliers->contact_num = $request->input('contact_num');
-        $suppliers->save();
-        // return redirect()->route('admin.supplier');
-        return back();
-    }
+    //     // Update the session with the new list of products
+    //     $request->session()->put('products', $products);
+
+    //     // Assuming we proceed to save if the form is submitted without the intent to add more (no specific indicator for this version)
+    //     // Saving the supplier and the products
+    //     $supplier = new Supplier;
+    //     $supplier->company_name = $request->input('company_name');
+    //     $supplier->contact_name = $request->input('contact_name');
+    //     $supplier->address = $request->input('address');
+    //     $supplier->contact_num = $request->input('contact_num');
+    //     // Save the supplier first to get an ID if you need to associate products
+    //     $supplier->save();
+
+    //     // Now, save each product. Assuming a simple scenario where products are a comma-separated string.
+    //     // Adjust according to your actual database structure. 
+    //     // If products are stored in a separate table, you might iterate over them and save each one.
+    //     $supplier->product_name = implode(', ', $products); // This is an oversimplification. Adjust based on your needs.
+    //     $supplier->save();
+
+    //     // Clear the products from the session after saving
+    //     $request->session()->forget('products');
+
+    //     // Redirect with a success message
+    //     return back()->with("message", "Supplier added successfully with products!");
+    // }
 
 
-    public function supplierStoreQty(Request $request)
-    {
-        $request->validate([
-            "company_name" => "required",
-            "contact_name" => "required|min:1",
-            "address" => "required",
-            "contact_num" => "required|numeric|digits_between:5,11",
-            "product_name" => "required",
-            "quantity" => "required",
-        ]);
+    // public function supplierStoreProduct(Request $request)
+    // {
+    //     // Your validation and storage logic here
 
-        // Save supplier information
-        $supplier = new Supplier;
-        $supplier->company_name = $request->input('company_name');
-        $supplier->contact_name = $request->input('contact_name');
-        $supplier->address = $request->input('address');
-        $supplier->product_name = $request->input('product_name');
-        $supplier->contact_num = $request->input('contact_num');
-        $supplier->quantity = $request->input('quantity');
-        $supplier->save();
+    //     $request->validate([
+    //         "company_name" => "required",
+    //         "contact_name" => "required|min:1",
+    //         "product_name" => "required",
+    //         "address" => "required",
+    //         "contact_num" => "required|digits_between:5,11",
+    //     ]);
 
-        // Find the matching product by name and update its quantity
-        $product = Product::where('name', $request->input('product_name'))->first();
-        if ($product) {
-            $product->quantity += $request->input('quantity');
-            $product->save();
-        }
+    //     if ($request->has('keepModalOpen')) {
+    //         return redirect()->back()->withInput($request->except(['keepModalOpen', 'product_name']))->with('reopenModal', true);
+    //     }
 
-        // Optionally, you might want to handle the case where no matching product is found
-        // This could involve logging a warning, creating a new product, or informing the user
+    //     $suppliers = new Supplier;
+    //     $suppliers->company_name = $request->input('company_name');
+    //     $suppliers->contact_name = $request->input('contact_name');
+    //     $suppliers->address = $request->input('address');
+    //     $suppliers->product_name = $request->input('product_name');
+    //     $suppliers->contact_num = $request->input('contact_num');
+    //     $suppliers->save();
+    //     // return redirect()->route('admin.supplier');
+    //     return back();
+    // }
 
-        return back();
-    }
+
+    // public function supplierStoreQty(Request $request)
+    // {
+    //     $request->validate([
+    //         "company_name" => "required",
+    //         "contact_name" => "required|min:1",
+    //         "address" => "required",
+    //         "contact_num" => "required|numeric|digits_between:5,11",
+    //         "product_name" => "required",
+    //         "quantity" => "required",
+    //     ]);
+
+    //     // Save supplier information
+    //     $supplier = new Supplier;
+    //     $supplier->company_name = $request->input('company_name');
+    //     $supplier->contact_name = $request->input('contact_name');
+    //     $supplier->address = $request->input('address');
+    //     $supplier->product_name = $request->input('product_name');
+    //     $supplier->contact_num = $request->input('contact_num');
+    //     $supplier->quantity = $request->input('quantity');
+    //     $supplier->save();
+
+    //     // Find the matching product by name and update its quantity
+    //     $product = Product::where('name', $request->input('product_name'))->first();
+    //     if ($product) {
+    //         $product->quantity += $request->input('quantity');
+    //         $product->save();
+    //     }
+
+    //     // Optionally, you might want to handle the case where no matching product is found
+    //     // This could involve logging a warning, creating a new product, or informing the user
+
+    //     return back();
+    // }
 
 
     public function supplierUpdate(Request $request, string $id)

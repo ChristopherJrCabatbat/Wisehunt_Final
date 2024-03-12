@@ -206,3 +206,27 @@ i.fa-plus, i.edt-taas  {
 select.report {
     min-width: 104%;
 }
+
+#productSuggestions {
+    position: relative; /* Changed from absolute to relative */
+    top: 190px; /* Adjust based on your layout */
+    /* left: 0; */ /* Adjust based on your layout */
+    width: 86%; /* Match the input field width */
+    box-shadow: 0 4px 6px rgba(0,0,0,.1); /* Optional: adds a shadow for better separation */
+    max-height: 200px; /* Limit the height and make it scrollable */
+    overflow-y: auto;
+    border-radius: 0 0 4px 4px; /* Rounded corners at the bottom */
+    color: black;
+    padding: 5px;
+    text-decoration: none;
+}
+
+#productSuggestions:hover {
+    color: black;
+    background-color: transparent;
+    /* top: 150px; */
+}
+
+div#productSuggestions a:hover{
+    background-color: transparent;
+}

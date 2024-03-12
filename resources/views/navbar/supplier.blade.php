@@ -15,7 +15,7 @@
 
     {{-- Add Modal --}}
     {{-- <div id="newModal" class="modal"> --}}
-        <div id="newModal" class="modal" style="{{ session('reopenModal') ? 'display:block;' : 'display:none;' }}">
+    <div id="newModal" class="modal" style="{{ session('reopenModal') ? 'display:block;' : 'display:none;' }}">
 
         <div class="modal-content">
             <span class="close closeModal">&times;</span>
@@ -56,7 +56,7 @@
                         id="product-supp" />
                     {{-- <a href="#" id="plusSupplier"><i class="fa-regular fa-plus"></i></a> --}}
                     {{-- <button type="submit" id="plusSupplier"><i class="fa-regular fa-plus"></i></button> --}}
-                    <button type="button" id="plusSupplier" onclick="submitFormAndReopenModal()"><i
+                    <button type="button" id="plusSupplier" onclick="submitFormAndReopenModal()" title="Click to add more product."><i
                             class="fa-regular fa-plus"></i></button>
                 </div>
                 @if ($errors->has('product_name'))

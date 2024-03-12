@@ -166,7 +166,7 @@
 
                         <!-- User Profile Dropdown -->
                         <div class="user-photo-dropdown">
-                            <img class="icon-user" src="{{ asset($userPhoto) }}" alt="User Photo" width="100"
+                            <img class="icon-user" src="{{ asset($userPhoto) }}" alt="" width="100"
                                 height="auto">
                                 
                         @if (auth()->user()->role === 'Admin')

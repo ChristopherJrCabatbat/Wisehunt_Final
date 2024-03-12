@@ -61,6 +61,7 @@ Route::group([
     Route::put('/transactionUpdate/{id}', [AdminController::class, 'transactionUpdate'])->name('transactionUpdate');
     Route::delete('/transactionDestroy/{id}', [AdminController::class, 'transactionDestroy'])->name('transactionDestroy');
     Route::get('/transactionSearch', [LiveSearchController::class, 'transactionSearch'])->name('transactionSearch');
+    Route::get('/searchProduct', [AdminController::class, 'searchProduct'])->name('searchProduct');
     Route::post('/generateReport', [AdminController::class, 'generateReport'])->name('generateReport');
 
 
@@ -163,6 +164,3 @@ Route::group([
 // })->name('logout');
 
 // Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
-
-
-

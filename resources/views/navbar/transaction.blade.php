@@ -33,7 +33,7 @@
                     @endforeach
                 </select>
 
-                <label for="product_name" class="taas-select">Product:</label>
+                {{-- <label for="product_name" class="taas-select">Product:</label>
                 <select required name="product_name" id="product_name" class="select product_name product-select"
                     onchange="updateUnitPrice('newModal')">
                     <option value="" disabled selected>-- Select a Product --</option>
@@ -43,7 +43,20 @@
                             {{ $product->name }}
                         </option>
                     @endforeach
-                </select>
+                </select> --}}
+
+                <label for="product_name" class="taas-select">Product:</label>
+                <input class="form-control product_name" id="product_name" type="text" placeholder="Type to search..."
+                    autocomplete="off">
+                <!-- Add a simple loading indicator in your HTML that's hidden by default -->
+                {{-- <div id="loadingIndicator" style="display: none;">Loading...</div> --}}
+
+                <div id="productSuggestions"
+                    style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc;">
+                    <div id="loadingIndicator" style="display: none;">Loading...</div>
+                </div>
+
+
 
                 <!-- Display validation error for product_name -->
                 <div class="text-danger">{{ $errors->first('product_name') }}</div>
@@ -70,6 +83,7 @@
 
                 <input type="submit" value="Add" id="button-transac">
             </form>
+
         </div>
     </div>
 
@@ -417,7 +431,7 @@
 
 
     <!-- Auto Price Script -->
-    <script>
+    {{-- <script>
         function updateUnitPrice(elementId) {
             var productSelect = document.querySelector('#' + elementId + ' .product-select');
             var unitPriceInput = document.querySelector('#' + elementId + ' .selling_price');
@@ -427,8 +441,7 @@
 
             unitPriceInput.value = unitPrice;
         }
-    </script>
-
+    </script> --}}
 
 
     {{-- Auto Total Price --}}
@@ -460,6 +473,67 @@
             });
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+            var debounceTimer;
+            $('#product_name').on('input', function() {
+                var query = $(this).val();
+
+                // Clear the current debounce timer to reset the delay
+                clearTimeout(debounceTimer);
+
+                if (query.length < 1) {
+                    $('#productSuggestions').html('');
+                    return;
+                }
+
+                // Show loading indicator or message
+                $('#loadingIndicator').show();
+
+                // Set a new debounce timer
+                debounceTimer = setTimeout(function() {
+                    $.ajax({
+                        url: '{{ route('admin.searchProduct') }}',
+                        type: 'GET',
+                        data: {
+                            'query': query
+                        },
+                        success: function(data) {
+                            // Hide loading indicator or message
+                            $('#loadingIndicator').hide();
+
+                            $('#productSuggestions').empty();
+                            $.each(data, function(index, product) {
+                                $('#productSuggestions').append(
+                                    '<a href="#" class="list-group-item list-group-item-action" data-name="' +
+                                    product.value + '" data-price="' +
+                                    product.selling_price + '">' + product
+                                    .value + '</a>');
+                            });
+                        }
+                    });
+                }, 250); // Adjust the delay as needed (250ms is a reasonable starting point)
+            });
+
+            $(document).on('click', '#productSuggestions .list-group-item', function(e) {
+                e.preventDefault();
+                var productName = $(this).data('name');
+                var productPrice = $(this).data('price');
+
+                $('#product_name').val(productName);
+                $('#selling_price').val(productPrice);
+                $('#productSuggestions').html('');
+
+                // Trigger any additional updates that depend on the product selection
+                // For example, update the total price if needed
+                // updateTotalPrice(); // Define this function based on your total price calculation logic
+            });
+        });
+    </script>
+
+
+
 
 
 @endsection

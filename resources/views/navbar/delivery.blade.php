@@ -99,24 +99,28 @@
                     </div>
                 @endif --}}
 
-                {{-- Display products with checkboxes --}}
-                @foreach ($products as $index => $product)
-                    <label>
-                        <input type="checkbox" name="product[]" value="{{ $product->name }}"
-                            {{ in_array($product->name, old('product', [])) ? 'checked' : '' }} />
-                        {{ $product->name }}
-                    </label>
-                    @if ($loop->first)
-                        <!-- Display the first quantity input without any condition -->
-                        <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity"
-                            value="{{ old('quantity.' . $index) }}" />
-                    @else
-                        <!-- Display the quantity input only if the checkbox is checked -->
-                        <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity"
-                            value="{{ in_array($product->name, old('product', [])) ? old('quantity.' . $index) : '' }}"
-                            {{ in_array($product->name, old('product', [])) ? 'required' : '' }} />
-                    @endif
-                @endforeach
+                @if (count($products) === 0)
+                    <p>No products available for delivery.</p>
+                @else
+                    {{-- Display products with checkboxes --}}
+                    @foreach ($products as $index => $product)
+                        <label>
+                            <input type="checkbox" name="product[]" value="{{ $product->name }}"
+                                {{ in_array($product->name, old('product', [])) ? 'checked' : '' }} />
+                            {{ $product->name }}
+                        </label>
+                        @if ($loop->first)
+                            <!-- Display the first quantity input without any condition -->
+                            <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity"
+                                value="{{ old('quantity.' . $index) }}" />
+                        @else
+                            <!-- Display the quantity input only if the checkbox is checked -->
+                            <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity"
+                                value="{{ in_array($product->name, old('product', [])) ? old('quantity.' . $index) : '' }}"
+                                {{ in_array($product->name, old('product', [])) ? 'required' : '' }} />
+                        @endif
+                    @endforeach
+                @endif
 
                 <div class="buttons">
                     <input class="add backButton" type="button" id="backButton" value="Back" />
