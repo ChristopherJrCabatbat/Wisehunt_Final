@@ -889,13 +889,13 @@ class AdminController extends Controller
     // }
 
     public function searchProduct(Request $request)
-{
-    $search = $request->input('query');
-    $products = Product::where('name', 'LIKE', "{$search}%")
-        ->get(['name as value', 'selling_price']);
+    {
+        $search = $request->input('query');
+        $products = Product::where('name', 'LIKE', "{$search}%")
+            ->get(['name as value', 'selling_price']);
 
-    return response()->json($products);
-}
+        return response()->json($products);
+    }
 
 
 
@@ -1336,69 +1336,53 @@ class AdminController extends Controller
     }
 
 
-    public function supplierStore(Request $request)
-    {
-        $request->validate([
-            "company_name" => "required",
-            "contact_name" => "required|min:1",
-            "product_name" => "required",
-            "address" => "required",
-            // "contact_num" => "required|digits_between:5,11",
-        ]);
-
-        $suppliers = new Supplier;
-        $suppliers->company_name = $request->input('company_name');
-        $suppliers->contact_name = $request->input('contact_name');
-        $suppliers->address = $request->input('address');
-        $suppliers->product_name = $request->input('product_name');
-        $suppliers->contact_num = $request->input('contact_num');
-        $suppliers->save();
-        // return redirect()->route('admin.supplier');
-        return back()->with("message", "Supplier added successfully!");
-    }
-
     // public function supplierStore(Request $request)
     // {
     //     $request->validate([
     //         "company_name" => "required",
     //         "contact_name" => "required|min:1",
     //         "product_name" => "required",
-    //         "contact_num" => "required",
     //         "address" => "required",
-    //         // "contact_num" => "required|digits_between:5,11", // Uncomment and adjust as per your actual validation rules
+    //         // "contact_num" => "required|digits_between:5,11",
     //     ]);
 
-    //     // Initialize or retrieve the session-stored products
-    //     $products = $request->session()->get('products', []);
-
-    //     // Add the current product to the array
-    //     $products[] = $request->input('product_name');
-
-    //     // Update the session with the new list of products
-    //     $request->session()->put('products', $products);
-
-    //     // Assuming we proceed to save if the form is submitted without the intent to add more (no specific indicator for this version)
-    //     // Saving the supplier and the products
-    //     $supplier = new Supplier;
-    //     $supplier->company_name = $request->input('company_name');
-    //     $supplier->contact_name = $request->input('contact_name');
-    //     $supplier->address = $request->input('address');
-    //     $supplier->contact_num = $request->input('contact_num');
-    //     // Save the supplier first to get an ID if you need to associate products
-    //     $supplier->save();
-
-    //     // Now, save each product. Assuming a simple scenario where products are a comma-separated string.
-    //     // Adjust according to your actual database structure. 
-    //     // If products are stored in a separate table, you might iterate over them and save each one.
-    //     $supplier->product_name = implode(', ', $products); // This is an oversimplification. Adjust based on your needs.
-    //     $supplier->save();
-
-    //     // Clear the products from the session after saving
-    //     $request->session()->forget('products');
-
-    //     // Redirect with a success message
-    //     return back()->with("message", "Supplier added successfully with products!");
+    //     $suppliers = new Supplier;
+    //     $suppliers->company_name = $request->input('company_name');
+    //     $suppliers->contact_name = $request->input('contact_name');
+    //     $suppliers->address = $request->input('address');
+    //     $suppliers->product_name = $request->input('product_name');
+    //     $suppliers->contact_num = $request->input('contact_num');
+    //     $suppliers->save();
+    //     // return redirect()->route('admin.supplier');
+    //     return back()->with("message", "Supplier added successfully!");
     // }
+
+    public function supplierStore(Request $request)
+    {
+        $request->validate([
+            "company_name" => "required",
+            "contact_name" => "required|min:1",
+            "address" => "required",
+            "products.*" => "required", // Validates that each product name in the array is required
+        ]);
+
+        $supplier = new Supplier;
+        $supplier->company_name = $request->input('company_name');
+        $supplier->contact_name = $request->input('contact_name');
+        $supplier->address = $request->input('address');
+        $supplier->contact_num = $request->input('contact_num');
+        $supplier->save();
+
+        foreach ($request->products as $productName) {
+            // Assuming a Product model exists and is related to Supplier
+            $product = new Product(); // Create a new Product instance
+            $product->name = $productName;
+            // Assuming there's a relationship set up in your Supplier model
+            $supplier->products()->save($product);
+        }
+
+        return back()->with("message", "Supplier added successfully!");
+    }
 
 
     // public function supplierStoreProduct(Request $request)
@@ -1464,42 +1448,6 @@ class AdminController extends Controller
     // }
 
 
-    // public function supplierUpdate(Request $request, string $id)
-    // {
-
-    //     $request->validate([
-    //         "company_name" => "required",
-    //         "contact_name" => "required|min:1",
-    //         "product_name" => "required",
-    //         "address" => "required",
-    //         // "contact_num" => "required|digits_between:5,11",
-    //     ]);
-
-    //     $suppliers = Supplier::find($id);
-    //     $suppliers->company_name = $request->company_name;
-    //     $suppliers->contact_name = $request->contact_name;
-    //     $suppliers->address = $request->address;
-    //     $suppliers->product_name = $request->product_name;
-    //     $suppliers->contact_num = $request->contact_num;
-    //     $suppliers->quantity = $request->input('quantity');
-    //     $suppliers->save();
-
-    //     // Find the matching product by name and update its quantity
-    //     $product = Product::where('name', $request->input('product_name'))->first();
-    //     if ($product) {
-    //         $product->quantity += $request->input('quantity');
-    //         $product->save();
-    //     }
-
-    //     // Optionally, you might want to handle the case where no matching product is found
-    //     // This could involve logging a warning, creating a new product, or informing the user
-
-    //     return back()->with("message", "Supplier updated successfully!");
-    //     // $suppliers->save();
-    //     // return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
-    //     // return back();
-    // }
-
     public function supplierUpdate(Request $request, $id)
     {
         $request->validate([
@@ -1508,7 +1456,7 @@ class AdminController extends Controller
             "product_name" => "required",
             "address" => "required",
             // "contact_num" => "required|numeric|digits_between:5,15",
-            "quantity" => "required|numeric|min:0", // Validate quantity
+            "quantity" => "nullable|numeric|min:0", // Allow quantity to be nullable
         ]);
 
         $supplier = Supplier::findOrFail($id);
@@ -1517,23 +1465,62 @@ class AdminController extends Controller
         $supplier->address = $request->address;
         $supplier->product_name = $request->product_name;
         $supplier->contact_num = $request->contact_num;
-        $supplier->quantity = $request->quantity;
+        $supplier->quantity = $request->quantity === null ? null : $request->quantity;
         $supplier->save();
 
         // Find the matching product by name and update its quantity
         $product = Product::where('name', $request->product_name)->first();
         if ($product) {
-            // Decide whether to add or set the new quantity based on your application's logic
-            $product->quantity += $request->quantity; // Adjusts based on what's needed
-            $product->save();
+            // Ensure that we only update the quantity if a value was provided
+            if ($request->quantity !== null) {
+                // Decide whether to add or set the new quantity based on your application's logic
+                $newQuantity = $request->quantity; // Use the provided quantity
+                // Assuming you want to add the quantity. Adjust if you're setting it instead.
+                $product->quantity += $newQuantity;
+                $product->save();
+            }
+            // If quantity is null, you might choose to not update the product's quantity
         } else {
             // Handle case where product doesn't exist. Options: create new, log, or inform user.
         }
 
         return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
-
-        // return back()->with("message", "Supplier updated successfully!");
     }
+
+    // public function supplierUpdate(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         "company_name" => "required",
+    //         "contact_name" => "required|min:1",
+    //         "product_name" => "required",
+    //         "address" => "required",
+    //         // "contact_num" => "required|numeric|digits_between:5,15",
+    //         "quantity" => "numeric|min:0", // Validate quantity
+    //     ]);
+
+    //     $supplier = Supplier::findOrFail($id);
+    //     $supplier->company_name = $request->company_name;
+    //     $supplier->contact_name = $request->contact_name;
+    //     $supplier->address = $request->address;
+    //     $supplier->product_name = $request->product_name;
+    //     $supplier->contact_num = $request->contact_num;
+    //     $supplier->quantity = $request->quantity;
+    //     $supplier->save();
+
+    //     // Find the matching product by name and update its quantity
+    //     $product = Product::where('name', $request->product_name)->first();
+    //     if ($product) {
+    //         // Decide whether to add or set the new quantity based on your application's logic
+    //         $product->quantity += $request->quantity; // Adjusts based on what's needed
+    //         $product->save();
+    //     } else {
+    //         // Handle case where product doesn't exist. Options: create new, log, or inform user.
+    //     }
+
+    //     return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
+
+    //     // return back()->with("message", "Supplier updated successfully!");
+    // }
 
 
     public function supplierDestroy(string $id)

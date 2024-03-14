@@ -424,7 +424,7 @@ select.unit {
 }
 
 #productSuggestions {
-    display: none;
+    /* display: none; */
     position: relative; /* Changed from absolute to relative */
     top: 142px; /* Adjust based on your layout */
     /* left: 0; */ /* Adjust based on your layout */

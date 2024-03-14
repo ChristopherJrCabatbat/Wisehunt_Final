@@ -39,7 +39,8 @@
                 @endif
 
                 <label for="">Contact Number:</label>
-                <input value="{{ old('contact_num') }}" required type="tel" pattern="^\+?\d{4,14}$" title="Enter a valid contact number" name="contact_num" id="" value="">
+                <input value="{{ old('contact_num') }}" required type="tel" pattern="^\+?\d{4,14}$"
+                    title="Enter a valid contact number" name="contact_num" id="" value="">
                 @if ($errors->has('contact_num'))
                     <div class="text-danger">{{ $errors->first('contact_num') }}</div>
                 @endif
@@ -50,15 +51,23 @@
                     <div class="text-danger">{{ $errors->first('address') }}</div>
                 @endif
 
-                <label for="">Product:</label>
+                {{-- <label for="">Product:</label>
+                <input required type="text" name="product_name"
+                id="product-supp" /> --}}
                 {{-- <div class="product-plus"> --}}
-                    <input required type="text" name="product_name"
-                        id="product-supp" />
-                    {{-- <a href="#" id="plusSupplier"><i class="fa-regular fa-plus"></i></a> --}}
-                    {{-- <button type="submit" id="plusSupplier"><i class="fa-regular fa-plus"></i></button> --}}
-                    {{-- <button type="button" id="plusSupplier" onclick="submitFormAndReopenModal()" title="Click to add more product."><i
+                {{-- <a href="#" id="plusSupplier"><i class="fa-regular fa-plus"></i></a> --}}
+                {{-- <button type="submit" id="plusSupplier"><i class="fa-regular fa-plus"></i></button> --}}
+                {{-- <button type="button" id="plusSupplier" onclick="submitFormAndReopenModal()" title="Click to add more product."><i
                             class="fa-regular fa-plus"></i></button> --}}
                 {{-- </div> --}}
+
+                <div id="productFields">
+                    <label for="products[0]">Product:</label>
+                    <input required type="text" name="products[0]" />
+                    {{-- <input required type="text" name="product_name[0]" /> --}}
+                </div>
+                <button type="button" id="addProduct">Add Another Product</button>
+
                 @if ($errors->has('product_name'))
                     <div class="text-danger">{{ $errors->first('product_name') }}</div>
                 @endif
@@ -276,7 +285,8 @@
                                         <form action="{{ route('admin.supplierEdit', $supplier->id) }}" method="POST">
                                             @csrf
                                             @method('GET')
-                                            <button type="submit" class="edit editButton" id="edit" title="Click this button to add to the product's quantity.">
+                                            <button type="submit" class="edit editButton" id="edit"
+                                                title="Click this button to add to the product's quantity.">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>
@@ -312,7 +322,7 @@
 @endsection
 
 @section('footer')
-@if (session('message'))
+    @if (session('message'))
         <script>
             alert('{{ session('message') }}');
         </script>
@@ -381,6 +391,20 @@
             form.submit(); // Submit the form
         }
     </script>
+
+    <script>
+        document.getElementById('addProduct').addEventListener('click', function() {
+            const newProductIndex = document.querySelectorAll('#productFields > input').length;
+            const newFieldHTML = `
+            <div>
+                <label for="products[${newProductIndex}]">Product:</label>
+                <input required type="text" name="products[${newProductIndex}]" />
+            </div>
+        `;
+            document.getElementById('productFields').insertAdjacentHTML('beforeend', newFieldHTML);
+        });
+    </script>
+
 
     <script src="{{ asset('js/supplier.js') }}"></script>
 

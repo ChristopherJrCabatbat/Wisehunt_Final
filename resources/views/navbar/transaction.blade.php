@@ -33,7 +33,7 @@
                     @endforeach
                 </select>
 
-                <label for="product_name" class="taas-select">Product:</label>
+                {{-- <label for="product_name" class="taas-select">Product:</label>
                 <select required name="product_name" id="product_name" class="select product_name product-select"
                     onchange="updateUnitPrice('newModal')">
                     <option value="" disabled selected>-- Select a Product --</option>
@@ -43,26 +43,16 @@
                             {{ $product->name }}
                         </option>
                     @endforeach
-                </select>
+                </select> --}}
 
-                {{-- <label for="product_name" class="taas-select">Product:</label>
-                <input class="form-control product_name" id="product_name" name="product_name" type="text"
-                    placeholder="Type to search..." autocomplete="off">
-
-                <div id="loadingIndicator" style="display: none;">Loading...</div>
-                <div id="productSuggestions"
-                    style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc;">
-                </div> --}}
-{{-- 
                 <label for="product_name" class="taas-select">Product:</label>
                 <input class="form-control product_name" id="product_name" name="product_name" type="text"
                     placeholder="Type to search..." autocomplete="off">
-                <div id="loadingIndicator" style="display: none;">Loading...</div>
+
+                    <div id="loadingIndicator" style="display: none;">Loading...</div>
                 <div id="productSuggestions"
                     style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc;">
-                </div> --}}
-
-
+                </div>
 
 
                 <!-- Display validation error for product_name -->
@@ -438,7 +428,7 @@
 
 
     <!-- Auto Price Script -->
-    <script>
+    {{-- <script>
         function updateUnitPrice(elementId) {
             var productSelect = document.querySelector('#' + elementId + ' .product-select');
             var unitPriceInput = document.querySelector('#' + elementId + ' .selling_price');
@@ -448,7 +438,7 @@
 
             unitPriceInput.value = unitPrice;
         }
-    </script>
+    </script> --}}
 
 
     {{-- Auto Total Price --}}
@@ -481,7 +471,7 @@
     </script>
 
     {{-- Live Search Product --}}
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             var debounceTimer;
             $('#product_name').on('input', function() {
@@ -537,6 +527,75 @@
                 // updateTotalPrice(); // Define this function based on your total price calculation logic
             });
         });
+    </script> --}}
+
+    <script>
+        $(document).ready(function() {
+    var debounceTimer;
+    $('#product_name').on('input', function() {
+        var query = $(this).val();
+
+        // Clear the current debounce timer to reset the delay
+        clearTimeout(debounceTimer);
+
+        if (query.length < 1) {
+            $('#productSuggestions').html('');
+            return;
+        }
+
+        // Show loading indicator or message
+        $('#loadingIndicator').show();
+
+        // Set a new debounce timer
+        debounceTimer = setTimeout(function() {
+            $.ajax({
+                url: '{{ route('admin.searchProduct') }}', // Make sure this is correct in a .js file or use the full path
+                type: 'GET',
+                data: {
+                    'query': query
+                },
+                success: function(data) {
+                    // Hide loading indicator or message
+                    $('#loadingIndicator').hide();
+
+                    $('#productSuggestions').empty();
+                    if(data.length > 0) { // Check if there are any products
+                        $.each(data, function(index, product) {
+                            $('#productSuggestions').append(
+                                '<a href="#" class="list-group-item list-group-item-action" data-name="' +
+                                product.value + '" data-price="' +
+                                product.selling_price + '">' + product
+                                .value + '</a>');
+                        });
+                        $('#productSuggestions').show(); // Show suggestions if there are products
+                    } else {
+                        $('#productSuggestions').hide(); // Hide suggestions if there are no products
+                    }
+                }
+            });
+        }, 250);
+    });
+
+    // Hide the product suggestions when input loses focus but delay it to allow for suggestion click
+    $('#product_name').blur(function() {
+        setTimeout(function() {
+            $('#productSuggestions').hide();
+        }, 200); // Delay hiding to allow click event on suggestions to be processed
+    });
+
+    $(document).on('click', '#productSuggestions .list-group-item', function(e) {
+        e.preventDefault();
+        var productName = $(this).data('name');
+        var productPrice = $(this).data('price');
+
+        $('#product_name').val(productName);
+        $('#selling_price').val(productPrice);
+        $('#productSuggestions').html('').hide();
+
+        // Additional code as needed
+    });
+});
+
     </script>
 
 
