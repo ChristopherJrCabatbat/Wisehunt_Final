@@ -834,6 +834,15 @@ class StaffController extends Controller
         }
     }
 
+    public function searchProduct(Request $request)
+    {
+        $search = $request->input('query');
+        $products = Product::where('name', 'LIKE', "{$search}%") // Only starts with
+            ->get(['name as value', 'selling_price']);
+
+        return response()->json($products);
+    }
+
 
     // public function transactionStore(Request $request)
     // {

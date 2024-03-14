@@ -50,15 +50,15 @@
                     <div class="text-danger">{{ $errors->first('address') }}</div>
                 @endif
 
-                <label for="">Product/s:</label>
-                <div class="product-plus">
+                <label for="">Product:</label>
+                {{-- <div class="product-plus"> --}}
                     <input required type="text" name="product_name"
                         id="product-supp" />
                     {{-- <a href="#" id="plusSupplier"><i class="fa-regular fa-plus"></i></a> --}}
                     {{-- <button type="submit" id="plusSupplier"><i class="fa-regular fa-plus"></i></button> --}}
-                    <button type="button" id="plusSupplier" onclick="submitFormAndReopenModal()" title="Click to add more product."><i
-                            class="fa-regular fa-plus"></i></button>
-                </div>
+                    {{-- <button type="button" id="plusSupplier" onclick="submitFormAndReopenModal()" title="Click to add more product."><i
+                            class="fa-regular fa-plus"></i></button> --}}
+                {{-- </div> --}}
                 @if ($errors->has('product_name'))
                     <div class="text-danger">{{ $errors->first('product_name') }}</div>
                 @endif
@@ -276,7 +276,7 @@
                                         <form action="{{ route('admin.supplierEdit', $supplier->id) }}" method="POST">
                                             @csrf
                                             @method('GET')
-                                            <button type="submit" class="edit editButton" id="edit">
+                                            <button type="submit" class="edit editButton" id="edit" title="Click this button to add to the product's quantity.">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>

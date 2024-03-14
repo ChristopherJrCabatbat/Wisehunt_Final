@@ -16,15 +16,15 @@
 
     <div class="overlay"></div>
 
-    {{-- Add Modal --}}
-    <div id="newModal" class="modal">
+     {{-- Add Modal --}}
+     <div id="newModal" class="modal">
         <div class="modal-content">
             <a class="close closeModal">&times;</a>
 
             <form class="modal-form" action="{{ route('staff.transactionStore') }}" method="POST">
                 @csrf
                 <center>
-                    <h2 style="margin: 0%; color:#333;">Add Transaction</h2>
+                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Transaction</h2>
                 </center>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
@@ -38,7 +38,7 @@
                     @endforeach
                 </select>
 
-                <label for="product_name" class="taas-select">Product:</label>
+                {{-- <label for="product_name" class="taas-select">Product:</label>
                 <select required name="product_name" id="product_name" class="select product_name product-select"
                     onchange="updateUnitPrice('newModal')">
                     <option value="" disabled selected>-- Select a Product --</option>
@@ -48,7 +48,18 @@
                             {{ $product->name }}
                         </option>
                     @endforeach
-                </select>
+                </select> --}}
+
+                <label for="product_name" class="taas-select">Product:</label>
+                <input class="form-control product_name" id="product_name" name="product_name" type="text" placeholder="Type to search..."
+                    autocomplete="off">
+
+                <div id="productSuggestions"
+                    style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc;">
+                    <div id="loadingIndicator" style="display: none;">Loading...</div>
+                </div>
+
+
 
                 <!-- Display validation error for product_name -->
                 <div class="text-danger">{{ $errors->first('product_name') }}</div>
@@ -65,7 +76,7 @@
                 @endif
 
 
-                <label for="selling_price">Selling Price:</label>
+                <label for="selling_price">Price:</label>
                 <input readonly required name="selling_price" id="selling_price" type="number"
                     value="{{ old('selling_price') }}" class="selling_price">
 
@@ -75,6 +86,7 @@
 
                 <input type="submit" value="Add" id="button-transac">
             </form>
+
         </div>
     </div>
 
@@ -184,24 +196,20 @@
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
                             Default Sorting --</option>
                         <option value="customer_name_asc" {{ request('sort') === 'customer_name_asc' ? 'selected' : '' }}>
-                            Customer
-                            (A-Z)</option>
+                            Customer</option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
-                            Product Name (A-Z)
-                        </option>
-                        <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity
-                            (ascending)</option>
+                            Product Name</option>
+                        <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity</option>
                         <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>
-                            Unit
-                            Price (ascending)
+                            Price
                         </option>
                         <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
-                            Total
-                            Price
-                            (ascending)</option>
-                        {{-- <option value="profit_asc" {{ request('sort') === 'profit_asc' ? 'selected' : '' }}>
-                            Profit
-                            (descending)</option> --}}
+                            Total Price</option>
+                        <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>
+                            Date (Ascending)</option>
+                        <option value="date_desc" {{ request('sort') === 'date_desc' ? 'selected' : '' }}>
+                            Date (Descending)</option>
+
                     </select>
                 </form>
             </div>
@@ -348,7 +356,7 @@
     </script>
 
     <!-- Auto Selling Price Script -->
-    <script>
+    {{-- <script>
         function updateUnitPrice(elementId) {
             var productSelect = document.querySelector('#' + elementId + ' .product-select');
             var unitPriceInput = document.querySelector('#' + elementId + ' .selling_price');
@@ -358,7 +366,7 @@
 
             unitPriceInput.value = unitPrice;
         }
-    </script>
+    </script> --}}
 
 
 
@@ -366,31 +374,90 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Select the quantity input field
-            var qtyInputs = document.querySelectorAll('.qty');
+            var qtyInput = document.querySelector('.qty'); // Assuming there's only one qty input for simplicity
 
-            qtyInputs.forEach(function(qtyInput) {
-                // Add an event listener for the 'input' event on the quantity input field
-                qtyInput.addEventListener('input', function() {
-                    // Get the quantity value
-                    var qty = parseFloat(qtyInput.value) || 0;
+            // Function to calculate and update total price
+            function updateTotalPrice() {
+                var qty = parseFloat(qtyInput.value) || 0; // Get the quantity value or 0 if not a number
+                var sellingPrice = parseFloat(document.getElementById('selling_price').value) ||
+                    0; // Get the selling price or 0 if not a number
 
-                    // Get the unit price value from the selected product
-                    var productSelect = qtyInput.closest('.modal-content').querySelector(
-                        '.product-select');
-                    var unitPrice = parseFloat(productSelect.options[productSelect.selectedIndex]
-                        .getAttribute('data-unit-price')) || 0;
+                var totalPrice = qty * sellingPrice; // Calculate the total price
 
-                    // Calculate the total price
-                    var totalPrice = qty * unitPrice;
+                document.getElementById('total_price').value = totalPrice.toFixed(
+                    2); // Update the total price input field
+            }
 
-                    // Update the total price input field
-                    var totalPriceInput = qtyInput.closest('.modal-content').querySelector(
-                        '.total_price');
-                    totalPriceInput.value = totalPrice.toFixed(2);
-                });
+            // Listen for input changes on the quantity field
+            qtyInput.addEventListener('input', updateTotalPrice);
+
+            // You should also update the total price when a product is selected from the suggestions
+            $(document).on('click', '#productSuggestions .list-group-item', function(e) {
+                // Wait for the selling_price to be updated
+                setTimeout(updateTotalPrice, 0);
             });
         });
     </script>
+
+    {{-- Live Search Product --}}
+    <script>
+        $(document).ready(function() {
+            var debounceTimer;
+            $('#product_name').on('input', function() {
+                var query = $(this).val();
+
+                // Clear the current debounce timer to reset the delay
+                clearTimeout(debounceTimer);
+
+                if (query.length < 1) {
+                    $('#productSuggestions').html('');
+                    return;
+                }
+
+                // Show loading indicator or message
+                $('#loadingIndicator').show();
+
+                // Set a new debounce timer
+                debounceTimer = setTimeout(function() {
+                    $.ajax({
+                        url: '{{ route('staff.searchProduct') }}',
+                        type: 'GET',
+                        data: {
+                            'query': query
+                        },
+                        success: function(data) {
+                            // Hide loading indicator or message
+                            $('#loadingIndicator').hide();
+
+                            $('#productSuggestions').empty();
+                            $.each(data, function(index, product) {
+                                $('#productSuggestions').append(
+                                    '<a href="#" class="list-group-item list-group-item-action" data-name="' +
+                                    product.value + '" data-price="' +
+                                    product.selling_price + '">' + product
+                                    .value + '</a>');
+                            });
+                        }
+                    });
+                }, 250); // Adjust the delay as needed (250ms is a reasonable starting point)
+            });
+
+            $(document).on('click', '#productSuggestions .list-group-item', function(e) {
+                e.preventDefault();
+                var productName = $(this).data('name');
+                var productPrice = $(this).data('price');
+
+                $('#product_name').val(productName);
+                $('#selling_price').val(productPrice);
+                $('#productSuggestions').html('');
+
+                // Trigger any additional updates that depend on the product selection
+                // For example, update the total price if needed
+                // updateTotalPrice(); // Define this function based on your total price calculation logic
+            });
+        });
+    </script>
+
 
 
 @endsection

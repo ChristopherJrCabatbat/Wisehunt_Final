@@ -244,7 +244,7 @@ img {
 
 .logout-container-staff {
     /* position: absolute; */
-    margin-top: 409px;
+    margin-top: 355px;
     /* border: 1px solid white; */
     padding: 10px 62px;
     bottom: 0;
@@ -303,7 +303,7 @@ img {
     display: none;
     position: absolute;
     right: 0;
-    top: 82%;
+    top: 79.6%;
     /* top: 22px; */
     background-color: #f9f9f9;
     /* min-width: 120px; */
@@ -329,11 +329,12 @@ img {
     color: #006181;
     /* background-color: white; */
     /* position: relative; */
-    /* top: 53%; */
+    top: 53%;
 }
 
 .dropdown-item:hover {
     background-color: #a3a3a3;
+    border-color: #a3a3a3;
 }
 
 i.fa-sign-out {
@@ -580,9 +581,10 @@ i.fa-plus, i.edt-taas  {
     border: 1px solid #006181;
     right: 110px;
     width: 150px;
+    color: #006181;
 }
 
 .user-photo-dropdown .dropdown-content a:hover {
     background-color: #a3a3a3;
-    border-color: #a3a3a3;
+    /* border-color: #a3a3a3; */
 }

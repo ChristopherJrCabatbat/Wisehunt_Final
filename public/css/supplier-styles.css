@@ -1,7 +1,7 @@
 .text-danger {
     color: red;
     font-size: 14px;
-    /* margin-top: 0; */
+    margin-top: 5px;
     position: relative;
     bottom: 8px;
 }
@@ -15,7 +15,7 @@
 }
 
 input#product-supp {
-    min-width: 87%;
+    /* min-width: 87%; */
 }
 
 #plusSupplier {

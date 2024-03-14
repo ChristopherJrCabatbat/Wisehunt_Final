@@ -33,7 +33,7 @@
                     @endforeach
                 </select>
 
-                {{-- <label for="product_name" class="taas-select">Product:</label>
+                <label for="product_name" class="taas-select">Product:</label>
                 <select required name="product_name" id="product_name" class="select product_name product-select"
                     onchange="updateUnitPrice('newModal')">
                     <option value="" disabled selected>-- Select a Product --</option>
@@ -43,18 +43,25 @@
                             {{ $product->name }}
                         </option>
                     @endforeach
-                </select> --}}
+                </select>
 
-                <label for="product_name" class="taas-select">Product:</label>
-                <input class="form-control product_name" id="product_name" type="text" placeholder="Type to search..."
-                    autocomplete="off">
-                <!-- Add a simple loading indicator in your HTML that's hidden by default -->
-                {{-- <div id="loadingIndicator" style="display: none;">Loading...</div> --}}
+                {{-- <label for="product_name" class="taas-select">Product:</label>
+                <input class="form-control product_name" id="product_name" name="product_name" type="text"
+                    placeholder="Type to search..." autocomplete="off">
 
+                <div id="loadingIndicator" style="display: none;">Loading...</div>
                 <div id="productSuggestions"
                     style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc;">
-                    <div id="loadingIndicator" style="display: none;">Loading...</div>
-                </div>
+                </div> --}}
+{{-- 
+                <label for="product_name" class="taas-select">Product:</label>
+                <input class="form-control product_name" id="product_name" name="product_name" type="text"
+                    placeholder="Type to search..." autocomplete="off">
+                <div id="loadingIndicator" style="display: none;">Loading...</div>
+                <div id="productSuggestions"
+                    style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc;">
+                </div> --}}
+
 
 
 
@@ -431,7 +438,7 @@
 
 
     <!-- Auto Price Script -->
-    {{-- <script>
+    <script>
         function updateUnitPrice(elementId) {
             var productSelect = document.querySelector('#' + elementId + ' .product-select');
             var unitPriceInput = document.querySelector('#' + elementId + ' .selling_price');
@@ -441,39 +448,39 @@
 
             unitPriceInput.value = unitPrice;
         }
-    </script> --}}
+    </script>
 
 
     {{-- Auto Total Price --}}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Select the quantity input field
-            var qtyInputs = document.querySelectorAll('.qty');
+            var qtyInput = document.querySelector('.qty'); // Assuming there's only one qty input for simplicity
 
-            qtyInputs.forEach(function(qtyInput) {
-                // Add an event listener for the 'input' event on the quantity input field
-                qtyInput.addEventListener('input', function() {
-                    // Get the quantity value
-                    var qty = parseFloat(qtyInput.value) || 0;
+            // Function to calculate and update total price
+            function updateTotalPrice() {
+                var qty = parseFloat(qtyInput.value) || 0; // Get the quantity value or 0 if not a number
+                var sellingPrice = parseFloat(document.getElementById('selling_price').value) ||
+                    0; // Get the selling price or 0 if not a number
 
-                    // Get the unit price value from the selected product
-                    var productSelect = qtyInput.closest('.modal-content').querySelector(
-                        '.product-select');
-                    var unitPrice = parseFloat(productSelect.options[productSelect.selectedIndex]
-                        .getAttribute('data-unit-price')) || 0;
+                var totalPrice = qty * sellingPrice; // Calculate the total price
 
-                    // Calculate the total price
-                    var totalPrice = qty * unitPrice;
+                document.getElementById('total_price').value = totalPrice.toFixed(
+                    2); // Update the total price input field
+            }
 
-                    // Update the total price input field
-                    var totalPriceInput = qtyInput.closest('.modal-content').querySelector(
-                        '.total_price');
-                    totalPriceInput.value = totalPrice.toFixed(2);
-                });
+            // Listen for input changes on the quantity field
+            qtyInput.addEventListener('input', updateTotalPrice);
+
+            // You should also update the total price when a product is selected from the suggestions
+            $(document).on('click', '#productSuggestions .list-group-item', function(e) {
+                // Wait for the selling_price to be updated
+                setTimeout(updateTotalPrice, 0);
             });
         });
     </script>
 
+    {{-- Live Search Product --}}
     <script>
         $(document).ready(function() {
             var debounceTimer;

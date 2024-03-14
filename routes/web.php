@@ -48,20 +48,21 @@ Route::group([
     Route::get('/product', [AdminController::class, 'product'])->name('product');
     Route::get('/products/filter/{category}', [AdminController::class, 'filterProductsByCategory'])->name('filterProductsByCategory');
     Route::post('/productStore', [AdminController::class, 'productStore'])->name('productStore');
+    Route::get('/searchProductName', [AdminController::class, 'searchProductName'])->name('searchProductName');
     Route::get('/productEdit/{id}', [AdminController::class, 'productEdit'])->name('productEdit');
     Route::put('/productUpdate/{id}', [AdminController::class, 'productUpdate'])->name('productUpdate');
     Route::delete('/productDestroy/{id}', [AdminController::class, 'productDestroy'])->name('productDestroy');
     Route::get('/productSearch', [LiveSearchController::class, 'productSearch'])->name('productSearch');
-
+    
 
     // Transaction Routes
     Route::get('/transaction', [AdminController::class, 'transaction'])->name('transaction');
     Route::post('/transactionStore', [AdminController::class, 'transactionStore'])->name('transactionStore');
+    Route::get('/searchProduct', [AdminController::class, 'searchProduct'])->name('searchProduct');
     Route::get('/transactionEdit/{id}', [AdminController::class, 'transactionEdit'])->name('transactionEdit');
     Route::put('/transactionUpdate/{id}', [AdminController::class, 'transactionUpdate'])->name('transactionUpdate');
     Route::delete('/transactionDestroy/{id}', [AdminController::class, 'transactionDestroy'])->name('transactionDestroy');
     Route::get('/transactionSearch', [LiveSearchController::class, 'transactionSearch'])->name('transactionSearch');
-    Route::get('/searchProduct', [AdminController::class, 'searchProduct'])->name('searchProduct');
     Route::post('/generateReport', [AdminController::class, 'generateReport'])->name('generateReport');
 
 
@@ -130,6 +131,7 @@ Route::group([
     // Transaction Routes
     Route::get('/transaction', [StaffController::class, 'transaction'])->name('transaction');
     Route::post('/transactionStore', [StaffController::class, 'transactionStore'])->name('transactionStore');
+    Route::get('/searchProduct', [StaffController::class, 'searchProduct'])->name('searchProduct');
     Route::get('/transactionEdit/{id}', [StaffController::class, 'transactionEdit'])->name('transactionEdit');
     Route::put('/transactionUpdate/{id}', [StaffController::class, 'transactionUpdate'])->name('transactionUpdate');
     Route::delete('/transactionDestroy/{id}', [StaffController::class, 'transactionDestroy'])->name('transactionDestroy');

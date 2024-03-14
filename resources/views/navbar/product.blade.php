@@ -45,6 +45,25 @@
                                 </option>
                             @endforeach
                         </select>
+
+                        {{-- <label for="name">Product Name:</label>
+                        <input class="form-control product_name" id="name" name="name" type="text"
+                            placeholder="Type to search..." autocomplete="off">
+
+                        <div id="loadingIndicator" style="display: none;">Loading...</div>
+                        <div id="productSuggestions"
+                            style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc;">
+                        </div> --}}
+
+                        {{-- <label for="name">Product Name:</label>
+                        <input class="form-control product_name" id="name" name="name" type="text"
+                            placeholder="Type to search..." autocomplete="off">
+                        <div id="loadingIndicator" style="display: none;">Loading...</div>
+                        <div id="productSuggestions"
+                            style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc; display: none;">
+                        </div> --}}
+
+
                         @if ($errors->has('name'))
                             <div class="text-danger">{{ $errors->first('name') }}</div>
                         @endif
@@ -472,6 +491,133 @@
             window.location.href = url;
         }
     </script>
+
+    {{-- Live Search Product Name --}}
+    {{-- <script>
+        $(document).ready(function() {
+            var debounceTimer;
+            $('#name').on('input', function() {
+                var query = $(this).val();
+
+                clearTimeout(debounceTimer);
+
+                if (query.length < 1) {
+                    $('#productSuggestions').hide();
+                    return;
+                }
+
+                $('#loadingIndicator').show();
+
+                debounceTimer = setTimeout(function() {
+                    $.ajax({
+                        url: '{{ route('admin.searchProductName') }}',
+                        type: 'GET',
+                        data: {
+                            'query': query
+                        },
+                        success: function(data) {
+                            $('#loadingIndicator').hide();
+
+                            if (data.length > 0) {
+                                $('#productSuggestions').empty().show();
+                                $.each(data, function(index, product) {
+                                    $('#productSuggestions').append(
+                                        '<a href="#" class="list-group-item list-group-item-action" data-name="' +
+                                        product.value + '" data-price="' +
+                                        product.selling_price + '">' +
+                                        product
+                                        .value + '</a>');
+                                });
+                            } else {
+                                $('#productSuggestions').hide();
+                            }
+                        }
+                    });
+                }, 250);
+            });
+
+            // Hide suggestions when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#name, #productSuggestions').length) {
+                    $('#productSuggestions').hide();
+                }
+            });
+
+            // Optionally, show suggestions again when the input is focused and there is text
+            $('#name').on('focus', function() {
+                if (this.value.length > 0) {
+                    $('#productSuggestions').show();
+                }
+            });
+        });
+    </script> --}}
+
+    <script>
+        $(document).ready(function() {
+            var debounceTimer;
+            $('#name').on('input', function() {
+                var query = $(this).val();
+        
+                clearTimeout(debounceTimer);
+        
+                if (query.length < 1) {
+                    $('#productSuggestions').hide();
+                    return;
+                }
+        
+                $('#loadingIndicator').show();
+        
+                debounceTimer = setTimeout(function() {
+                    $.ajax({
+                        url: '{{ route('admin.searchProductName') }}',
+                        type: 'GET',
+                        data: {
+                            'query': query
+                        },
+                        success: function(data) {
+                            $('#loadingIndicator').hide();
+        
+                            if (data.length > 0) {
+                                $('#productSuggestions').empty().show();
+                                $.each(data, function(index, product) {
+                                    $('#productSuggestions').append(
+                                        '<a href="#" class="list-group-item list-group-item-action" data-name="' +
+                                        product.value + '" data-price="' +
+                                        product.selling_price + '">' +
+                                        product.value + '</a>');
+                                });
+                            } else {
+                                $('#productSuggestions').hide();
+                            }
+                        }
+                    });
+                }, 250);
+            });
+        
+            // Hide suggestions when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#name, #productSuggestions').length) {
+                    $('#productSuggestions').hide();
+                }
+            });
+        
+            // Handle click on suggestion to fill the input and hide suggestions
+            $('#productSuggestions').on('click', 'a', function(event) {
+                event.preventDefault();
+                var name = $(this).data('name');
+                $('#name').val(name);
+                $('#productSuggestions').hide();
+            });
+        
+            // Optionally, show suggestions again when the input is focused and there is text
+            $('#name').on('focus', function() {
+                if (this.value.length > 0 && $('#productSuggestions').children().length > 0) {
+                    $('#productSuggestions').show();
+                }
+            });
+        });
+        </script>
+        
 
 
 

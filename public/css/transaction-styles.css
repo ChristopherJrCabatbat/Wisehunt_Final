@@ -208,6 +208,7 @@ select.report {
 }
 
 #productSuggestions {
+    display: none;
     position: relative; /* Changed from absolute to relative */
     top: 190px; /* Adjust based on your layout */
     /* left: 0; */ /* Adjust based on your layout */

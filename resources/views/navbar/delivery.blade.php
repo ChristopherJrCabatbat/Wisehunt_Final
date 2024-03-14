@@ -43,11 +43,7 @@
                     <option disabled selected value="">-- Select Mode of Payment --</option>
                     <option value="Cash on Delivery" {{ old('mode_of_payment') === 'Cash on Delivery' ? 'selected' : '' }}>
                         Cash on Delivery
-                    <option value="Mobile Payment / E-Wallets"
-                        {{ old('mode_of_payment') === 'Mobile Payment / E-Wallets' ? 'selected' : '' }}>Mobile Payment /
-                        E-Wallets</option>
-                    <option value="Credit and Debit Cards"
-                        {{ old('mode_of_payment') === 'Credit and Debit Cards' ? 'selected' : '' }}>Credit and Debit Cards
+                    </option>
                     <option value="Bank Transfers" {{ old('mode_of_payment') === 'Bank Transfers' ? 'selected' : '' }}>Bank
                         Transfers
                     </option>
@@ -63,12 +59,11 @@
                 @endif --}}
 
                 <label for="">Pending Status:</label>
-                <select required name="status" id="" class="">
+                <input type="text" value="Not Delivered" name="status" readonly>
+                {{-- <select required name="status" id="" class="">
                     <option value="Not Delivered" {{ old('status') === 'Not Delivered' ? 'selected' : '' }}>Not Delivered
-                    <option value="Delivered" {{ old('status') === 'Delivered' ? 'selected' : '' }}>Delivered</option>
-                    {{-- <option disabled selected value="">-- Select Status --</option> --}}
                     </option>
-                </select>
+                </select> --}}
                 @if ($errors->has('status'))
                     <div class="text-danger">{{ $errors->first('status') }}</div>
                 @endif
