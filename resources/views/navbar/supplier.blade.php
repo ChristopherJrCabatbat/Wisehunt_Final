@@ -51,9 +51,9 @@
                     <div class="text-danger">{{ $errors->first('address') }}</div>
                 @endif
 
-                {{-- <label for="">Product:</label>
+                <label for="">Product:</label>
                 <input required type="text" name="product_name"
-                id="product-supp" /> --}}
+                id="product-supp" />
                 {{-- <div class="product-plus"> --}}
                 {{-- <a href="#" id="plusSupplier"><i class="fa-regular fa-plus"></i></a> --}}
                 {{-- <button type="submit" id="plusSupplier"><i class="fa-regular fa-plus"></i></button> --}}
@@ -61,12 +61,12 @@
                             class="fa-regular fa-plus"></i></button> --}}
                 {{-- </div> --}}
 
-                <div id="productFields">
+                {{-- <div id="productFields">
                     <label for="products[0]">Product:</label>
-                    <input required type="text" name="products[0]" />
-                    {{-- <input required type="text" name="product_name[0]" /> --}}
+                    <input required type="text" name="products[0]" /> Pili ka ng isa kung ito
+                    <input required type="text" name="product_name[0]" /> o ito
                 </div>
-                <button type="button" id="addProduct">Add Another Product</button>
+                <button type="button" id="addProduct">Add Another Product</button> --}}
 
                 @if ($errors->has('product_name'))
                     <div class="text-danger">{{ $errors->first('product_name') }}</div>
@@ -198,10 +198,10 @@
                             Default Sorting --</option>
                         <option value="company_name_asc" {{ request('sort') === 'company_name_asc' ? 'selected' : '' }}>
                             Company Name</option>
-                        <option value="contact_name_asc" {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>
+                        {{-- <option value="contact_name_asc" {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>
                             Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
-                        </option>
+                        </option> --}}
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
                             Product
                         </option>

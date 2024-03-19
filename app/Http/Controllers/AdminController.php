@@ -526,17 +526,15 @@ class AdminController extends Controller
         return redirect()->route('admin.product')->with('success', 'Product added successfully.');
     }
 
-    // public function searchProductName(Request $request)
-    // {
-    //     $search = $request->input('query');
+    public function searchSupplierProduct(Request $request)
+    {
+        $searchTerm = $request->input('query');
+        $supplierProducts = Supplier::where('product_name', 'LIKE', "%{$searchTerm}%")
+            ->get(['product_name as value'])
+            ->unique('value'); // Optional: Ensures unique product names
 
-    //     // Assuming 'name' is the correct column you wish to search by
-    //     // And your model for managing products is named `Product`
-    //     $products = Supplier::where('product_name', 'LIKE', "{$search}%") // Only starts with
-    //         ->get(['id', 'name as value', 'selling_price']);
-
-    //     return response()->json($products);
-    // }
+        return response()->json($supplierProducts);
+    }
 
     public function searchProductName(Request $request)
     {
@@ -1336,53 +1334,53 @@ class AdminController extends Controller
     }
 
 
-    // public function supplierStore(Request $request)
-    // {
-    //     $request->validate([
-    //         "company_name" => "required",
-    //         "contact_name" => "required|min:1",
-    //         "product_name" => "required",
-    //         "address" => "required",
-    //         // "contact_num" => "required|digits_between:5,11",
-    //     ]);
-
-    //     $suppliers = new Supplier;
-    //     $suppliers->company_name = $request->input('company_name');
-    //     $suppliers->contact_name = $request->input('contact_name');
-    //     $suppliers->address = $request->input('address');
-    //     $suppliers->product_name = $request->input('product_name');
-    //     $suppliers->contact_num = $request->input('contact_num');
-    //     $suppliers->save();
-    //     // return redirect()->route('admin.supplier');
-    //     return back()->with("message", "Supplier added successfully!");
-    // }
-
     public function supplierStore(Request $request)
     {
         $request->validate([
             "company_name" => "required",
             "contact_name" => "required|min:1",
+            "product_name" => "required",
             "address" => "required",
-            "products.*" => "required", // Validates that each product name in the array is required
+            // "contact_num" => "required|digits_between:5,11",
         ]);
 
-        $supplier = new Supplier;
-        $supplier->company_name = $request->input('company_name');
-        $supplier->contact_name = $request->input('contact_name');
-        $supplier->address = $request->input('address');
-        $supplier->contact_num = $request->input('contact_num');
-        $supplier->save();
-
-        foreach ($request->products as $productName) {
-            // Assuming a Product model exists and is related to Supplier
-            $product = new Product(); // Create a new Product instance
-            $product->name = $productName;
-            // Assuming there's a relationship set up in your Supplier model
-            $supplier->products()->save($product);
-        }
-
+        $suppliers = new Supplier;
+        $suppliers->company_name = $request->input('company_name');
+        $suppliers->contact_name = $request->input('contact_name');
+        $suppliers->address = $request->input('address');
+        $suppliers->product_name = $request->input('product_name');
+        $suppliers->contact_num = $request->input('contact_num');
+        $suppliers->save();
+        // return redirect()->route('admin.supplier');
         return back()->with("message", "Supplier added successfully!");
     }
+
+    // public function supplierStore(Request $request)
+    // {
+    //     $request->validate([
+    //         "company_name" => "required",
+    //         "contact_name" => "required|min:1",
+    //         "address" => "required",
+    //         "products.*" => "required", // Validates that each product name in the array is required
+    //     ]);
+
+    //     $supplier = new Supplier;
+    //     $supplier->company_name = $request->input('company_name');
+    //     $supplier->contact_name = $request->input('contact_name');
+    //     $supplier->address = $request->input('address');
+    //     $supplier->contact_num = $request->input('contact_num');
+    //     $supplier->save();
+
+    //     foreach ($request->products as $productName) {
+    //         // Assuming a Product model exists and is related to Supplier
+    //         $product = new Product(); // Create a new Product instance
+    //         $product->name = $productName;
+    //         // Assuming there's a relationship set up in your Supplier model
+    //         $supplier->products()->save($product);
+    //     }
+
+    //     return back()->with("message", "Supplier added successfully!");
+    // }
 
 
     // public function supplierStoreProduct(Request $request)

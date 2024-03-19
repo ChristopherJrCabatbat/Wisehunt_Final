@@ -425,8 +425,8 @@ select.unit {
 
 #productSuggestions {
     /* display: none; */
-    position: relative; /* Changed from absolute to relative */
-    top: 142px; /* Adjust based on your layout */
+    position: absolute; /* Changed from absolute to relative */
+    top: 143px; /* Adjust based on your layout */
     /* left: 0; */ /* Adjust based on your layout */
     width: 26.9%; /* Match the input field width */
     box-shadow: 0 4px 6px rgba(0,0,0,.1); /* Optional: adds a shadow for better separation */
@@ -434,16 +434,26 @@ select.unit {
     overflow-y: auto;
     border-radius: 0 0 4px 4px; /* Rounded corners at the bottom */
     color: black;
-    padding: 5px;
+    /* padding: 5px; */
     text-decoration: none;
+    background-color: white;
 }
 
 #productSuggestions:hover {
     color: black;
-    background-color: transparent;
+    /* background-color: #cfcfcf; */
+    cursor: pointer;
     /* top: 150px; */
 }
 
 div#productSuggestions a:hover{
-    background-color: transparent;
+    /* background-color: transparent; */
+}
+
+div.suggestion-item {
+    padding: 5px;
+}
+
+div.suggestion-item:hover {
+    background-color: rgb(225, 225, 225);
 }

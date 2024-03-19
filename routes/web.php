@@ -48,7 +48,10 @@ Route::group([
     Route::get('/product', [AdminController::class, 'product'])->name('product');
     Route::get('/products/filter/{category}', [AdminController::class, 'filterProductsByCategory'])->name('filterProductsByCategory');
     Route::post('/productStore', [AdminController::class, 'productStore'])->name('productStore');
+
     Route::get('/searchProductName', [AdminController::class, 'searchProductName'])->name('searchProductName');
+    Route::get('/searchSupplierProduct', [AdminController::class, 'searchSupplierProduct'])->name('searchSupplierProduct');
+
     Route::get('/productEdit/{id}', [AdminController::class, 'productEdit'])->name('productEdit');
     Route::put('/productUpdate/{id}', [AdminController::class, 'productUpdate'])->name('productUpdate');
     Route::delete('/productDestroy/{id}', [AdminController::class, 'productDestroy'])->name('productDestroy');

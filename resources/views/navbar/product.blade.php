@@ -35,7 +35,7 @@
 
                     <div class="column">
 
-                        <label for="">Product Name:</label>
+                        {{-- <label for="">Product Name:</label>
                         <select required class="select_product" name="name" id="product_name">
                             <option value="" disabled selected>-- Select a Product --</option>
                             @foreach ($suppliers as $supplier)
@@ -44,7 +44,15 @@
                                     {{ $supplier->product_name }}
                                 </option>
                             @endforeach
-                        </select>
+                        </select> --}}
+
+                        <label for="product_name">Product Name:</label>
+                        <input class="form-control" id="product_name" name="name" type="text" placeholder="Type to search..."
+                            autocomplete="off">
+
+                        <div id="productSuggestions" class="suggestions-dropdown">
+                            <!-- Search suggestions will be appended here -->
+                        </div>
 
                         {{-- <label for="name">Product Name:</label>
                         <input class="form-control product_name" id="name" name="name" type="text"
@@ -112,6 +120,8 @@
                             </option>
                             <option value="Per set" {{ old('unit') === 'Per set' ? 'selected' : '' }}>
                                 Per set</option>
+                            <option value="Per box" {{ old('unit') === 'Per box' ? 'selected' : '' }}>Per ream
+                                </option>
                         </select>
                         @if ($errors->has('unit'))
                             <div class="text-danger">{{ $errors->first('unit') }}</div>
@@ -369,9 +379,9 @@
                                             @csrf
                                             @method('GET')
 
-                                            {{-- <button type="submit" class="edit" id="edit">
+                                            <button type="submit" class="edit" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                            </button> --}}
+                                            </button>
                                         </form>
                                         <form action="{{ route('admin.productDestroy', $product->id) }}" method="POST">
                                             @csrf
@@ -482,6 +492,7 @@
             window.location.href = url;
         }
     </script> --}}
+    
     <script>
         function applyCategoryFilter() {
             var selectedCategory = document.getElementById('category').value;
@@ -552,21 +563,21 @@
         });
     </script> --}}
 
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             var debounceTimer;
             $('#name').on('input', function() {
                 var query = $(this).val();
-        
+
                 clearTimeout(debounceTimer);
-        
+
                 if (query.length < 1) {
                     $('#productSuggestions').hide();
                     return;
                 }
-        
+
                 $('#loadingIndicator').show();
-        
+
                 debounceTimer = setTimeout(function() {
                     $.ajax({
                         url: '{{ route('admin.searchProductName') }}',
@@ -576,7 +587,7 @@
                         },
                         success: function(data) {
                             $('#loadingIndicator').hide();
-        
+
                             if (data.length > 0) {
                                 $('#productSuggestions').empty().show();
                                 $.each(data, function(index, product) {
@@ -593,14 +604,14 @@
                     });
                 }, 250);
             });
-        
+
             // Hide suggestions when clicking outside
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('#name, #productSuggestions').length) {
                     $('#productSuggestions').hide();
                 }
             });
-        
+
             // Handle click on suggestion to fill the input and hide suggestions
             $('#productSuggestions').on('click', 'a', function(event) {
                 event.preventDefault();
@@ -608,7 +619,7 @@
                 $('#name').val(name);
                 $('#productSuggestions').hide();
             });
-        
+
             // Optionally, show suggestions again when the input is focused and there is text
             $('#name').on('focus', function() {
                 if (this.value.length > 0 && $('#productSuggestions').children().length > 0) {
@@ -616,8 +627,65 @@
                 }
             });
         });
-        </script>
-        
+    </script> --}}
+
+    <script>
+        $(document).ready(function() {
+            var debounceTimer;
+            $('#product_name').on('input', function() {
+                var query = $(this).val();
+
+                clearTimeout(debounceTimer);
+
+                if (query.length < 1) {
+                    $('#productSuggestions').html('').hide();
+                    return;
+                }
+
+                $('#productSuggestions').show(); // Optional: Show loading indicator
+
+                debounceTimer = setTimeout(function() {
+                    $.ajax({
+                        url: '{{ route('admin.searchSupplierProduct') }}',
+                        type: 'GET',
+                        data: {
+                            'query': query
+                        },
+                        success: function(data) {
+                            $('#productSuggestions').empty();
+                            if (data.length > 0) {
+                                data.forEach(function(product) {
+                                    $('#productSuggestions').append(
+                                        '<div class="suggestion-item" data-value="' +
+                                        product.value + '">' + product
+                                        .value + '</div>');
+                                });
+                            } else {
+                                $('#productSuggestions').append(
+                                    '<div class="suggestion-item">No results found</div>'
+                                );
+                            }
+                        }
+                    });
+                }, 250); // Adjust debounce time as needed
+            });
+
+            $(document).on('click', '.suggestion-item', function() {
+                var selectedProduct = $(this).data('value');
+                $('#product_name').val(selectedProduct);
+                $('#productSuggestions').empty().hide();
+            });
+
+            // Optional: Hide suggestions when clicking outside
+            $(document).mouseup(function(e) {
+                var container = $("#productSuggestions");
+                if (!container.is(e.target) && container.has(e.target).length === 0) {
+                    container.hide();
+                }
+            });
+        });
+    </script>
+
 
 
 
