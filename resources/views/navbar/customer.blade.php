@@ -193,7 +193,7 @@
 @endsection
 
 @section('footer')
-    @if (session('success'))
+    {{-- @if (session('success'))
         <script>
             alert('{{ session('success') }}');
         </script>
@@ -202,7 +202,7 @@
         <script>
             alert('{{ session('message') }}');
         </script>
-    @endif
+    @endif --}}
 @endsection
 
 @section('script')

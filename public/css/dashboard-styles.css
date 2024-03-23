@@ -111,7 +111,7 @@ label {
 #curve_chart {
     position: absolute;
     top: 160px;
-    left: 215px;
+    left: 233px;
     overflow: hidden;
     /* overflow-x: hidden; */
     min-width: 1110px;
@@ -125,8 +125,8 @@ label {
 
 .sales {
     position: absolute;
-    top: 66%;
-    left: 194px;
+    top: 59%;
+    left: 185px;
     transform: translateY(-50%) rotate(-90deg);
     font-size: 16px;
     color: #414141;
@@ -138,12 +138,16 @@ label {
 }
 
 div div div div div svg rect {
-    width: 1250px;
+    width: 1035px;
+    /* margin-left: 40px; */
 }
 
 div.graph div.line-graph div#curve_chart div div div svg g g g text {
     font-size: 14px;
-    /* margin-left: 20px; */
+    margin-left: 20px;
+    /* text-wrap: nowrap; */
+    /* overflow-wrap: normal; */
+    /* white-space: nowrap; */
 }
 
 /* div div div div div svg  {
@@ -184,6 +188,8 @@ div.graph div.line-graph div#curve_chart div div div svg g g g text {
 /* Labels Text */
 g g g text {
     font-size: 17px;
+    white-space: nowrap;
+    /* color: red; */
 }
 
 .gitna-boxbaba {
@@ -295,4 +301,14 @@ svg g g rect {
     left: 26px;
     top: 400px;
     position: absolute;
+}
+
+
+div#curve_chart div div div svg g g g text::before {
+    /* text-wrap: wrap; */
+    /* color: red; */
+    /* background-color: red; */
+    /* white-space: nowrap; */
+    /* content: "P"; */
+    
 }

@@ -51,9 +51,17 @@
                     <div class="text-danger">{{ $errors->first('address') }}</div>
                 @endif
 
-                <label for="">Product:</label>
-                <input required type="text" name="product_name"
-                id="product-supp" />
+                {{-- <label for="">Product:</label>
+                <input required type="text" name="product_name" id="product-supp" /> --}}
+
+                <label for="">Products:</label>
+                <div id="product-input-container">
+                    <!-- Initial product input -->
+                    <input required type="text" name="product_name[]" class="product-input" />
+                </div>
+                <button type="button" id="add-more-products">Add More Product</button>
+
+
                 {{-- <div class="product-plus"> --}}
                 {{-- <a href="#" id="plusSupplier"><i class="fa-regular fa-plus"></i></a> --}}
                 {{-- <button type="submit" id="plusSupplier"><i class="fa-regular fa-plus"></i></button> --}}
@@ -278,7 +286,9 @@
                                 <td>{{ $supplier->contact_name }}</td>
                                 <td>{{ $supplier->contact_num }}</td>
                                 <td>{{ $supplier->address }}</td>
-                                <td>{{ $supplier->product_name }}</td>
+                                {{-- <td>{{ $supplier->product_name }}</td> --}}
+                                <td>{{ implode(', ', json_decode($supplier->product_name, true)) }}</td>
+
 
                                 <td class="actions">
                                     <div class="actions-container">
@@ -392,7 +402,7 @@
         }
     </script>
 
-    <script>
+    {{-- <script>
         document.getElementById('addProduct').addEventListener('click', function() {
             const newProductIndex = document.querySelectorAll('#productFields > input').length;
             const newFieldHTML = `
@@ -402,6 +412,18 @@
             </div>
         `;
             document.getElementById('productFields').insertAdjacentHTML('beforeend', newFieldHTML);
+        });
+    </script> --}}
+
+    <script>
+        document.getElementById('add-more-products').addEventListener('click', function() {
+            var newInput = document.createElement('input');
+            newInput.setAttribute('type', 'text');
+            newInput.setAttribute('name', 'product_name[]'); // Important: Use array notation for the name attribute
+            newInput.setAttribute('required', 'true');
+            newInput.classList.add('product-input');
+
+            document.getElementById('product-input-container').appendChild(newInput);
         });
     </script>
 

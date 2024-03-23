@@ -628,7 +628,7 @@ class AdminController extends Controller
         }
 
         $product->save();
-        return redirect()->route('admin.product');
+        return redirect()->route('admin.product')->with("message", "Product updated successfully!");
     }
 
     public function productDestroy(string $id)
@@ -1334,12 +1334,33 @@ class AdminController extends Controller
     }
 
 
+    // public function supplierStore(Request $request)
+    // {
+    //     $request->validate([
+    //         "company_name" => "required",
+    //         "contact_name" => "required|min:1",
+    //         "product_name" => "required",
+    //         "address" => "required",
+    //         // "contact_num" => "required|digits_between:5,11",
+    //     ]);
+
+    //     $suppliers = new Supplier;
+    //     $suppliers->company_name = $request->input('company_name');
+    //     $suppliers->contact_name = $request->input('contact_name');
+    //     $suppliers->address = $request->input('address');
+    //     $suppliers->product_name = $request->input('product_name');
+    //     $suppliers->contact_num = $request->input('contact_num');
+    //     $suppliers->save();
+    //     // return redirect()->route('admin.supplier');
+    //     return back()->with("message", "Supplier added successfully!");
+    // }
+
     public function supplierStore(Request $request)
     {
         $request->validate([
             "company_name" => "required",
             "contact_name" => "required|min:1",
-            "product_name" => "required",
+            "product_name.*" => "required", // Validate each product name in the array
             "address" => "required",
             // "contact_num" => "required|digits_between:5,11",
         ]);
@@ -1348,10 +1369,11 @@ class AdminController extends Controller
         $suppliers->company_name = $request->input('company_name');
         $suppliers->contact_name = $request->input('contact_name');
         $suppliers->address = $request->input('address');
-        $suppliers->product_name = $request->input('product_name');
+        // Convert the product_name array to JSON before saving
+        $suppliers->product_name = json_encode($request->input('product_name'));
         $suppliers->contact_num = $request->input('contact_num');
         $suppliers->save();
-        // return redirect()->route('admin.supplier');
+
         return back()->with("message", "Supplier added successfully!");
     }
 

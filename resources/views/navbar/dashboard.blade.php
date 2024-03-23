@@ -81,6 +81,22 @@
             }
             ?>
 
+            // Add the NumberFormat configuration here
+            // var formatter = new google.visualization.NumberFormat({
+            //     prefix: '₱',
+            //     pattern: '#,##0.00'
+            // });
+            // console.log("Applying formatter");
+            // formatter.format(data, 1); 
+            // formatter.format(data, 2);
+            // console.log("Formatter applied");
+
+
+            var formatter = new google.visualization.NumberFormat({
+                pattern: 'currency'
+            });
+
+
             var options = {
                 title: 'Sales Forecasting',
                 curveType: 'function',
@@ -100,9 +116,20 @@
                         lineDashStyle: [4, 4]
                     }
                 },
-                vAxis: {
-                    format: '₱ '
-                },
+
+                // vAxis: {
+                //     format: '₱'
+                // },
+
+                // vAxis: {
+                //     format: 'currency',
+                //     textStyle: {
+                //         color: '#1a237e',
+                //         fontSize: 12,
+                //         bold: true
+                //     }
+                // },
+
                 hAxis: {
                     textStyle: {
                         fontSize: 12
@@ -284,7 +311,7 @@
         <div class="graph">
             <div class="line-graph">
                 <div id="curve_chart" style="height: 500px;"></div>
-                <div class="sales">Sales</div>
+                <div class="sales">Sales (₱)</div>
             </div>
 
             <div class="bar-graph">

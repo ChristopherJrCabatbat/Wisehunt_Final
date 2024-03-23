@@ -168,18 +168,18 @@
                         <div class="user-photo-dropdown">
                             <img class="icon-user" src="{{ asset($userPhoto) }}" alt="" width="100"
                                 height="auto">
-                                
-                        @if (auth()->user()->role === 'Admin')
-                            <div class="dropdown-content">
-                                <a href="{{ route('admin.userEdit', auth()->user()->id) }}">Edit user profile</a>
-                            </div>
-                        @endif
-                        
-                        @if (auth()->user()->role === 'Staff')
-                            <div class="dropdown-content">
-                                <a href="{{ route('staff.userEdit', auth()->user()->id) }}">Edit user profile</a>
-                            </div>
-                        @endif
+
+                            @if (auth()->user()->role === 'Admin')
+                                <div class="dropdown-content">
+                                    <a href="{{ route('admin.userEdit', auth()->user()->id) }}">Edit user profile</a>
+                                </div>
+                            @endif
+
+                            @if (auth()->user()->role === 'Staff')
+                                <div class="dropdown-content">
+                                    <a href="{{ route('staff.userEdit', auth()->user()->id) }}">Edit user profile</a>
+                                </div>
+                            @endif
 
                         </div>
 
@@ -220,16 +220,17 @@
 
     {{-- Edit Profile --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             var userPhoto = document.querySelector('.icon-user');
             var dropdownContent = document.querySelector('.dropdown-content');
-        
+
             // Toggle dropdown display on photo click
             userPhoto.addEventListener('click', function(event) {
-                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+                dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' :
+                    'block';
                 event.stopPropagation(); // Prevent click from immediately propagating to document
             });
-        
+
             // Clicking outside the dropdown hides it
             document.addEventListener('click', function(event) {
                 if (event.target !== userPhoto) {
@@ -237,8 +238,8 @@
                 }
             });
         });
-        </script>
-        
+    </script>
+
 
 
     @yield('script')
@@ -277,6 +278,17 @@
     </script>
 
     <script src="{{ asset('js/notification.js') }}"></script>
+
+    @if (session('success'))
+        <script>
+            alert('{{ session('success') }}');
+        </script>
+    @endif
+    @if (session('message'))
+        <script>
+            alert('{{ session('message') }}');
+        </script>
+    @endif
 
 </body>
 

@@ -73,6 +73,30 @@
                     </div>
 
                     <div class="column">
+                        <label for="">Unit:</label>
+                        <select required name="unit" id="" class="row1-input unit">
+                            <option value="" disabled selected>Select Unit</option>
+                            <option value="Per item" {{ old('unit', $productss->unit) === 'Per item' ? 'selected' : '' }}>Per item
+                            </option>
+                            <option value="Per box" {{ old('unit', $productss->unit) === 'Per box' ? 'selected' : '' }}>Per box
+                            </option>
+                            <option value="Per case" {{ old('unit', $productss->unit) === 'Per case' ? 'selected' : '' }}>Per case
+                            </option>
+                            <option value="Per pack" {{ old('unit', $productss->unit) === 'Per pack' ? 'selected' : '' }}>Per pack
+                            </option>
+                            <option value="Per set" {{ old('unit', $productss->unit) === 'Per set' ? 'selected' : '' }}>
+                                Per set</option>
+                            <option value="Per box" {{ old('unit', $productss->unit) === 'Per box' ? 'selected' : '' }}>Per ream
+                                </option>
+                            {{-- <option value="Paper" {{ old('category', $productss->category) === 'Paper' ? 'selected' : '' }}>Paper</option> --}}
+
+                        </select>
+                        @if ($errors->has('unit'))
+                            <div class="text-danger">{{ $errors->first('unit') }}</div>
+                        @endif
+                    </div>
+
+                    <div class="column">
                         <label for="">Capital:</label>
                         <input required type="number" name="purchase_price" id=""
                             value="{{ old('purchase_price', $productss->purchase_price) }}" class="row2-input" />
