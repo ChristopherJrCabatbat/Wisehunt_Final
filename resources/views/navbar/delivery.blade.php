@@ -347,11 +347,11 @@
 @endsection
 
 @section('footer')
-    @if (session('message'))
+    {{-- @if (session('message'))
         <script>
             alert('{{ session('message') }}');
         </script>
-    @endif
+    @endif --}}
 @endsection
 
 @section('script')

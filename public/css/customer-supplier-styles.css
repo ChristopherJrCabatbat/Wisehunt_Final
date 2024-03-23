@@ -50,6 +50,8 @@ label {
     transition: all 0.3s;
 }
 
+input.add {}
+
 input, select {
     margin-top: 5px;
     margin-bottom: 5px;

@@ -54,12 +54,13 @@
                 {{-- <label for="">Product:</label>
                 <input required type="text" name="product_name" id="product-supp" /> --}}
 
-                <label for="">Products:</label>
+                <label for="">Product/s:</label>
                 <div id="product-input-container">
                     <!-- Initial product input -->
                     <input required type="text" name="product_name[]" class="product-input" />
+                    {{-- <button type="button" id="add-more-products">Add More Product</button> --}}
                 </div>
-                <button type="button" id="add-more-products">Add More Product</button>
+                {{-- <button type="button" id="add-more-products" title="Click to add more product."><i class="fa-regular fa-plus"></i></button> --}}
 
 
                 {{-- <div class="product-plus"> --}}
@@ -82,7 +83,10 @@
 
 
 
-                <input class="add" type="submit" value="Add" />
+                <div class="add-save">
+                    <button type="button" id="add-more-products" title="Click to add more product.">Add More Product</button>
+                    <input class="add" type="submit" value="Save Supplier" />
+                </div>
             </form>
         </div>
     </div>
@@ -332,11 +336,11 @@
 @endsection
 
 @section('footer')
-    @if (session('message'))
+    {{-- @if (session('message'))
         <script>
             alert('{{ session('message') }}');
         </script>
-    @endif
+    @endif --}}
 @endsection
 
 @section('script')

@@ -18,24 +18,55 @@ input#product-supp {
     /* min-width: 87%; */
 }
 
-#plusSupplier {
+/* #plusSupplier { */
+#add-more-products {
+    white-space: nowrap;
+    margin-left: 81px;
+    width: 100%;
     /* display: inline-block; */
-    display: flex;
+    /* display: flex; */
     text-decoration: none;
     justify-content: center;
     align-items: center;
     align-content: center;
     background-color: #006181;
     color: white;
-    padding: 3px 3px 3px 13px;
-    margin-left: -2px;
+    /* padding: 3px 3px 3px 13px; */
+    /* padding: 2px 3px 1px 13px; */
+    padding: 6px;
+    /* margin-left: -2px; */
+    margin-top: 2px;
+    height: 100%;
     /* padding-left: 9px; */
+    /* white-space: normal; */
 }
 
-#plusSupplier:hover {
+/* #plusSupplier:hover { */
+#add-more-products:hover {
     background-color: #333;
 }
 
 .modal-content {
     bottom: 160px;
+}
+
+/* #product-input-container {
+    display: flex;  
+} */
+
+.product-input {
+    width: 100%;
+}
+.add-save {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+input[type="submit"], input[type="button"] {
+    margin-top: 6px;
+    height: 100%;
+    width: 100%;
 }

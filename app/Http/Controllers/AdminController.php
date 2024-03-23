@@ -526,15 +526,81 @@ class AdminController extends Controller
         return redirect()->route('admin.product')->with('success', 'Product added successfully.');
     }
 
+    // public function searchSupplierProduct(Request $request)
+    // {
+    //     $searchTerm = $request->input('query');
+        
+    //     // Fetch all suppliers to ensure we check through all products
+    //     $suppliers = Supplier::all();
+    
+    //     $matchingProductNames = [];
+    
+    //     foreach ($suppliers as $supplier) {
+    //         // Decode the JSON-encoded product_name array
+    //         $productNames = json_decode($supplier->product_name, true);
+            
+    //         // Check if productNames is an array and not empty
+    //         if (is_array($productNames) && !empty($productNames)) {
+    //             // Filter product names based on the search term
+    //             $filteredProductNames = array_filter($productNames, function($productName) use ($searchTerm) {
+    //                 return stripos($productName, $searchTerm) !== false;
+    //             });
+                
+    //             // Merge the filtered product names
+    //             $matchingProductNames = array_merge($matchingProductNames, $filteredProductNames);
+    //         }
+    //     }
+    
+    //     // Remove duplicate product names to ensure uniqueness
+    //     $uniqueProductNames = array_unique($matchingProductNames);
+    
+    //     // Prepare the product names to match the expected format for suggestions
+    //     $formattedProducts = array_map(function ($productName) {
+    //         return ['value' => $productName];
+    //     }, $uniqueProductNames);
+    
+    //     return response()->json($formattedProducts);
+    // }
+    
+
     public function searchSupplierProduct(Request $request)
     {
         $searchTerm = $request->input('query');
-        $supplierProducts = Supplier::where('product_name', 'LIKE', "%{$searchTerm}%")
-            ->get(['product_name as value'])
-            ->unique('value'); // Optional: Ensures unique product names
-
-        return response()->json($supplierProducts);
+        
+        // Fetch all suppliers to ensure we check through all products
+        $suppliers = Supplier::all();
+    
+        $matchingProductNames = [];
+    
+        foreach ($suppliers as $supplier) {
+            // Decode the JSON-encoded product_name array
+            $productNames = json_decode($supplier->product_name, true);
+            
+            // Check if productNames is an array and not empty
+            if (is_array($productNames) && !empty($productNames)) {
+                // Filter product names based on the search term
+                $filteredProductNames = array_filter($productNames, function($productName) use ($searchTerm) {
+                    // Change the condition to check if the product name starts with the search term
+                    return stripos($productName, $searchTerm) === 0;
+                });
+                
+                // Merge the filtered product names
+                $matchingProductNames = array_merge($matchingProductNames, $filteredProductNames);
+            }
+        }
+    
+        // Remove duplicate product names to ensure uniqueness
+        $uniqueProductNames = array_unique($matchingProductNames);
+    
+        // Prepare the product names to match the expected format for suggestions
+        $formattedProducts = array_map(function ($productName) {
+            return ['value' => $productName];
+        }, $uniqueProductNames);
+    
+        return response()->json($formattedProducts);
     }
+    
+
 
     public function searchProductName(Request $request)
     {
