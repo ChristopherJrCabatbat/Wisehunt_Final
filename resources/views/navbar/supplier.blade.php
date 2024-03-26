@@ -58,25 +58,8 @@
                 <div id="product-input-container">
                     <!-- Initial product input -->
                     <input required type="text" name="product_name[]" class="product-input" />
-                    {{-- <button type="button" id="add-more-products">Add More Product</button> --}}
                 </div>
-                {{-- <button type="button" id="add-more-products" title="Click to add more product."><i class="fa-regular fa-plus"></i></button> --}}
-
-
-                {{-- <div class="product-plus"> --}}
-                {{-- <a href="#" id="plusSupplier"><i class="fa-regular fa-plus"></i></a> --}}
-                {{-- <button type="submit" id="plusSupplier"><i class="fa-regular fa-plus"></i></button> --}}
-                {{-- <button type="button" id="plusSupplier" onclick="submitFormAndReopenModal()" title="Click to add more product."><i
-                            class="fa-regular fa-plus"></i></button> --}}
-                {{-- </div> --}}
-
-                {{-- <div id="productFields">
-                    <label for="products[0]">Product:</label>
-                    <input required type="text" name="products[0]" /> Pili ka ng isa kung ito
-                    <input required type="text" name="product_name[0]" /> o ito
-                </div>
-                <button type="button" id="addProduct">Add Another Product</button> --}}
-
+                
                 @if ($errors->has('product_name'))
                     <div class="text-danger">{{ $errors->first('product_name') }}</div>
                 @endif
@@ -407,19 +390,6 @@
     </script>
 
     {{-- <script>
-        document.getElementById('addProduct').addEventListener('click', function() {
-            const newProductIndex = document.querySelectorAll('#productFields > input').length;
-            const newFieldHTML = `
-            <div>
-                <label for="products[${newProductIndex}]">Product:</label>
-                <input required type="text" name="products[${newProductIndex}]" />
-            </div>
-        `;
-            document.getElementById('productFields').insertAdjacentHTML('beforeend', newFieldHTML);
-        });
-    </script> --}}
-
-    <script>
         document.getElementById('add-more-products').addEventListener('click', function() {
             var newInput = document.createElement('input');
             newInput.setAttribute('type', 'text');
@@ -429,7 +399,38 @@
 
             document.getElementById('product-input-container').appendChild(newInput);
         });
+    </script> --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Listener for adding more product inputs
+            document.getElementById('add-more-products').addEventListener('click', function() {
+                var newInput = document.createElement('input');
+                newInput.setAttribute('type', 'text');
+                newInput.setAttribute('name', 'product_name[]');
+                newInput.setAttribute('required', 'true');
+                newInput.classList.add('product-input');
+    
+                document.getElementById('product-input-container').appendChild(newInput);
+            });
+    
+            // Listener for the close button of the modal
+            document.querySelector('.closeModal').addEventListener('click', function() {
+                // Select all product input elements
+                var inputs = document.querySelectorAll('#product-input-container .product-input');
+                // Keep only the first input, remove the rest
+                if(inputs.length > 1) {
+                    for(var i = 1; i < inputs.length; i++) {
+                        inputs[i].parentNode.removeChild(inputs[i]);
+                    }
+                }
+    
+                // Optionally reset the value of the first input if needed
+                inputs[0].value = '';
+            });
+        });
     </script>
+    
 
 
     <script src="{{ asset('js/supplier.js') }}"></script>
