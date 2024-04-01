@@ -214,8 +214,8 @@ class LiveSearchController extends Controller
             <td> ' . $supplier->contact_name . ' </td>
             <td> ' . $supplier->contact_num . ' </td>
             <td> ' . $supplier->address . ' </td>
-            <td> ' . $supplier->product_name . ' </td>
-
+            <td> ' . implode(', ', json_decode($supplier->product_name, true)) . 
+            ' <button type="button" onclick="showProducts(\''. addslashes($supplier->company_name) .'\', \''. htmlspecialchars($supplier->product_name, ENT_QUOTES) .'\')">View All</button>' . ' </td>
             <td class="actions">
                 <div class="actions-container">
                         <form action="' . route('admin.supplierEdit', $supplier->id) . '" method="POST">

@@ -51,7 +51,10 @@ input#product-supp {
     max-height: 600px;
     overflow: hidden;
     overflow-y: scroll;
+}
 
+.edit {
+    overflow-y: hidden;
 }
 
 /* #product-input-container {
@@ -73,4 +76,74 @@ input[type="submit"], input[type="button"] {
     margin-top: 6px;
     height: 100%;
     width: 100%;
+}
+
+
+/* Modal Content */
+#viewProductsModal {
+    background-color: rgba(0, 0, 0, 0.7);
+    height: 100vh;
+    z-index: 1000;
+    position: absolute;
+    width: 100vw;
+}
+
+.modal-content-view {
+    /* display: none; */
+    background-color: #fefefe;
+    position: fixed; /* Fixed position to keep it at the top */
+    top: 110px; /* Align top edge with the top of the viewport */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust horizontal positioning */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%; /* Adjust as necessary */
+    max-height: 70%; /* Maximum height */
+    overflow-y: auto; /* Allow scrolling within the modal */
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+/* The Close Button */
+.close-view {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-view:hover,
+.close-view:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Additional table styles from previous instructions */
+
+
+
+/* Table Styles */
+.modal-content-view table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px; /* Space between table and any content above it */
+}
+
+.modal-content-view th, .modal-content-view td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.modal-content-view tr:nth-child(even) {
+    background-color: #f2f2f2; /* Zebra striping for rows */
+}
+
+.modal-content-view th {
+    background-color: #006181; /* Green background for header */
+    color: white; /* White text for header */
+}
+
+
+.modal-content-view h2 {
+    text-align: center;
 }

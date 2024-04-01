@@ -55,27 +55,7 @@
                             <td class="nowrap transcact-td">₱ {{ number_format($transaction->total_price) }}</td>
                             {{-- <td class="nowrap transcact-td">₱ {{ number_format($transaction->profit) }}</td> --}}
                             <td>{{ optional($transaction->created_at)->format('M. d, Y') }}</td>
-                            {{-- <td class="actions">
-                                <div class="actions-container">
-                                    <form action="{{ route('admin.transactionEdit', $transaction->id) }}"
-                                        method="POST">
-                                        @csrf
-                                        @method('GET')
-                                        <button type="submit" class="edit" id="edit">
-                                            <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('admin.transactionDestroy', $transaction->id) }}"
-                                        method="POST">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button onclick="return confirm('Are you sure you want to delete this?')"
-                                            type="submit" class="delete" id="delete">
-                                            <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td> --}}
+                           
                         </tr>
                     @endforeach
                 @endif

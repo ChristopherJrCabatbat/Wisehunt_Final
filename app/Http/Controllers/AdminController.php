@@ -529,77 +529,77 @@ class AdminController extends Controller
     // public function searchSupplierProduct(Request $request)
     // {
     //     $searchTerm = $request->input('query');
-        
+
     //     // Fetch all suppliers to ensure we check through all products
     //     $suppliers = Supplier::all();
-    
+
     //     $matchingProductNames = [];
-    
+
     //     foreach ($suppliers as $supplier) {
     //         // Decode the JSON-encoded product_name array
     //         $productNames = json_decode($supplier->product_name, true);
-            
+
     //         // Check if productNames is an array and not empty
     //         if (is_array($productNames) && !empty($productNames)) {
     //             // Filter product names based on the search term
     //             $filteredProductNames = array_filter($productNames, function($productName) use ($searchTerm) {
     //                 return stripos($productName, $searchTerm) !== false;
     //             });
-                
+
     //             // Merge the filtered product names
     //             $matchingProductNames = array_merge($matchingProductNames, $filteredProductNames);
     //         }
     //     }
-    
+
     //     // Remove duplicate product names to ensure uniqueness
     //     $uniqueProductNames = array_unique($matchingProductNames);
-    
+
     //     // Prepare the product names to match the expected format for suggestions
     //     $formattedProducts = array_map(function ($productName) {
     //         return ['value' => $productName];
     //     }, $uniqueProductNames);
-    
+
     //     return response()->json($formattedProducts);
     // }
-    
+
 
     public function searchSupplierProduct(Request $request)
     {
         $searchTerm = $request->input('query');
-        
+
         // Fetch all suppliers to ensure we check through all products
         $suppliers = Supplier::all();
-    
+
         $matchingProductNames = [];
-    
+
         foreach ($suppliers as $supplier) {
             // Decode the JSON-encoded product_name array
             $productNames = json_decode($supplier->product_name, true);
-            
+
             // Check if productNames is an array and not empty
             if (is_array($productNames) && !empty($productNames)) {
                 // Filter product names based on the search term
-                $filteredProductNames = array_filter($productNames, function($productName) use ($searchTerm) {
+                $filteredProductNames = array_filter($productNames, function ($productName) use ($searchTerm) {
                     // Change the condition to check if the product name starts with the search term
                     return stripos($productName, $searchTerm) === 0;
                 });
-                
+
                 // Merge the filtered product names
                 $matchingProductNames = array_merge($matchingProductNames, $filteredProductNames);
             }
         }
-    
+
         // Remove duplicate product names to ensure uniqueness
         $uniqueProductNames = array_unique($matchingProductNames);
-    
+
         // Prepare the product names to match the expected format for suggestions
         $formattedProducts = array_map(function ($productName) {
             return ['value' => $productName];
         }, $uniqueProductNames);
-    
+
         return response()->json($formattedProducts);
     }
-    
+
 
 
     public function searchProductName(Request $request)
@@ -1534,45 +1534,6 @@ class AdminController extends Controller
     // }
 
 
-    public function supplierUpdate(Request $request, $id)
-    {
-        $request->validate([
-            "company_name" => "required",
-            "contact_name" => "required|min:1",
-            "product_name" => "required",
-            "address" => "required",
-            // "contact_num" => "required|numeric|digits_between:5,15",
-            "quantity" => "nullable|numeric|min:0", // Allow quantity to be nullable
-        ]);
-
-        $supplier = Supplier::findOrFail($id);
-        $supplier->company_name = $request->company_name;
-        $supplier->contact_name = $request->contact_name;
-        $supplier->address = $request->address;
-        $supplier->product_name = $request->product_name;
-        $supplier->contact_num = $request->contact_num;
-        $supplier->quantity = $request->quantity === null ? null : $request->quantity;
-        $supplier->save();
-
-        // Find the matching product by name and update its quantity
-        $product = Product::where('name', $request->product_name)->first();
-        if ($product) {
-            // Ensure that we only update the quantity if a value was provided
-            if ($request->quantity !== null) {
-                // Decide whether to add or set the new quantity based on your application's logic
-                $newQuantity = $request->quantity; // Use the provided quantity
-                // Assuming you want to add the quantity. Adjust if you're setting it instead.
-                $product->quantity += $newQuantity;
-                $product->save();
-            }
-            // If quantity is null, you might choose to not update the product's quantity
-        } else {
-            // Handle case where product doesn't exist. Options: create new, log, or inform user.
-        }
-
-        return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
-    }
-
     // public function supplierUpdate(Request $request, $id)
     // {
     //     $request->validate([
@@ -1581,7 +1542,7 @@ class AdminController extends Controller
     //         "product_name" => "required",
     //         "address" => "required",
     //         // "contact_num" => "required|numeric|digits_between:5,15",
-    //         "quantity" => "numeric|min:0", // Validate quantity
+    //         "quantity" => "nullable|numeric|min:0", // Allow quantity to be nullable
     //     ]);
 
     //     $supplier = Supplier::findOrFail($id);
@@ -1590,23 +1551,70 @@ class AdminController extends Controller
     //     $supplier->address = $request->address;
     //     $supplier->product_name = $request->product_name;
     //     $supplier->contact_num = $request->contact_num;
-    //     $supplier->quantity = $request->quantity;
+    //     $supplier->quantity = $request->quantity === null ? null : $request->quantity;
     //     $supplier->save();
 
     //     // Find the matching product by name and update its quantity
     //     $product = Product::where('name', $request->product_name)->first();
     //     if ($product) {
-    //         // Decide whether to add or set the new quantity based on your application's logic
-    //         $product->quantity += $request->quantity; // Adjusts based on what's needed
-    //         $product->save();
+    //         // Ensure that we only update the quantity if a value was provided
+    //         if ($request->quantity !== null) {
+    //             // Decide whether to add or set the new quantity based on your application's logic
+    //             $newQuantity = $request->quantity; // Use the provided quantity
+    //             // Assuming you want to add the quantity. Adjust if you're setting it instead.
+    //             $product->quantity += $newQuantity;
+    //             $product->save();
+    //         }
+    //         // If quantity is null, you might choose to not update the product's quantity
     //     } else {
     //         // Handle case where product doesn't exist. Options: create new, log, or inform user.
     //     }
 
     //     return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
-
-    //     // return back()->with("message", "Supplier updated successfully!");
     // }
+
+    public function supplierUpdate(Request $request, $id)
+    {
+        $request->validate([
+            "company_name" => "required",
+            "contact_name" => "required|min:1",
+            // "product_name" => "required",
+            "address" => "required",
+            // "contact_num" => "required|numeric|digits_between:5,15",
+            "quantity" => "nullable|numeric|min:0", // Allow quantity to be nullable
+        ]);
+
+        // Check if the selected product exists
+        $productExists = Product::where('name', $request->product_name)->exists();
+
+        if (!$productExists) {
+            // If the product does not exist, redirect back with an error message
+            return back()->withErrors(['product_name' => 'The selected product does not exist.'])->withInput();
+        }
+
+        $supplier = Supplier::findOrFail($id);
+        $supplier->company_name = $request->company_name;
+        $supplier->contact_name = $request->contact_name;
+        $supplier->address = $request->address;
+        // $supplier->product_name = $request->product_name;
+        $supplier->contact_num = $request->contact_num;
+
+        // Assuming you want to keep track of which products a supplier has in a different way,
+        // since the 'quantity' might be more relevant to the 'Product' model rather than 'Supplier'
+        // So, this line might need adjustment or removal depending on your actual app structure
+        // $supplier->quantity = $request->quantity === null ? null : $request->quantity;
+
+        $supplier->save();
+
+        // Update the product's quantity
+        $product = Product::where('name', $request->product_name)->first();
+        if ($request->quantity !== null) {
+            $product->quantity += $request->quantity;
+            $product->save();
+        }
+
+        return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
+    }
 
 
     public function supplierDestroy(string $id)

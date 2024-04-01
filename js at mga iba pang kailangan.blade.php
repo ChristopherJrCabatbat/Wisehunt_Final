@@ -3227,4 +3227,78 @@ for ($i = 1; $i <= 12; $i++) {
 
 
 
-                <input required type="text" name="products[${newProductIndex}]" />
+                            <input required type="text" name="products[${newProductIndex}]" />
+
+
+
+
+
+                            @section('modals')
+                                {{-- Edit Modal --}}
+                                <div id="editModal" class="editModal">
+                                    <div class="modal-content">
+                                        <a href="{{ route('staff.dashboard') }}"><span
+                                                class="close closeEditModal">&times;</span></a>
+
+                                        <form class="edit-modal-form"
+                                            action="{{ route('staff.userUpdate', $userss->id) }}"
+                                            enctype="multipart/form-data" method="POST">
+                                            @csrf
+                                            @method('PUT')
+
+                                            <center>
+                                                <h2 style="margin: 0%; color:#333;"><i
+                                                        class="fa-regular fa-pen-to-square edt-taas"></i>Edit User</h2>
+                                            </center>
+
+                                            <label class="label-name" for="name">Name:</label>
+                                            <input required autofocus type="text" name="name" id="name"
+                                                value="{{ old('name', $userss->name) }}" />
+
+                                            <label for="email">Email:</label>
+                                            <input required type="email" name="email" id="email"
+                                                value="{{ old('email', $userss->email) }}" />
+                                            @if ($errors->has('email'))
+                                                <div class="user-text-danger">{{ $errors->first('email') }}</div>
+                                            @endif
+                                            {{-- <label for="old_password">Old Password:</label>
+                                            <input required type="password" name="old_password" id="old_password" /> --}}
+
+                                            <label for="password">New Password:</label>
+                                            <input required type="password" name="password" id="password" />
+                                            @if ($errors->has('password'))
+                                                <div class="user-text-danger">{{ $errors->first('password') }}</div>
+                                            @endif
+                                            <label for="password_confirmation">Confirm New Password:</label>
+                                            <input required type="password" name="password_confirmation"
+                                                id="password_confirmation" />
+
+                                            <div class="image">
+                                                <div class="image-container">
+                                                    <div class="image-column">
+                                                        <label for="">Current Image:</label>
+                                                        <img class="img-edit" src="{{ asset($userss->photo) }}"
+                                                            alt="image" width="50px" height="auto">
+                                                    </div>
+                                                    <div class="image-column">
+                                                        <label for="" class="change-image">Change Image:</label>
+                                                        <div class="input_container_edit">
+                                                            <input type="file" name="photo" id="fileUpload">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <label for="role">Role:</label>
+                                            <select required name="role" id="role">
+                                                {{-- <option disabled selected value="">-- Select Role --</option> --}}
+                                                {{-- <option disabled value="Admin" {{ $userss->role === 'Admin' ? 'selected' : '' }}>Admin</option> --}}
+                                                <option value="Staff" {{ $userss->role === 'Staff' ? 'selected' : '' }}>
+                                                    Staff</option>
+                                            </select>
+
+                                            <input class="add" type="submit" value="Update" />
+                                        </form>
+                                    </div>
+                                </div>
+                            @endsection

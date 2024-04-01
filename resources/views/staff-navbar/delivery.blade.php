@@ -65,12 +65,11 @@
                 @endif --}}
 
                 <label for="">Pending Status:</label>
-                <select required name="status" id="" class="">
+                <input type="text" value="Not Delivered" name="status" readonly>
+                {{-- <select required name="status" id="" class="">
                     <option value="Not Delivered" {{ old('status') === 'Not Delivered' ? 'selected' : '' }}>Not Delivered
-                    {{-- <option value="Delivered" {{ old('status') === 'Delivered' ? 'selected' : '' }}>Delivered</option> --}}
-                    {{-- <option disabled selected value="">-- Select Status --</option> --}}
                     </option>
-                </select>
+                </select> --}}
                 @if ($errors->has('status'))
                     <div class="text-danger">{{ $errors->first('status') }}</div>
                 @endif
@@ -101,24 +100,28 @@
                     </div>
                 @endif --}}
 
-                {{-- Display products with checkboxes --}}
-                @foreach ($products as $index => $product)
-                    <label>
-                        <input type="checkbox" name="product[]" value="{{ $product->name }}"
-                            {{ in_array($product->name, old('product', [])) ? 'checked' : '' }} />
-                        {{ $product->name }}
-                    </label>
-                    @if ($loop->first)
-                        <!-- Display the first quantity input without any condition -->
-                        <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity"
-                            value="{{ old('quantity.' . $index) }}" />
-                    @else
-                        <!-- Display the quantity input only if the checkbox is checked -->
-                        <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity"
-                            value="{{ in_array($product->name, old('product', [])) ? old('quantity.' . $index) : '' }}"
-                            {{ in_array($product->name, old('product', [])) ? 'required' : '' }} />
-                    @endif
-                @endforeach
+                @if (count($products) === 0)
+                    <p>No products available for delivery.</p>
+                @else
+                    {{-- Display products with checkboxes --}}
+                    @foreach ($products as $index => $product)
+                        <label>
+                            <input type="checkbox" name="product[]" value="{{ $product->name }}"
+                                {{ in_array($product->name, old('product', [])) ? 'checked' : '' }} />
+                            {{ $product->name }}
+                        </label>
+                        @if ($loop->first)
+                            <!-- Display the first quantity input without any condition -->
+                            <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity"
+                                value="{{ old('quantity.' . $index) }}" />
+                        @else
+                            <!-- Display the quantity input only if the checkbox is checked -->
+                            <input type="number" name="quantity[{{ $index }}]" placeholder="Quantity"
+                                value="{{ in_array($product->name, old('product', [])) ? old('quantity.' . $index) : '' }}"
+                                {{ in_array($product->name, old('product', [])) ? 'required' : '' }} />
+                        @endif
+                    @endforeach
+                @endif
 
                 <div class="buttons">
                     <input class="add backButton" type="button" id="backButton" value="Back" />
@@ -127,6 +130,33 @@
             </div>
         </div>
     </form>
+
+    <!-- Delivery Modal -->
+    {{-- <div id="deliveryModal" class="modal">
+        <div class="modal-content-delivery-name">
+            <span class="closes">&times;</span>
+            <h2>Delivery Details</h2>
+            <table id="modalTable">
+                @foreach ($deliveries as $delivery)
+                    <tr>
+                        <th colspan="2">Delivery ID: {{ $delivery->delivery_id }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Customer: {{ $delivery->name }}</th>
+                    </tr>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                    </tr>
+                    <tr>
+                        <td>{{ $delivery->product }}</td>
+                        <td>{{ $delivery->quantity }}</td>
+                    </tr>
+                @endforeach
+
+            </table>
+        </div>
+    </div> --}}
 
     <!-- Delivery Modal -->
     <div id="deliveryModal" class="modal">
@@ -143,7 +173,6 @@
 
 
 @endsection
-
 
 @section('side-navbar')
 
@@ -302,11 +331,11 @@
 @endsection
 
 @section('footer')
-    @if (session('success'))
+    {{-- @if (session('message'))
         <script>
-            alert('{{ session('success') }}');
+            alert('{{ session('message') }}');
         </script>
-    @endif
+    @endif --}}
 @endsection
 
 @section('script')

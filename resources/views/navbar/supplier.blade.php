@@ -59,7 +59,7 @@
                     <!-- Initial product input -->
                     <input required type="text" name="product_name[]" class="product-input" />
                 </div>
-                
+
                 @if ($errors->has('product_name'))
                     <div class="text-danger">{{ $errors->first('product_name') }}</div>
                 @endif
@@ -67,12 +67,26 @@
 
 
                 <div class="add-save">
-                    <button type="button" id="add-more-products" title="Click to add more product.">Add More Product</button>
+                    <button type="button" id="add-more-products" title="Click to add more product.">Add More
+                        Product</button>
                     <input class="add" type="submit" value="Save Supplier" />
                 </div>
             </form>
         </div>
     </div>
+
+    <!-- The Modal -->
+    <div id="viewProductsModal" class="modal-view">
+        <!-- Modal content -->
+        <div class="modal-content-view">
+            <span class="close-view">&times;</span>
+            <h2>Supplier Products</h2>
+            <div id="productsList">
+                <!-- Products will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
 
     {{-- Add Existing Quantity
     <div id="newModalQty" class="modal">
@@ -274,7 +288,17 @@
                                 <td>{{ $supplier->contact_num }}</td>
                                 <td>{{ $supplier->address }}</td>
                                 {{-- <td>{{ $supplier->product_name }}</td> --}}
-                                <td>{{ implode(', ', json_decode($supplier->product_name, true)) }}</td>
+                                {{-- <td>{{ implode(', ', json_decode($supplier->product_name, true)) }}</td> --}}
+                                {{-- <td><button type="button"
+                                    onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ json_encode($supplier->product_names) }}')">View
+                                    Products</button>
+                                </td> --}}
+                                {{-- <td><button type="button" onclick="showProducts('{{ $supplier->product_name }}')">View Products</button></td> --}}
+                                <td>{{ implode(', ', json_decode($supplier->product_name, true)) }}... <button type="button"
+                                        onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name }}')">View
+                                        All</button>
+                                </td>
+                                {{-- <td><button type="button" onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name }}')">View Products</button></td> --}}
 
 
                                 <td class="actions">
@@ -283,7 +307,7 @@
                                             @csrf
                                             @method('GET')
                                             <button type="submit" class="edit editButton" id="edit"
-                                                title="Click this button to add to the product's quantity.">
+                                                title="Click this button to increase the product's quantity..">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>
@@ -402,7 +426,7 @@
     </script> --}}
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Listener for adding more product inputs
             document.getElementById('add-more-products').addEventListener('click', function() {
                 var newInput = document.createElement('input');
@@ -410,28 +434,63 @@
                 newInput.setAttribute('name', 'product_name[]');
                 newInput.setAttribute('required', 'true');
                 newInput.classList.add('product-input');
-    
+
                 document.getElementById('product-input-container').appendChild(newInput);
             });
-    
+
             // Listener for the close button of the modal
             document.querySelector('.closeModal').addEventListener('click', function() {
                 // Select all product input elements
                 var inputs = document.querySelectorAll('#product-input-container .product-input');
                 // Keep only the first input, remove the rest
-                if(inputs.length > 1) {
-                    for(var i = 1; i < inputs.length; i++) {
+                if (inputs.length > 1) {
+                    for (var i = 1; i < inputs.length; i++) {
                         inputs[i].parentNode.removeChild(inputs[i]);
                     }
                 }
-    
+
                 // Optionally reset the value of the first input if needed
                 inputs[0].value = '';
             });
         });
     </script>
-    
 
+
+    {{-- View Product Script --}}
+   
+    <script>
+        function showProducts(companyName, productNamesJson) {
+            const productNames = JSON.parse(productNamesJson);
+            let tableContent = `<table><tr><th>${companyName} product/s</th></tr>`; // Use companyName for the table header
+            productNames.forEach(function(name) {
+                tableContent += `<tr><td>${name}</td></tr>`;
+            });
+            tableContent += '</table>';
+
+            // Set the content in the modal's body
+            document.getElementById('productsList').innerHTML = tableContent;
+
+            // Show the modal
+            document.getElementById('viewProductsModal').style.display = 'block';
+        }
+
+        // Initialization logic to hide the modal on page load, if not already done
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('viewProductsModal').style.display = 'none';
+        });
+
+        // Close modal logic
+        var span = document.getElementsByClassName("close-view")[0];
+        span.onclick = function() {
+            document.getElementById('viewProductsModal').style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('viewProductsModal')) {
+                document.getElementById('viewProductsModal').style.display = "none";
+            }
+        }
+    </script>
 
     <script src="{{ asset('js/supplier.js') }}"></script>
 

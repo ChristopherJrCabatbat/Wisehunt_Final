@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/staff-user-styles.css') }}">
     <style>
         .taas-content {
-           justify-content: center;
+            justify-content: center;
         }
 
         .loob-box {
@@ -30,6 +30,13 @@
             left: 27px;
             top: 189px;
             position: absolute;
+        }
+
+        .delivery-i {
+            top: 241px;
+        }
+        body {
+            overflow: hidden;
         }
     </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -235,13 +242,13 @@
 @endsection
 
 @section('modals')
-
     {{-- Edit Modal --}}
     <div id="editModal" class="editModal">
         <div class="modal-content">
             <a href="{{ route('staff.dashboard') }}"><span class="close closeEditModal">&times;</span></a>
 
-            <form class="edit-modal-form" action="{{ route('staff.userUpdate', $userss->id) }}" enctype="multipart/form-data" method="POST">
+            <form class="edit-modal-form" action="{{ route('staff.userUpdate', $userss->id) }}" enctype="multipart/form-data"
+                method="POST">
                 @csrf
                 @method('PUT')
 
@@ -254,13 +261,12 @@
                     value="{{ old('name', $userss->name) }}" />
 
                 <label for="email">Email:</label>
-                <input required type="email" name="email" id="email"
-                    value="{{ old('email', $userss->email) }}" />
+                <input required type="email" name="email" id="email" value="{{ old('email', $userss->email) }}" />
                 @if ($errors->has('email'))
                     <div class="user-text-danger">{{ $errors->first('email') }}</div>
                 @endif
                 {{-- <label for="old_password">Old Password:</label>
-                <input required type="password" name="old_password" id="old_password" /> --}}
+                                            <input required type="password" name="old_password" id="old_password" /> --}}
 
                 <label for="password">New Password:</label>
                 <input required type="password" name="password" id="password" />
@@ -287,17 +293,19 @@
                 </div>
 
                 <label for="role">Role:</label>
-                <select required name="role" id="role">
+                <input type="text" value="Staff" name="role" readonly>
+                {{--<select required name="role" id="role">--}}
                     {{-- <option disabled selected value="">-- Select Role --</option> --}}
                     {{-- <option disabled value="Admin" {{ $userss->role === 'Admin' ? 'selected' : '' }}>Admin</option> --}}
-                    <option value="Staff" {{ $userss->role === 'Staff' ? 'selected' : '' }}>Staff</option>
-                </select>
+                    {{--<input type="text" readonly >--}}
+                    {{--<option value="Staff" {{ $userss->role === 'Staff' ? 'selected' : '' }}>--}}
+                    {{--    Staff</option>--}}
+                {{--</select>--}}
 
                 <input class="add" type="submit" value="Update" />
             </form>
         </div>
-    </div>  
-
+    </div>
 @endsection
 
 @section('side-navbar')
@@ -329,6 +337,13 @@
                 <a class="sidebar" href="{{ route('staff.customer') }}">
                     <img src="{{ asset('images/customer.png') }}" class="staff-customer-i" alt="">
                     CUSTOMER</a>
+            </div>
+        </li>
+        <li>
+            <div class="baba-container">
+                <a class="sidebar" href="{{ route('staff.delivery') }}">
+                    <img src="{{ asset('images/delivery.png') }}" class="delivery-i" alt="">
+                    DELIVERY</a>
             </div>
         </li>
     </ul>
@@ -444,12 +459,8 @@
                 </thead>
                 <?php
                 // Calculate the start and end date for the current week
-                $startDate = now()
-                    ->startOfWeek()
-                    ->format('Y-m-d');
-                $endDate = now()
-                    ->endOfWeek()
-                    ->format('Y-m-d');
+                $startDate = now()->startOfWeek()->format('Y-m-d');
+                $endDate = now()->endOfWeek()->format('Y-m-d');
                 
                 // Query the database to get data for the current week
                 $weekQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
@@ -481,12 +492,8 @@
                 </thead>
                 <?php
                 // Calculate the start and end date for the current month
-                $startDate = now()
-                    ->startOfMonth()
-                    ->format('Y-m-d');
-                $endDate = now()
-                    ->endOfMonth()
-                    ->format('Y-m-d');
+                $startDate = now()->startOfMonth()->format('Y-m-d');
+                $endDate = now()->endOfMonth()->format('Y-m-d');
                 
                 // Query the database to get data for the current month
                 $monthQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');
@@ -517,12 +524,8 @@
                 </thead>
                 <?php
                 // Calculate the start and end date for the current year
-                $startDate = now()
-                    ->startOfYear()
-                    ->format('Y-m-d');
-                $endDate = now()
-                    ->endOfYear()
-                    ->format('Y-m-d');
+                $startDate = now()->startOfYear()->format('Y-m-d');
+                $endDate = now()->endOfYear()->format('Y-m-d');
                 
                 // Query the database to get data for the current year
                 $yearQtySold = App\Models\Transaction::whereBetween('created_at', [$startDate, $endDate])->sum('qty');

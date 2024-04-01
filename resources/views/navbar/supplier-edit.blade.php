@@ -14,7 +14,7 @@
 
     {{-- Edit Modal --}}
     <div id="editModal" class="editModal">
-        <div class="modal-content">
+        <div class="modal-content edit">
             <a href="{{ route('admin.supplier') }}"><span class="close closeEditModal">&times;</span></a>
 
             <form class="edit-modal-form" action="{{ route('admin.supplierUpdate', $supplierss->id) }}" method="POST">
@@ -28,37 +28,46 @@
                 <label class="modal-top" for="">Company Name:</label>
                 <input required type="text" class="autofocus" name="company_name" id="" autofocus
                     value="{{ old('company_name', $supplierss->company_name) }}" />
-                    @if ($errors->has('company_name'))
+                @if ($errors->has('company_name'))
                     <div class="text-danger">{{ $errors->first('company_name') }}</div>
                 @endif
 
                 <label for="">Contact Name:</label>
                 <input required type="text" name="contact_name" id=""
                     value="{{ old('contact_name', $supplierss->contact_name) }}" />
-                    @if ($errors->has('contact_name'))
+                @if ($errors->has('contact_name'))
                     <div class="text-danger">{{ $errors->first('contact_name') }}</div>
                 @endif
 
                 <label for="">Contact Number:</label>
-                <input required type="tel" pattern="^\+?\d{4,14}$" title="Enter a valid contact number" name="contact_num"
-                    name="contact_num" id="" value="{{ old('contact_num', $supplierss->contact_num) }}" />
-                    @if ($errors->has('contact_num'))
+                <input required type="tel" pattern="^\+?\d{4,14}$" title="Enter a valid contact number"
+                    name="contact_num" name="contact_num" id=""
+                    value="{{ old('contact_num', $supplierss->contact_num) }}" />
+                @if ($errors->has('contact_num'))
                     <div class="text-danger">{{ $errors->first('contact_num') }}</div>
                 @endif
 
                 <label for="">Address:</label>
                 <input required type="text" name="address" id=""
                     value="{{ old('address', $supplierss->address) }}" />
-                    @if ($errors->has('address'))
+                @if ($errors->has('address'))
                     <div class="text-danger">{{ $errors->first('address') }}</div>
                 @endif
 
                 <label for="">Product/s:</label>
-                <input required type="text" name="product_name" id="" class="product-supp"
-                    value="{{ old('product_name', $supplierss->product_name) }}" />
+                {{-- <input required type="text" name="product_name" id="" class="product-supp"
+                    value="{{ old('product_name', $supplierss->product_name) }}" /> --}}
+
+                <select name="product_name" id="product_name" class="product-supp" required>
+                    @foreach (json_decode($supplierss->product_name, true) as $productName)
+                        <option value="{{ $productName }}" {{ old('product_name') == $productName ? 'selected' : '' }}>
+                            {{ $productName }}</option>
+                    @endforeach
+                </select>
+
 
                 <label for="">Quantity:</label>
-                <input type="number" name="quantity" />
+                <input type="number" name="quantity" title="Add quantity to a certain product" />
 
 
                 <input class="add" type="submit" value="Update" />
@@ -226,14 +235,27 @@
                                 <td>{{ $supplier->contact_name }}</td>
                                 <td>{{ $supplier->contact_num }}</td>
                                 <td>{{ $supplier->address }}</td>
-                                <td>{{ $supplier->product_name }}</td>
+                                {{-- <td>{{ $supplier->product_name }}</td> --}}
+                                {{-- <td>{{ implode(', ', json_decode($supplier->product_name, true)) }}</td> --}}
+                                {{-- <td><button type="button"
+                                    onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ json_encode($supplier->product_names) }}')">View
+                                    Products</button>
+                                </td> --}}
+                                {{-- <td><button type="button" onclick="showProducts('{{ $supplier->product_name }}')">View Products</button></td> --}}
+                                <td>{{ implode(', ', json_decode($supplier->product_name, true)) }}... <button type="button"
+                                        onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name }}')">View
+                                        All</button>
+                                </td>
+                                {{-- <td><button type="button" onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name }}')">View Products</button></td> --}}
+
 
                                 <td class="actions">
                                     <div class="actions-container">
                                         <form action="{{ route('admin.supplierEdit', $supplier->id) }}" method="POST">
                                             @csrf
                                             @method('GET')
-                                            <button type="submit" class="edit editButton" id="edit">
+                                            <button type="submit" class="edit editButton" id="edit"
+                                                title="Click this button to increase the product's quantity..">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
                                         </form>

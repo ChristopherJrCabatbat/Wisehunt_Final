@@ -87,7 +87,7 @@
             <div class="side-navbar">
                 @yield('side-navbar')
 
-                <div class="logout-bottom-left dropdown">
+                {{-- <div class="logout-bottom-left dropdown">
                     @if (auth()->user()->role === 'Admin')
                         <div class="logout-container" id="logoutBtn">
                             Log out <i class="fas fa-sign-out"></i>
@@ -129,7 +129,7 @@
                             </form>
                         </div>
                     @endif
-                </div>
+                </div> --}}
 
 
             </div>
@@ -170,16 +170,42 @@
                                 height="auto">
 
                             @if (auth()->user()->role === 'Admin')
+                            <div class="dropdown-content">
+                                <div class="edit-logout">
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <a href="{{ route('admin.userEdit', auth()->user()->id) }}">Edit user profile</a>
+                                        <a href="javascript:void(0);" 
+                                           onclick="event.preventDefault(); 
+                                           if(confirm('Are you sure you want to log out?')) this.closest('form').submit();"
+                                           class="dropdown-item">Log out <i class="fas fa-sign-out"></i></a>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            @endif
+                           
+                            @if (auth()->user()->role === 'Staff')
                                 <div class="dropdown-content">
-                                    <a href="{{ route('admin.userEdit', auth()->user()->id) }}">Edit user profile</a>
+                                    <div class="edit-logout">
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <a href="{{ route('staff.userEdit', auth()->user()->id) }}">Edit user
+                                                profile</a>
+                                                <a href="javascript:void(0);" 
+                                                onclick="event.preventDefault(); 
+                                                if(confirm('Are you sure you want to log out?')) this.closest('form').submit();"
+                                                class="dropdown-item">Log out <i class="fas fa-sign-out"></i></a>
+                                        </form>
+                                    </div>
                                 </div>
                             @endif
 
-                            @if (auth()->user()->role === 'Staff')
+                            {{-- @if (auth()->user()->role === 'Staff')
                                 <div class="dropdown-content">
                                     <a href="{{ route('staff.userEdit', auth()->user()->id) }}">Edit user profile</a>
                                 </div>
-                            @endif
+                            @endif --}}
 
                         </div>
 
@@ -243,39 +269,6 @@
 
 
     @yield('script')
-
-
-    <script>
-        //    function navigateToProductView(productId) {
-        //        showNotificationPanel();
-        //
-        //        setTimeout(function() {
-        //            window.location.href = `@url('productEdit', ['id' => '__productId__'])`.replace('__productId__', productId);
-        //        }, 2000);
-        //    }
-        //
-        //    function showNotificationPanel() {
-        //        var notificationPanel = document.getElementById('notificationPanel');
-        //        if (notificationPanel) {
-        //            notificationPanel.style.display = 'block';
-        //        }
-        //    }
-        //
-        //    function closeNotification() {
-        //        var notificationPanel = document.getElementById('notificationPanel');
-        //        if (notificationPanel) {
-        //            notificationPanel.style.display = 'none';
-        //        }
-        //    }
-        //
-    </script>
-
-
-    <script>
-        //    // Pass lowQuantityNotifications to JavaScript
-        //    const lowQuantityNotifications = @json($lowQuantityNotifications);
-        //
-    </script>
 
     <script src="{{ asset('js/notification.js') }}"></script>
 

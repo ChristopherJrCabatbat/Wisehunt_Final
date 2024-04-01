@@ -16,8 +16,8 @@
 
     <div class="overlay"></div>
 
-     {{-- Add Modal --}}
-     <div id="newModal" class="modal">
+    {{-- Add Modal --}}
+    <div id="newModal" class="modal">
         <div class="modal-content">
             <a class="close closeModal">&times;</a>
 
@@ -50,19 +50,26 @@
                     @endforeach
                 </select> --}}
 
-                <label for="product_name" class="taas-select">Product:</label>
-                <input class="form-control product_name" id="product_name" name="product_name" type="text" placeholder="Type to search..."
-                    autocomplete="off">
+                {{-- <label for="product_name" class="taas-select">Product:</label>
+                <input class="form-control product_name" id="product_name" name="product_name" type="text"
+                    placeholder="Type to search..." autocomplete="off">
 
+                <div id="loadingIndicator" style="display: none;">Loading...</div>
                 <div id="productSuggestions"
                     style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc;">
-                    <div id="loadingIndicator" style="display: none;">Loading...</div>
+                </div> --}}
+
+                <label for="product_name">Product:</label>
+                <input class="form-control" id="product_name" name="product_name" type="text"
+                    placeholder="Type to search..." autocomplete="off">
+
+                <div id="productSuggestions" class="suggestions-dropdown">
+                    <!-- Search suggestions will be appended here -->
                 </div>
-
-
 
                 <!-- Display validation error for product_name -->
                 <div class="text-danger">{{ $errors->first('product_name') }}</div>
+
 
                 <label for="">Quantity:</label>
                 <input required name="qty" class="qty" type="number" id="qty" value="{{ old('qty') }}">
@@ -114,7 +121,7 @@
                 </div>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                <select required name="customer_name" class="select customer">
+                <select required name="customer_name" class="select customer report">
                     <option value="" disabled selected>-- Select a Customer --</option>
                     @foreach ($customers as $customer)
                         <option value="{{ $customer->name }}"
@@ -131,6 +138,7 @@
 
         </div>
     </div>
+
 @endsection
 
 @section('side-navbar')
@@ -198,13 +206,16 @@
                         <option value="customer_name_asc" {{ request('sort') === 'customer_name_asc' ? 'selected' : '' }}>
                             Customer</option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
-                            Product Name</option>
+                            Product</option>
                         <option value="qty_asc" {{ request('sort') === 'qty_asc' ? 'selected' : '' }}>Quantity</option>
                         <option value="selling_price_asc" {{ request('sort') === 'selling_price_asc' ? 'selected' : '' }}>
                             Price
                         </option>
                         <option value="total_price_asc" {{ request('sort') === 'total_price_asc' ? 'selected' : '' }}>
                             Total Price</option>
+                        <option value="profit_asc" {{ request('sort') === 'profit_asc' ? 'selected' : '' }}>
+                            Profit</option>
+
                         <option value="date_asc" {{ request('sort') === 'date_asc' ? 'selected' : '' }}>
                             Date (Ascending)</option>
                         <option value="date_desc" {{ request('sort') === 'date_desc' ? 'selected' : '' }}>
@@ -219,7 +230,7 @@
                 <div class="searchs">
                     <div class="form-search">
                         <input type="text" name="search" id="search" required class="search-prod"
-                            placeholder="Search transaction..." value="{{ $searchQuery }}" />
+                            placeholder="Search transactions..." value="{{ $searchQuery }}" />
                         <i class="fa fa-search search-icon"></i>
                     </div>
                 </div>
@@ -272,10 +283,9 @@
                 <tbody id="content" class="search-data"></tbody>
             </table>
 
-            <div class="pagination">
-                {{ $transactions->appends(['sort' => request('sort')])->links('layouts.customPagination') }}
-            </div>
 
+            <div class="pagination">
+                {{ $transactions->appends(['sort' => request('sort')])->links('layouts.customPagination') }}</div>
 
         </div>
 
@@ -316,7 +326,7 @@
     </script>
 
     {{-- Live Search --}}
-    <script type="text/javascript">
+    {{-- <script type="text/javascript">
         $('#search').on('input', function() {
 
             const contentContainer = $('#content');
@@ -353,9 +363,50 @@
                 }
             });
         });
+    </script> --}}
+
+    {{-- Live Search --}}
+    <script type="text/javascript">
+        $('#search').on('input', function() {
+
+            const contentContainer = $('#content');
+            $value = $(this).val();
+
+            if ($value) {
+                $('.all-data').hide();
+                $('.search-data').show();
+            } else {
+                $('.all-data').show();
+                $('.search-data').hide();
+            }
+
+            // Clear the existing results instantly
+            contentContainer.html('');
+
+            $.ajax({
+                type: 'get',
+                url: '{{ route('staff.transactionSearch') }}',
+                data: {
+                    'search': $value
+                },
+                success: function(data) {
+                    console.log('AJAX Success:', data);
+                    if (data.trim() === "") {
+                        contentContainer.html(
+                            '<tr><td colspan="11" class="id">No Result Found</td></tr>');
+                    } else {
+                        contentContainer.html(data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                }
+            });
+        });
     </script>
 
-    <!-- Auto Selling Price Script -->
+
+    <!-- Auto Price Script -->
     {{-- <script>
         function updateUnitPrice(elementId) {
             var productSelect = document.querySelector('#' + elementId + ' .product-select');
@@ -369,9 +420,8 @@
     </script> --}}
 
 
-
     {{-- Auto Total Price --}}
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Select the quantity input field
             var qtyInput = document.querySelector('.qty'); // Assuming there's only one qty input for simplicity
@@ -397,10 +447,9 @@
                 setTimeout(updateTotalPrice, 0);
             });
         });
-    </script>
+    </script> --}}
 
-    {{-- Live Search Product --}}
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             var debounceTimer;
             $('#product_name').on('input', function() {
@@ -420,7 +469,7 @@
                 // Set a new debounce timer
                 debounceTimer = setTimeout(function() {
                     $.ajax({
-                        url: '{{ route('staff.searchProduct') }}',
+                        url: '{{ route('staff.searchProduct') }}', // Make sure this is correct in a .js file or use the full path
                         type: 'GET',
                         data: {
                             'query': query
@@ -430,16 +479,31 @@
                             $('#loadingIndicator').hide();
 
                             $('#productSuggestions').empty();
-                            $.each(data, function(index, product) {
-                                $('#productSuggestions').append(
-                                    '<a href="#" class="list-group-item list-group-item-action" data-name="' +
-                                    product.value + '" data-price="' +
-                                    product.selling_price + '">' + product
-                                    .value + '</a>');
-                            });
+                            if (data.length > 0) { // Check if there are any products
+                                $.each(data, function(index, product) {
+                                    $('#productSuggestions').append(
+                                        '<a href="#" class="list-group-item list-group-item-action" data-name="' +
+                                        product.value + '" data-price="' +
+                                        product.selling_price + '">' +
+                                        product
+                                        .value + '</a>');
+                                });
+                                $('#productSuggestions')
+                                    .show(); // Show suggestions if there are products
+                            } else {
+                                $('#productSuggestions')
+                                    .hide(); // Hide suggestions if there are no products
+                            }
                         }
                     });
-                }, 250); // Adjust the delay as needed (250ms is a reasonable starting point)
+                }, 250);
+            });
+
+            // Hide the product suggestions when input loses focus but delay it to allow for suggestion click
+            $('#product_name').blur(function() {
+                setTimeout(function() {
+                    $('#productSuggestions').hide();
+                }, 200); // Delay hiding to allow click event on suggestions to be processed
             });
 
             $(document).on('click', '#productSuggestions .list-group-item', function(e) {
@@ -449,14 +513,221 @@
 
                 $('#product_name').val(productName);
                 $('#selling_price').val(productPrice);
-                $('#productSuggestions').html('');
+                $('#productSuggestions').html('').hide();
 
-                // Trigger any additional updates that depend on the product selection
-                // For example, update the total price if needed
-                // updateTotalPrice(); // Define this function based on your total price calculation logic
+                // Additional code as needed
+            });
+        });
+    </script> --}}
+
+    {{-- Live Search Product --}}
+    
+    {{-- <script>
+        $(document).ready(function() {
+            var debounceTimer;
+            $('#product_name').on('input', function() {
+                var query = $(this).val();
+
+                clearTimeout(debounceTimer);
+
+                if (query.length < 1) {
+                    $('#productSuggestions').html('').hide();
+                    return;
+                }
+
+                $('#productSuggestions').show(); // Optional: Show loading indicator
+
+                debounceTimer = setTimeout(function() {
+                    $.ajax({
+                        url: '{{ route('staff.searchProduct') }}',
+                        type: 'GET',
+                        data: {
+                            'query': query
+                        },
+                        success: function(data) {
+                            $('#productSuggestions').empty();
+                            if (data.length > 0) {
+                                data.forEach(function(product) {
+                                    $('#productSuggestions').append(
+                                        '<div class="suggestion-item" data-value="' +
+                                        product.value + '">' + product
+                                        .value + '</div>');
+                                });
+                            } else {
+                                $('#productSuggestions').append(
+                                    '<div class="suggestion-item">No results found</div>'
+                                );
+                            }
+                        }
+                    });
+                }, 250); // Adjust debounce time as needed
+            });
+
+            $(document).on('click', '.suggestion-item', function() {
+                var selectedProduct = $(this).data('value');
+                $('#product_name').val(selectedProduct);
+                $('#productSuggestions').empty().hide();
+            });
+
+            // Optional: Hide suggestions when clicking outside
+            $(document).mouseup(function(e) {
+                var container = $("#productSuggestions");
+                if (!container.is(e.target) && container.has(e.target).length === 0) {
+                    container.hide();
+                }
+            });
+        });
+    </script> --}}
+
+    <script>
+        $(document).ready(function() {
+            var debounceTimer;
+            $('#product_name').on('input', function() {
+                var query = $(this).val();
+    
+                clearTimeout(debounceTimer);
+    
+                if (query.length < 1) {
+                    $('#productSuggestions').html('').hide();
+                    return;
+                }
+    
+                $('#productSuggestions').show(); // Optional: Show loading indicator
+    
+                debounceTimer = setTimeout(function() {
+                    $.ajax({
+                        url: '{{ route('staff.searchProduct') }}',
+                        type: 'GET',
+                        data: {
+                            'query': query
+                        },
+                        success: function(data) {
+                            $('#productSuggestions').empty();
+                            if (data.length > 0) {
+                                data.forEach(function(product) {
+                                    $('#productSuggestions').append(
+                                        `<div class="suggestion-item" data-value="${product.value}" data-unit-price="${product.selling_price}">${product.value}</div>`
+                                    );
+                                });
+                            } else {
+                                $('#productSuggestions').append(
+                                    '<div class="suggestion-item">No results found</div>'
+                                );
+                            }
+                        }
+                    });
+                }, 250); // Adjust debounce time as needed
+            });
+    
+            $(document).on('click', '.suggestion-item', function() {
+                var selectedProduct = $(this).data('value');
+                var unitPrice = $(this).data('unit-price');
+                $('#product_name').val(selectedProduct);
+                $('#selling_price').val(unitPrice); // Update the selling price input
+                $('#productSuggestions').empty().hide();
+                updateTotalPrice(); // Calculate and update total price
+            });
+    
+            // Calculate and update total price based on quantity and unit price
+            function updateTotalPrice() {
+                var qty = parseFloat($('#qty').val()) || 0;
+                var sellingPrice = parseFloat($('#selling_price').val()) || 0;
+                var totalPrice = qty * sellingPrice;
+                $('#total_price').val(totalPrice.toFixed(2));
+            }
+    
+            // Update total price when quantity changes
+            $('#qty').on('input', updateTotalPrice);
+    
+            // Optional: Hide suggestions when clicking outside
+            $(document).mouseup(function(e) {
+                var container = $("#productSuggestions");
+                if (!container.is(e.target) && container.has(e.target).length === 0) {
+                    container.hide();
+                }
             });
         });
     </script>
+    
+
+    {{-- <script>
+        $(document).ready(function() {
+            var debounceTimer;
+            $('#product_name').on('input', function() {
+                var query = $(this).val();
+
+                clearTimeout(debounceTimer);
+
+                if (query.length < 1) {
+                    $('#productSuggestions').html('').hide();
+                    return;
+                }
+
+                $('#productSuggestions').show(); // Optional: Show loading indicator
+
+                debounceTimer = setTimeout(function() {
+                    $.ajax({
+                        url: '{{ route('staff.searchProduct') }}', // Make sure this URL is correct and routed properly
+                        type: 'GET',
+                        data: {
+                            'query': query
+                        },
+                        success: function(data) {
+                            $('#productSuggestions').empty();
+                            if (data.length > 0) {
+                                data.forEach(function(product) {
+                                    // Ensure your server response includes the product name and selling price
+                                    $('#productSuggestions').append(
+                                        '<div class="suggestion-item" data-value="' +
+                                        product.name +
+                                        '" data-unit-price="' + product
+                                        .selling_price + '">' + product
+                                        .name + '</div>'
+                                    );
+                                });
+                            } else {
+                                $('#productSuggestions').append(
+                                    '<div class="suggestion-item">No results found</div>'
+                                    );
+                            }
+                        }
+                    });
+                }, 250); // Adjust debounce time as needed
+            });
+
+            $(document).on('click', '.suggestion-item', function() {
+                var selectedProduct = $(this).data('value');
+                var unitPrice = $(this).data('unit-price');
+                $('#product_name').val(selectedProduct);
+                $('#selling_price').val(unitPrice);
+                $('#productSuggestions').empty().hide();
+                updateTotalPrice(); // Calculate and update the total price
+            });
+
+            // Listen for input changes on the quantity field and calculate the total price
+            $('#qty').on('input', updateTotalPrice);
+
+            // Function to calculate and update total price
+            function updateTotalPrice() {
+                var qty = parseFloat($('#qty').val()) || 0;
+                var sellingPrice = parseFloat($('#selling_price').val()) || 0;
+                var totalPrice = qty * sellingPrice;
+                $('#total_price').val(totalPrice.toFixed(2));
+            }
+
+            // Optional: Hide suggestions when clicking outside
+            $(document).mouseup(function(e) {
+                var container = $("#productSuggestions");
+                if (!container.is(e.target) && container.has(e.target).length === 0) {
+                    container.hide();
+                }
+            });
+        });
+    </script> --}}
+
+
+
+
 
 
 
