@@ -55,15 +55,19 @@
                 @endif
 
                 <label for="">Product/s:</label>
-                {{-- <input required type="text" name="product_name" id="" class="product-supp"
-                    value="{{ old('product_name', $supplierss->product_name) }}" /> --}}
+                {{-- <input required type="text" name="product_name_id" id="" class="product-supp"
+                    value="{{ old('product_name_id', $supplierss->product_name_id) }}" /> --}}
 
-                <select name="product_name" id="product_name" class="product-supp" required>
-                    @foreach (json_decode($supplierss->product_name, true) as $productName)
-                        <option value="{{ $productName }}" {{ old('product_name') == $productName ? 'selected' : '' }}>
+                <select name="product_name_id" id="product_name_id" class="product-supp" required>
+                    @foreach (json_decode($supplierss->product_name_id, true) as $productName)
+                        <option value="{{ $productName }}"
+                            {{ old('product_name_id') == $productName ? 'selected' : '' }}>
                             {{ $productName }}</option>
                     @endforeach
                 </select>
+                @if ($errors->has('product_name_id'))
+                    <div class="text-danger">{{ $errors->first('product_name_id') }}</div>
+                @endif
 
 
                 <label for="">Quantity:</label>
@@ -159,7 +163,8 @@
                             Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option>
-                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                        <option value="product_name_id_asc"
+                            {{ request('sort') === 'product_name_id_asc' ? 'selected' : '' }}>
                             Product
                         </option>
 
@@ -180,7 +185,7 @@
                             {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option>
-                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                        <option value="product_name_id_asc" {{ request('sort') === 'product_name_id_asc' ? 'selected' : '' }}>
                             Product</option>
                     </select>
                 </form>
@@ -235,18 +240,19 @@
                                 <td>{{ $supplier->contact_name }}</td>
                                 <td>{{ $supplier->contact_num }}</td>
                                 <td>{{ $supplier->address }}</td>
-                                {{-- <td>{{ $supplier->product_name }}</td> --}}
-                                {{-- <td>{{ implode(', ', json_decode($supplier->product_name, true)) }}</td> --}}
+                                {{-- <td>{{ $supplier->product_name_id }}</td> --}}
+                                {{-- <td>{{ implode(', ', json_decode($supplier->product_name_id, true)) }}</td> --}}
                                 {{-- <td><button type="button"
-                                    onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ json_encode($supplier->product_names) }}')">View
+                                    onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ json_encode($supplier->product_name_ids) }}')">View
                                     Products</button>
                                 </td> --}}
-                                {{-- <td><button type="button" onclick="showProducts('{{ $supplier->product_name }}')">View Products</button></td> --}}
-                                <td>{{ implode(', ', json_decode($supplier->product_name, true)) }}... <button type="button"
-                                        onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name }}')">View
+                                {{-- <td><button type="button" onclick="showProducts('{{ $supplier->product_name_id }}')">View Products</button></td> --}}
+                                <td>{{ implode(', ', json_decode($supplier->product_name_id, true)) }}... <button
+                                        type="button"
+                                        onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}')">View
                                         All</button>
                                 </td>
-                                {{-- <td><button type="button" onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name }}')">View Products</button></td> --}}
+                                {{-- <td><button type="button" onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}')">View Products</button></td> --}}
 
 
                                 <td class="actions">

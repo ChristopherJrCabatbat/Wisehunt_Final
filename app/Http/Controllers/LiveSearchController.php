@@ -17,7 +17,7 @@ class LiveSearchController extends Controller
         $output = "";
 
         $products = Product::where('code', 'Like', '%' . $request->search . '%')
-            ->orWhere('name', 'LIKE', '%' . $request->search . '%')
+            ->orWhere('product_name_id', 'LIKE', '%' . $request->search . '%')
             ->orWhere('description', 'LIKE', '%' . $request->search . '%')
             ->orWhere('category', 'LIKE', '%' . $request->search . '%')
             ->get();
@@ -27,13 +27,13 @@ class LiveSearchController extends Controller
                 '<tr>
                     <td>' . $rowNumber++ . '</td>
                     <td> ' . $product->code . ' </td>
-                    <td> ' . $product->name . ' </td>
+                    <td> ' . $product->product_name_id . ' </td>
                     <td> ' . $product->brand_name . ' </td>
                     <td> ' . $product->description . ' </td>
                     <td> ' . $product->unit . ' </td>
                     <td> ' . $product->category . ' </td>
                     <td>
-                        <img src="' . asset($product->photo) . '" alt="' . $product->name . '" width="auto" height="50px" style="background-color: transparent">
+                        <img src="' . asset($product->photo) . '" alt="' . $product->product_name_id . '" width="auto" height="50px" style="background-color: transparent">
                     </td>
                     <td> ' . $product->quantity . ' </td>
                     <td class="nowrap"> ₱ ' . number_format($product->purchase_price) . ' </td>
@@ -201,7 +201,7 @@ class LiveSearchController extends Controller
 
         $suppliers = Supplier::where('company_name', 'Like', '%' . $request->search . '%')
             ->orWhere('contact_name', 'LIKE', '%' . $request->search . '%')
-            ->orWhere('product_name', 'LIKE', '%' . $request->search . '%')
+            ->orWhere('product_name_id', 'LIKE', '%' . $request->search . '%')
             ->get();
 
         foreach ($suppliers as $supplier) {
@@ -214,8 +214,8 @@ class LiveSearchController extends Controller
             <td> ' . $supplier->contact_name . ' </td>
             <td> ' . $supplier->contact_num . ' </td>
             <td> ' . $supplier->address . ' </td>
-            <td> ' . implode(', ', json_decode($supplier->product_name, true)) . 
-            ' <button type="button" onclick="showProducts(\''. addslashes($supplier->company_name) .'\', \''. htmlspecialchars($supplier->product_name, ENT_QUOTES) .'\')">View All</button>' . ' </td>
+            <td> ' . implode(', ', json_decode($supplier->product_name_id, true)) . 
+            ' <button type="button" onclick="showProducts(\''. addslashes($supplier->company_name) .'\', \''. htmlspecialchars($supplier->product_name_id, ENT_QUOTES) .'\')">View All</button>' . ' </td>
             <td class="actions">
                 <div class="actions-container">
                         <form action="' . route('admin.supplierEdit', $supplier->id) . '" method="POST">

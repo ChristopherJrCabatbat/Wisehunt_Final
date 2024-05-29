@@ -52,16 +52,16 @@
                 @endif
 
                 {{-- <label for="">Product:</label>
-                <input required type="text" name="product_name" id="product-supp" /> --}}
+                <input required type="text" name="product_name_id" id="product-supp" /> --}}
 
                 <label for="">Product/s:</label>
                 <div id="product-input-container">
                     <!-- Initial product input -->
-                    <input required type="text" name="product_name[]" class="product-input" />
+                    <input required type="text" name="product_name_id[]" class="product-input" />
                 </div>
 
-                @if ($errors->has('product_name'))
-                    <div class="text-danger">{{ $errors->first('product_name') }}</div>
+                @if ($errors->has('product_name_id'))
+                    <div class="text-danger">{{ $errors->first('product_name_id') }}</div>
                 @endif
 
 
@@ -109,10 +109,10 @@
                 <input required type="text" name="address" id="" />
 
                 <label for="">Product:</label>
-                <select required class="select_product" name="product_name" id="product_name">
+                <select required class="select_product" name="product_name_id" id="product_name_id">
                     <option value="" disabled selected>-- Select a Product --</option>
                     @foreach ($products as $product)
-                        <option value="{{ $product->name }}" {{ old('product_name') === $product->name ? 'selected' : '' }}>
+                        <option value="{{ $product->name }}" {{ old('product_name_id') === $product->name ? 'selected' : '' }}>
                             {{ $product->name }}
                         </option>
                     @endforeach
@@ -211,7 +211,7 @@
                             Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option> --}}
-                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                        <option value="product_name_id_asc" {{ request('sort') === 'product_name_id_asc' ? 'selected' : '' }}>
                             Product
                         </option>
 
@@ -232,7 +232,7 @@
                             {{ request('sort') === 'contact_name_asc' ? 'selected' : '' }}>Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option>
-                        <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
+                        <option value="product_name_id_asc" {{ request('sort') === 'product_name_id_asc' ? 'selected' : '' }}>
                             Product</option>
                     </select>
                 </form>
@@ -287,18 +287,18 @@
                                 <td>{{ $supplier->contact_name }}</td>
                                 <td>{{ $supplier->contact_num }}</td>
                                 <td>{{ $supplier->address }}</td>
-                                {{-- <td>{{ $supplier->product_name }}</td> --}}
-                                {{-- <td>{{ implode(', ', json_decode($supplier->product_name, true)) }}</td> --}}
+                                {{-- <td>{{ $supplier->product_name_id }}</td> --}}
+                                {{-- <td>{{ implode(', ', json_decode($supplier->product_name_id, true)) }}</td> --}}
                                 {{-- <td><button type="button"
-                                    onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ json_encode($supplier->product_names) }}')">View
+                                    onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ json_encode($supplier->product_name_ids) }}')">View
                                     Products</button>
                                 </td> --}}
-                                {{-- <td><button type="button" onclick="showProducts('{{ $supplier->product_name }}')">View Products</button></td> --}}
-                                <td>{{ implode(', ', json_decode($supplier->product_name, true)) }}... <button type="button"
-                                        onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name }}')">View
+                                {{-- <td><button type="button" onclick="showProducts('{{ $supplier->product_name_id }}')">View Products</button></td> --}}
+                                <td>{{ implode(', ', json_decode($supplier->product_name_id, true)) }}... <button type="button"
+                                        onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}')">View
                                         All</button>
                                 </td>
-                                {{-- <td><button type="button" onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name }}')">View Products</button></td> --}}
+                                {{-- <td><button type="button" onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}')">View Products</button></td> --}}
 
 
                                 <td class="actions">
@@ -417,7 +417,7 @@
         document.getElementById('add-more-products').addEventListener('click', function() {
             var newInput = document.createElement('input');
             newInput.setAttribute('type', 'text');
-            newInput.setAttribute('name', 'product_name[]'); // Important: Use array notation for the name attribute
+            newInput.setAttribute('name', 'product_name_id[]'); // Important: Use array notation for the name attribute
             newInput.setAttribute('required', 'true');
             newInput.classList.add('product-input');
 
@@ -431,7 +431,7 @@
             document.getElementById('add-more-products').addEventListener('click', function() {
                 var newInput = document.createElement('input');
                 newInput.setAttribute('type', 'text');
-                newInput.setAttribute('name', 'product_name[]');
+                newInput.setAttribute('name', 'product_name_id[]');
                 newInput.setAttribute('required', 'true');
                 newInput.classList.add('product-input');
 

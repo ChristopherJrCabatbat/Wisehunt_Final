@@ -111,12 +111,19 @@ label {
 #curve_chart {
     position: absolute;
     top: 160px;
-    left: 233px;
+    left: 220px;
     overflow: hidden;
     /* overflow-x: hidden; */
-    min-width: 1110px;
+    min-width: 1450px;
+    /* min-width: 100%; */
     min-height: 600px;
     z-index: inherit;
+}
+
+div div div div div svg rect {
+    /* width: 1035px; */
+    width: 100%;
+    /* margin-left: 40px; */
 }
 
 .bar-graph {
@@ -137,10 +144,6 @@ label {
     font-weight: bold;
 }
 
-div div div div div svg rect {
-    width: 1035px;
-    /* margin-left: 40px; */
-}
 
 div.graph div.line-graph div#curve_chart div div div svg g g g text {
     font-size: 14px;
@@ -311,4 +314,12 @@ div#curve_chart div div div svg g g g text::before {
     /* white-space: nowrap; */
     /* content: "P"; */
     
+}
+
+body {
+    overflow-x: hidden;
+}
+
+#curve_chart {
+    overflow-x: visible;
 }

@@ -160,3 +160,15 @@ p {
     margin-top: 15px;
     color: red;
 }
+
+.th-blue {
+    background-color: #006181;
+    color: white;
+    border-right-color: white;
+    border-bottom-color: #006181;
+
+}
+
+.th-blue:nth-child(3) {
+    border-right-color: #006181;
+}

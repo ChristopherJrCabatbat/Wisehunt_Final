@@ -25,9 +25,9 @@
                 </center>
 
                 <label class="modal-tops" for="">Company Name:</label>
-                <input required autofocus type="text" name="name" value="{{ old('name') }}" id="autofocus" />
-                @if ($errors->has('name'))
-                    <div class="text-danger">{{ $errors->first('name') }}</div>
+                <input required autofocus type="text" name="customer_name_id" value="{{ old('customer_name_id') }}" id="autofocus" />
+                @if ($errors->has('customer_name_id'))
+                    <div class="text-danger">{{ $errors->first('customer_name_id') }}</div>
                 @endif
 
                 <label for="">Contact Name:</label>
@@ -152,7 +152,7 @@
                         @foreach ($customers as $customer)
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
-                                <td>{{ $customer->name }}</td>
+                                <td>{{ $customer->customer_name_id }}</td>
                                 <td>{{ $customer->contact_name }}</td>
                                 <td>{{ $customer->contact_num }}</td>
                                 <td>{{ $customer->address }}</td>

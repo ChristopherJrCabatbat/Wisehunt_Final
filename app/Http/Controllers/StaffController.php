@@ -32,13 +32,13 @@ class StaffController extends Controller
     private function forecastSalesForAllCustomers()
     {
         // Get all unique customer names
-        $uniqueCustomerNames = Transaction::distinct()->pluck('customer_name');
+        $uniqueCustomerNames = Transaction::distinct()->pluck('customer_name_id');
 
         $forecasts = [];
 
         foreach ($uniqueCustomerNames as $customerId) {
             // Fetch transactions for the given customer, ordered by transaction date in descending order
-            $customerTransactions = Transaction::where('customer_name', $customerId)
+            $customerTransactions = Transaction::where('customer_name_id', $customerId)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -110,10 +110,10 @@ class StaffController extends Controller
         // No need to redefine $forecasts, as it's already passed as a parameter
 
         // Find the best-selling product
-        $bestSeller = Product::select('products.id', 'products.name')
-            ->join('transactions', 'products.name', '=', 'transactions.product_name')
+        $bestSeller = Product::select('products.id', 'products.product_name_id')
+            ->join('transactions', 'products.product_name_id', '=', 'transactions.product_name')
             ->selectRaw('SUM(transactions.qty) as total_qty')
-            ->groupBy('products.id', 'products.name')
+            ->groupBy('products.id', 'products.product_name_id')
             ->orderByDesc('total_qty')
             ->first();
 
@@ -121,7 +121,7 @@ class StaffController extends Controller
 
         foreach ($productsss as $product) {
             // Check if there are forecasts for the customer
-            $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+            $customerId = $product->customer_name_id; // Assuming customer_name_id is the customer identifier
 
             $forecastMessages = null; // Initialize as null
 
@@ -158,7 +158,7 @@ class StaffController extends Controller
             // Display the best seller quantity sold in the notification
             if ($bestSeller && $bestSeller->id == $product->id && $bestSeller->total_qty > 0) {
                 $bestSellerNotification = [
-                    'message' => '<span class="bold-text">' . e($bestSeller->name) . '</span> is your best seller. It might be wise to increase stock levels to meet the high demand and capitalize on its popularity.',
+                    'message' => '<span class="bold-text">' . ($bestSeller->product_name_id) . '</span> is your best seller. It might be wise to increase stock levels to meet the high demand and capitalize on its popularity.',
                     'productId' => $bestSeller->id,
                 ];
 
@@ -660,8 +660,8 @@ class StaffController extends Controller
 
         $query = Transaction::query();
 
-        if ($sortOption === 'customer_name_asc') {
-            $query->orderBy('customer_name', 'asc');
+        if ($sortOption === 'customer_name_id_asc') {
+            $query->orderBy('customer_name_id', 'asc');
         } elseif ($sortOption === 'product_name_asc') {
             $query->orderBy('product_name', 'asc');
         } elseif ($sortOption === 'qty_asc') {
@@ -764,7 +764,7 @@ class StaffController extends Controller
             'product_name' => 'required|string',
             'selling_price' => 'required|numeric|min:0',
             'qty' => 'required|integer|min:1',
-            'customer_name' => 'required|string',
+            'customer_name_id' => 'required|string',
         ];
 
         // Custom error messages
@@ -779,10 +779,10 @@ class StaffController extends Controller
         $productName = $request->input('product_name');
         $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
-        $customerName = $request->input('customer_name');
+        $customerName = $request->input('customer_name_id');
 
         // Retrieve the product's information from the Products table
-        $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
+        $product = Product::where('product_name_id', $productName)->where('selling_price', $selling_price)->first();
 
         if ($product) {
             // Calculate total price
@@ -794,7 +794,7 @@ class StaffController extends Controller
 
             // Create a new Transactions record and save it to the database
             $transaction = new Transaction;
-            $transaction->customer_name = $customerName;
+            $transaction->customer_name_id = $customerName;
             $transaction->product_name = $productName;
             $transaction->qty = $qty;
             $transaction->transacted_qty += $qty; // Assuming this is intended to increment a total, otherwise just assign $qty
@@ -834,11 +834,20 @@ class StaffController extends Controller
         }
     }
 
+    // public function searchProduct(Request $request)
+    // {
+    //     $search = $request->input('query');
+    //     $products = Product::where('product_name_id', 'LIKE', "{$search}%") // Only starts with
+    //         ->get(['name as value', 'selling_price']);
+
+    //     return response()->json($products);
+    // }
+
     public function searchProduct(Request $request)
     {
         $search = $request->input('query');
-        $products = Product::where('name', 'LIKE', "{$search}%") // Only starts with
-            ->get(['name as value', 'selling_price']);
+        $products = Product::where('product_name_id', 'LIKE', "{$search}%")
+            ->get(['product_name_id as value', 'selling_price']);
 
         return response()->json($products);
     }
@@ -851,7 +860,7 @@ class StaffController extends Controller
     //         'product_name' => 'required|string',
     //         'selling_price' => 'required|numeric|min:0',
     //         'qty' => 'required|integer|min:1',
-    //         'customer_name' => 'required|string',
+    //         'customer_name_id' => 'required|string',
     //     ];
 
     //     // Custom error messages
@@ -866,7 +875,7 @@ class StaffController extends Controller
     //     $productName = $request->input('product_name');
     //     $selling_price = $request->input('selling_price');
     //     $qty = $request->input('qty');
-    //     $customerName = $request->input('customer_name');
+    //     $customerName = $request->input('customer_name_id');
 
     //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
     //     $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
@@ -883,7 +892,7 @@ class StaffController extends Controller
 
     //             // Create a new Transactions record and save it to the database
     //             $transaction = new Transaction;
-    //             $transaction->customer_name = $customerName;
+    //             $transaction->customer_name_id = $customerName;
     //             $transaction->product_name = $productName;
     //             $transaction->qty = $qty;
     //             $transaction->selling_price = $selling_price;
@@ -992,7 +1001,7 @@ class StaffController extends Controller
             'product_name' => 'required|string',
             'selling_price' => 'required|numeric|min:0',
             'qty' => 'required|integer|min:1',
-            'customer_name' => 'required|string',
+            'customer_name_id' => 'required|string',
         ];
 
         // Custom error messages
@@ -1014,7 +1023,7 @@ class StaffController extends Controller
         $productName = $request->input('product_name');
         $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
-        $customerName = $request->input('customer_name');
+        $customerName = $request->input('customer_name_id');
 
         // Retrieve the old 'qty' for the transaction
         $oldQty = $transaction->qty;
@@ -1141,7 +1150,7 @@ class StaffController extends Controller
         // ]);
 
         $customers = new Customer;
-        $customers->name = $request->input('name');
+        $customers->customer_name_id = $request->input('customer_name_id');
         $customers->contact_name = $request->input('contact_name');
         $customers->address = $request->input('address');
         $customers->contact_num = $request->input('contact_num');
@@ -1155,7 +1164,7 @@ class StaffController extends Controller
     public function customerUpdate(Request $request, string $id)
     {
         $customers = Customer::find($id);
-        $customers->name = $request->name;
+        $customers->customer_name_id = $request->customer_name_id;
         $customers->contact_name = $request->contact_name;
         $customers->address = $request->address;
         $customers->contact_num = $request->contact_num;

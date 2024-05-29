@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('deliveries', function (Blueprint $table) {
             $table->id();
             $table->string('delivery_id');
-            $table->string('name');
+
+            // $table->string('name');
+            $table->string('customer_name_id');
 
             // $table->string('product');
             // $table->integer('quantity');

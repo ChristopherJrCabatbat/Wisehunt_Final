@@ -149,15 +149,6 @@
     </script>
 
 
-
-
-
-
-
-
-
-
-
     // {{-- Pie Chart --}}
     <script type="text/javascript">
         google.charts.load('current', {

@@ -3302,3 +3302,89 @@ for ($i = 1; $i <= 12; $i++) {
                                     </div>
                                 </div>
                             @endsection
+
+
+
+
+
+                            <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const deliveryNames = document.querySelectorAll('.delivery-name');
+            const modal = document.getElementById('deliveryModal');
+            const modalTable = document.getElementById('modalTable');
+            const closeModal = document.querySelector('.closes');
+
+            if (!modal || !closeModal) {
+                console.error('Modal or closeModal not found');
+                return;
+            }
+
+            closeModal.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+
+            if (deliveryNames.length === 0) {
+                console.error('No delivery names found');
+                return;
+            }
+
+            deliveryNames.forEach(name => {
+                name.addEventListener('click', function() {
+                    const deliveryId = this.getAttribute('data-delivery-id');
+                    console.log(`Delivery name clicked: ${deliveryId}`);
+
+                    fetch(`/admin/delivery/details/${deliveryId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Data received:', data);
+
+                            // Assuming we have a way to get prices. For example:
+                            // const prices = { "Product1": 10, "Product2": 20, ... };
+                            const products = JSON.parse(data.product);
+                            const quantities = JSON.parse(data.quantity);
+
+                            let tableContent = `
+                                <tr>
+                                    <th class="id-customer" colspan="3">Delivery ID: ${data.delivery_id}</th>
+                                </tr>
+                                <tr>
+                                    <th class="id-customer" colspan="3">Customer: ${data.customer_name_id}</th>
+                                </tr>
+                                <tr>
+                                    <th class="th-blue first">Product</th>
+                                    <th class="th-blue">Quantity</th>
+                                    <th class="th-blue">Total Price</th>
+                                </tr>
+                                `;
+
+                            products.forEach((product, index) => {
+                                const quantity = quantities[index];
+                                // Placeholder for price calculation, adjust as needed
+                                const price =
+                                10; // Assuming a fixed price for simplicity; replace with actual price lookup
+                                const totalPrice = quantity * price;
+
+                                tableContent += `
+                                <tr>
+                                    <td>${product}</td>
+                                    <td>${quantity}</td>
+                                    <td>₱${totalPrice.toFixed(2)}</td>
+                                </tr>
+                                `;
+                            });
+
+                            modalTable.innerHTML = tableContent;
+                            modal.style.display = 'block';
+                        })
+                        .catch(error => {
+                            console.error('Error loading delivery details:', error);
+                        });
+                });
+            });
+        });
+    </script>

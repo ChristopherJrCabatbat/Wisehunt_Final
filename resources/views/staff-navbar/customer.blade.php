@@ -30,7 +30,7 @@
                 </center>
 
                 <label class="modal-top" for="">Company Name:</label>
-                <input required autofocus type="text" name="name" id="autofocus" />
+                <input required autofocus type="text" name="customer_name_id" id="autofocus" />
 
                 <label for="">Contact Name:</label>
                 <input required type="text" name="contact_name" id="" />
@@ -129,7 +129,7 @@
                         @foreach ($customers as $customer)
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
-                                <td>{{ $customer->name }}</td>
+                                <td>{{ $customer->customer_name_id }}</td>
                                 <td>{{ $customer->contact_name }}</td>
                                 <td>{{ $customer->contact_num }}</td>
                                 <td>{{ $customer->address }}</td>

@@ -10,7 +10,8 @@ class Product extends Model
     use HasFactory;
     protected $fillable = [
         'code',
-        'name',
+        'product_name_id',
+        // 'name',
         'brand_name',
         'description',
         'unit',
@@ -25,6 +26,6 @@ class Product extends Model
     // Define the relationship to transactions
     public function transactions()
     {
-        return $this->hasMany(Transaction::class, 'product_name', 'name');
+        return $this->hasMany(Transaction::class, 'product_name', 'product_name_id');
     }
 }

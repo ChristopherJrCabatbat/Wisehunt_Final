@@ -60,13 +60,13 @@ class AdminController extends Controller
     // private function forecastSalesForAllCustomers()
     // {
     //     // Get all unique customer names
-    //     $uniqueCustomerNames = Transaction::distinct()->pluck('customer_name');
+    //     $uniqueCustomerNames = Transaction::distinct()->pluck('customer_name_id');
 
     //     $forecasts = [];
 
     //     foreach ($uniqueCustomerNames as $customerId) {
     //         // Fetch transactions for the given customer, ordered by transaction date in descending order
-    //         $customerTransactions = Transaction::where('customer_name', $customerId)
+    //         $customerTransactions = Transaction::where('customer_name_id', $customerId)
     //             ->orderBy('created_at', 'desc')
     //             ->get();
 
@@ -99,13 +99,13 @@ class AdminController extends Controller
     private function forecastSalesForAllCustomers()
     {
         // Get all unique customer names
-        $uniqueCustomerNames = Transaction::distinct()->pluck('customer_name');
+        $uniqueCustomerNames = Transaction::distinct()->pluck('customer_name_id');
 
         $forecasts = [];
 
         foreach ($uniqueCustomerNames as $customerId) {
             // Fetch transactions for the given customer, ordered by transaction date in descending order
-            $customerTransactions = Transaction::where('customer_name', $customerId)
+            $customerTransactions = Transaction::where('customer_name_id', $customerId)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
@@ -178,10 +178,10 @@ class AdminController extends Controller
         // No need to redefine $forecasts, as it's already passed as a parameter
 
         // Find the best-selling product
-        $bestSeller = Product::select('products.id', 'products.name')
-            ->join('transactions', 'products.name', '=', 'transactions.product_name')
+        $bestSeller = Product::select('products.id', 'products.product_name_id')
+            ->join('transactions', 'products.product_name_id', '=', 'transactions.product_name')
             ->selectRaw('SUM(transactions.qty) as total_qty')
-            ->groupBy('products.id', 'products.name')
+            ->groupBy('products.id', 'products.product_name_id')
             ->orderByDesc('total_qty')
             ->first();
 
@@ -189,7 +189,7 @@ class AdminController extends Controller
 
         foreach ($productsss as $product) {
             // Check if there are forecasts for the customer
-            $customerId = $product->customer_name; // Assuming customer_name is the customer identifier
+            $customerId = $product->customer_name_id; // Assuming customer_name_id is the customer identifier
 
             $forecastMessages = null; // Initialize as null
 
@@ -226,7 +226,7 @@ class AdminController extends Controller
             // Display the best seller quantity sold in the notification
             if ($bestSeller && $bestSeller->id == $product->id && $bestSeller->total_qty > 0) {
                 $bestSellerNotification = [
-                    'message' => '<span class="bold-text">' . e($bestSeller->name) . '</span> is your best seller. It might be wise to increase stock levels to meet the high demand and capitalize on its popularity.',
+                    'message' => '<span class="bold-text">' . ($bestSeller->product_name_id) . '</span> is your best seller. It might be wise to increase stock levels to meet the high demand and capitalize on its popularity.',
                     'productId' => $bestSeller->id,
                 ];
 
@@ -413,8 +413,8 @@ class AdminController extends Controller
         // Sort
         $sortOption = $request->input('sort');
 
-        if ($sortOption === 'name_asc') {
-            $query->orderBy('name', 'asc');
+        if ($sortOption === 'product_name_id_asc') {
+            $query->orderBy('product_name_id', 'asc');
         } elseif ($sortOption === 'category_asc') {
             $query->orderBy('category', 'asc');
         } elseif ($sortOption === 'default_asc') {
@@ -461,8 +461,8 @@ class AdminController extends Controller
         // Sort
         $sortOption = $request->input('sort');
 
-        if ($sortOption === 'name_asc') {
-            $query->orderBy('name', 'asc');
+        if ($sortOption === 'product_name_id_asc') {
+            $query->orderBy('product_name_id', 'asc');
         } elseif ($sortOption === 'default_asc') {
             return redirect()->route('admin.product');
         } elseif ($sortOption === 'category_asc') {
@@ -487,7 +487,7 @@ class AdminController extends Controller
         // Your validation logic here
         $validator = Validator::make($request->all(), [
             'code' => 'required',
-            'name' => 'required|unique:products,name,NULL,id',
+            'product_name_id' => 'required|unique:products,product_name_id,NULL,id',
             'brand_name' => 'required',
             'description' => 'required',
             'unit' => 'required',
@@ -497,7 +497,7 @@ class AdminController extends Controller
             'purchase_price' => 'required|numeric|min:1',
             'selling_price' => 'required|numeric|min:1',
         ], [
-            'name.unique' => 'You already have :input in your table.',
+            'product_name_id.unique' => 'You already have :input in your table.',
         ]);
 
         if ($validator->fails()) {
@@ -506,7 +506,7 @@ class AdminController extends Controller
 
         $products = new Product;
         $products->code = $request->input('code');
-        $products->name = $request->input('name');
+        $products->product_name_id = $request->input('product_name_id');
         $products->brand_name = $request->input('brand_name');
         $products->description = $request->input('description');
         $products->unit = $request->input('unit');
@@ -574,7 +574,7 @@ class AdminController extends Controller
 
         foreach ($suppliers as $supplier) {
             // Decode the JSON-encoded product_name array
-            $productNames = json_decode($supplier->product_name, true);
+            $productNames = json_decode($supplier->product_name_id, true);
 
             // Check if productNames is an array and not empty
             if (is_array($productNames) && !empty($productNames)) {
@@ -606,8 +606,8 @@ class AdminController extends Controller
     {
         $search = $request->input('query');
 
-        $products = Supplier::where('product_name', 'LIKE', "%{$search}%") // Using '%' before and after for broader matching
-            ->get(['product_name as value', 'selling_price']); // Ensure these column names match your database
+        $products = Supplier::where('product_name_id', 'LIKE', "%{$search}%") // Using '%' before and after for broader matching
+            ->get(['product_name_id as value', 'selling_price']); // Ensure these column names match your database
 
         return response()->json($products);
     }
@@ -653,17 +653,17 @@ class AdminController extends Controller
     {
         $updateValidator = Validator::make($request->all(), [
             'code' => 'required',
-            'name' => 'required|unique:products,name,' . $id . ',id',
+            'product_name_id' => 'required|unique:products,product_name_id,' . $id . ',id',
             'brand_name' => 'required',
             'description' => 'required',
             'unit' => 'required',
             'category' => 'required',
-            'quantity' => 'required|numeric|min:1',
+            'quantity' => 'required|numeric',
             'low_quantity_threshold' => 'required|numeric|min:1',
             'purchase_price' => 'required|numeric|min:1',
             'selling_price' => 'required|numeric|min:1',
         ], [
-            'name.unique' => 'You already have :input in your table.',
+            'product_name_id.unique' => 'You already have :input in your table.',
         ]);
 
         if ($updateValidator->fails()) {
@@ -677,7 +677,7 @@ class AdminController extends Controller
         }
 
         $product->code = $request->code;
-        $product->name = $request->name;
+        $product->product_name_id = $request->product_name_id;
         $product->brand_name = $request->brand_name;
         $product->description = $request->description;
         $product->unit = $request->unit;
@@ -711,7 +711,7 @@ class AdminController extends Controller
 
         // Query the products table for matching records
         $results = Product::where('code', 'like', "%$searchTerm%")
-            ->orWhere('name', 'like', "%$searchTerm%")
+            ->orWhere('product_name_id', 'like', "%$searchTerm%")
             ->orWhere('description', 'like', "%$searchTerm%")
             ->orWhere('category', 'like', "%$searchTerm%")
             ->get();
@@ -753,8 +753,8 @@ class AdminController extends Controller
 
         $query = Transaction::query();
 
-        if ($sortOption === 'customer_name_asc') {
-            $query->orderBy('customer_name', 'asc');
+        if ($sortOption === 'customer_name_id_asc') {
+            $query->orderBy('customer_name_id', 'asc');
         } elseif ($sortOption === 'product_name_asc') {
             $query->orderBy('product_name', 'asc');
         } elseif ($sortOption === 'qty_asc') {
@@ -873,7 +873,7 @@ class AdminController extends Controller
             'product_name' => 'required|string',
             'selling_price' => 'required|numeric|min:0',
             'qty' => 'required|integer|min:1',
-            'customer_name' => 'required|string',
+            'customer_name_id' => 'required|string',
         ];
 
         // Custom error messages
@@ -888,10 +888,10 @@ class AdminController extends Controller
         $productName = $request->input('product_name');
         $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
-        $customerName = $request->input('customer_name');
+        $customerName = $request->input('customer_name_id');
 
         // Retrieve the product's information from the Products table
-        $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
+        $product = Product::where('product_name_id', $productName)->where('selling_price', $selling_price)->first();
 
         if ($product) {
             // Calculate total price
@@ -903,7 +903,7 @@ class AdminController extends Controller
 
             // Create a new Transactions record and save it to the database
             $transaction = new Transaction;
-            $transaction->customer_name = $customerName;
+            $transaction->customer_name_id = $customerName;
             $transaction->product_name = $productName;
             $transaction->qty = $qty;
             $transaction->transacted_qty += $qty; // Assuming this is intended to increment a total, otherwise just assign $qty
@@ -955,114 +955,11 @@ class AdminController extends Controller
     public function searchProduct(Request $request)
     {
         $search = $request->input('query');
-        $products = Product::where('name', 'LIKE', "{$search}%")
-            ->get(['name as value', 'selling_price']);
+        $products = Product::where('product_name_id', 'LIKE', "{$search}%")
+            ->get(['product_name_id as value', 'selling_price']);
 
         return response()->json($products);
     }
-
-
-
-    // public function transactionStore(Request $request)
-    // {
-    //     // Validation rules
-    //     $rules = [
-    //         'product_name' => 'required|string',
-    //         'selling_price' => 'required|numeric|min:0',
-    //         'qty' => 'required|integer|min:1',
-    //         'customer_name' => 'required|string',
-    //     ];
-
-    //     // Custom error messages
-    //     $messages = [
-    //         'qty.min' => 'The quantity must be at least :min.',
-    //     ];
-
-    //     // Validate the request
-    //     $request->validate($rules, $messages);
-
-    //     // Retrieve data from the request
-    //     $productName = $request->input('product_name');
-    //     $selling_price = $request->input('selling_price');
-    //     $qty = $request->input('qty');
-    //     $customerName = $request->input('customer_name');
-
-    //     // Retrieve the product's information from the Products table (assuming you have a 'Product' model)
-    //     $product = Product::where('name', $productName)->where('selling_price', $selling_price)->first();
-
-    //     if ($product) {
-    //         // Check if there's enough quantity to subtract
-    //         if ($product->quantity >= $qty) {
-    //             // Calculate total price
-    //             $totalPrice = $selling_price * $qty;
-
-    //             // Calculate total earned
-    //             $purchase_price = $product->purchase_price;
-    //             $profit = ($selling_price - $purchase_price) * $qty;
-
-    //             // Create a new Transactions record and save it to the database
-    //             $transaction = new Transaction;
-    //             $transaction->customer_name = $customerName;
-    //             $transaction->product_name = $productName;
-    //             $transaction->qty = $qty;
-    //             $transaction->transacted_qty += $qty; // Increment transacted_qty
-    //             $transaction->selling_price = $selling_price;
-    //             $transaction->total_price = $totalPrice;
-    //             $transaction->profit = $profit;
-    //             $transaction->save();
-
-    //             // Update the product quantity by subtracting the sold quantity
-    //             $product->quantity -= $qty;
-    //             $product->save();
-
-    //             // Fetch past transactions for the current day
-    //             $currentDayTransactions = Transaction::whereDate('created_at', now()->toDateString())->get();
-
-    //             // Perform sales forecasting logic based on the past transactions
-    //             $forecastedSales = $this->calculateForecastedSales($currentDayTransactions);
-
-    //             $transactionCount = session('transactionCount', 0) + 1;
-    //             session(['transactionCount' => $transactionCount]);
-
-    //             // Increment the monthly transaction count in the session
-    //             $monthlyTransactionCount = session('monthlyTransactionCount', 0) + 1;
-    //             session(['monthlyTransactionCount' => $monthlyTransactionCount]);
-
-    //             // // Display alert with forecasted sales after every five transactions
-    //             if ($forecastedSales !== null && $transactionCount % 2 === 0) {
-    //                 $message = "Your forecased sales for the day is: ₱" . number_format($forecastedSales, 2);
-    //                 session()->flash('forecastedSalesAlert', $message);
-    //             }
-
-    //             // Display alert with forecasted sales after every 5 transactions for monthly forecasting
-    //             if ($forecastedSales !== null && $monthlyTransactionCount % 5 === 0) {
-    //                 // Fetch all transactions for the current month
-    //                 $allTransactions = Transaction::whereYear('created_at', now()->year)
-    //                     ->whereMonth('created_at', now()->month)
-    //                     ->get();
-
-    //                 $salesLastMonth = $this->calculateLastMonthSales(); // Calculate last month sales
-    //                 $monthlyForecastedSales = $this->calculateMonthlyForecastedSales($allTransactions);
-
-    //                 // $monthlyMessage = "Forecasted Sales for the month: ₱" . number_format($monthlyForecastedSales, 2);
-    //                 $monthlyMessage = "Last month, you earned ₱" . number_format($salesLastMonth, 2) . " due to demand. It is expected that this month your monthly sales will reach up to ₱" . number_format($monthlyForecastedSales, 2);
-    //                 session()->flash('monthlyForecastedSalesAlert', $monthlyMessage);
-    //             }
-
-    //             return back();
-    //         } else {
-    //             // Handle the case where the quantity is insufficient
-    //             return redirect()->back()
-    //                 ->withInput()
-    //                 ->withErrors(['error_stock' => 'Insufficient quantity in stock. Remaining quantity: ' . $product->quantity]);
-    //         }
-    //     } else {
-    //         // Keep the form data and repopulate the fields
-    //         return redirect()->back()
-    //             ->withInput()
-    //             ->withErrors(['error' => 'Selected product and unit price did not match.']);
-    //     }
-    // }
 
     private function calculateForecastedSales($transactions)
     {
@@ -1114,7 +1011,7 @@ class AdminController extends Controller
             'product_name' => 'required|string',
             'selling_price' => 'required|numeric|min:0',
             'qty' => 'required|integer|min:1',
-            'customer_name' => 'required|string',
+            'customer_name_id' => 'required|string',
         ];
 
         // Custom error messages
@@ -1136,7 +1033,7 @@ class AdminController extends Controller
         $productName = $request->input('product_name');
         $selling_price = $request->input('selling_price');
         $qty = $request->input('qty');
-        $customerName = $request->input('customer_name');
+        $customerName = $request->input('customer_name_id');
 
         // Retrieve the old 'qty' for the transaction
         $oldQty = $transaction->qty;
@@ -1195,12 +1092,12 @@ class AdminController extends Controller
     {
         $fromDate = $request->input('from_date');
         $toDate = $request->input('to_date');
-        $customerName = $request->input('customer_name');
+        $customerName = $request->input('customer_name_id');
 
         // Increment the toDate by one day to include records on the toDate itself
         $toDate = date('Y-m-d', strtotime($toDate . ' +1 day'));
 
-        $transactions = Transaction::where('customer_name', $customerName)
+        $transactions = Transaction::where('customer_name_id', $customerName)
             ->whereBetween('created_at', [$fromDate, $toDate])
             ->get();
 
@@ -1277,14 +1174,14 @@ class AdminController extends Controller
     {
 
         $request->validate([
-            "name" => "required",
+            "customer_name_id" => "required",
             "contact_name" => "required",
             // "contact_num" => "required|between:5,11",
             "address" => "required",
         ]);
 
         $customers = new Customer;
-        $customers->name = $request->input('name');
+        $customers->customer_name_id = $request->input('customer_name_id');
         $customers->contact_name = $request->input('contact_name');
         $customers->address = $request->input('address');
         $customers->contact_num = $request->input('contact_num');
@@ -1299,14 +1196,14 @@ class AdminController extends Controller
     {
 
         $request->validate([
-            "name" => "required",
+            "customer_name_id" => "required",
             "contact_name" => "required",
             // "contact_num" => "required|between:5,11",
             "address" => "required",
         ]);
 
         $customers = Customer::find($id);
-        $customers->name = $request->name;
+        $customers->customer_name_id = $request->customer_name_id;
         $customers->contact_name = $request->contact_name;
         $customers->address = $request->address;
         $customers->contact_num = $request->contact_num;
@@ -1339,8 +1236,8 @@ class AdminController extends Controller
             $query->orderBy('contact_name', 'asc');
         } elseif ($sortOption === 'address_asc') {
             $query->orderBy('address', 'asc');
-        } elseif ($sortOption === 'product_name_asc') {
-            $query->orderBy('product_name', 'asc');
+        } elseif ($sortOption === 'product_name_id_asc') {
+            $query->orderBy('product_name_id', 'asc');
         }
 
         // Assuming you retrieve $productsss and $forecasts here or from another method
@@ -1405,7 +1302,7 @@ class AdminController extends Controller
     //     $request->validate([
     //         "company_name" => "required",
     //         "contact_name" => "required|min:1",
-    //         "product_name" => "required",
+    //         "product_name_id" => "required",
     //         "address" => "required",
     //         // "contact_num" => "required|digits_between:5,11",
     //     ]);
@@ -1414,7 +1311,7 @@ class AdminController extends Controller
     //     $suppliers->company_name = $request->input('company_name');
     //     $suppliers->contact_name = $request->input('contact_name');
     //     $suppliers->address = $request->input('address');
-    //     $suppliers->product_name = $request->input('product_name');
+    //     $suppliers->product_name_id = $request->input('product_name_id');
     //     $suppliers->contact_num = $request->input('contact_num');
     //     $suppliers->save();
     //     // return redirect()->route('admin.supplier');
@@ -1426,7 +1323,7 @@ class AdminController extends Controller
         $request->validate([
             "company_name" => "required",
             "contact_name" => "required|min:1",
-            "product_name.*" => "required", // Validate each product name in the array
+            "product_name_id.*" => "required", // Validate each product name in the array
             "address" => "required",
             // "contact_num" => "required|digits_between:5,11",
         ]);
@@ -1435,8 +1332,8 @@ class AdminController extends Controller
         $suppliers->company_name = $request->input('company_name');
         $suppliers->contact_name = $request->input('contact_name');
         $suppliers->address = $request->input('address');
-        // Convert the product_name array to JSON before saving
-        $suppliers->product_name = json_encode($request->input('product_name'));
+        // Convert the product_name_id array to JSON before saving
+        $suppliers->product_name_id = json_encode($request->input('product_name_id'));
         $suppliers->contact_num = $request->input('contact_num');
         $suppliers->save();
 
@@ -1478,20 +1375,20 @@ class AdminController extends Controller
     //     $request->validate([
     //         "company_name" => "required",
     //         "contact_name" => "required|min:1",
-    //         "product_name" => "required",
+    //         "product_name_id" => "required",
     //         "address" => "required",
     //         "contact_num" => "required|digits_between:5,11",
     //     ]);
 
     //     if ($request->has('keepModalOpen')) {
-    //         return redirect()->back()->withInput($request->except(['keepModalOpen', 'product_name']))->with('reopenModal', true);
+    //         return redirect()->back()->withInput($request->except(['keepModalOpen', 'product_name_id']))->with('reopenModal', true);
     //     }
 
     //     $suppliers = new Supplier;
     //     $suppliers->company_name = $request->input('company_name');
     //     $suppliers->contact_name = $request->input('contact_name');
     //     $suppliers->address = $request->input('address');
-    //     $suppliers->product_name = $request->input('product_name');
+    //     $suppliers->product_name_id = $request->input('product_name_id');
     //     $suppliers->contact_num = $request->input('contact_num');
     //     $suppliers->save();
     //     // return redirect()->route('admin.supplier');
@@ -1506,7 +1403,7 @@ class AdminController extends Controller
     //         "contact_name" => "required|min:1",
     //         "address" => "required",
     //         "contact_num" => "required|numeric|digits_between:5,11",
-    //         "product_name" => "required",
+    //         "product_name_id" => "required",
     //         "quantity" => "required",
     //     ]);
 
@@ -1515,13 +1412,13 @@ class AdminController extends Controller
     //     $supplier->company_name = $request->input('company_name');
     //     $supplier->contact_name = $request->input('contact_name');
     //     $supplier->address = $request->input('address');
-    //     $supplier->product_name = $request->input('product_name');
+    //     $supplier->product_name_id = $request->input('product_name_id');
     //     $supplier->contact_num = $request->input('contact_num');
     //     $supplier->quantity = $request->input('quantity');
     //     $supplier->save();
 
     //     // Find the matching product by name and update its quantity
-    //     $product = Product::where('name', $request->input('product_name'))->first();
+    //     $product = Product::where('name', $request->input('product_name_id'))->first();
     //     if ($product) {
     //         $product->quantity += $request->input('quantity');
     //         $product->save();
@@ -1539,7 +1436,7 @@ class AdminController extends Controller
     //     $request->validate([
     //         "company_name" => "required",
     //         "contact_name" => "required|min:1",
-    //         "product_name" => "required",
+    //         "product_name_id" => "required",
     //         "address" => "required",
     //         // "contact_num" => "required|numeric|digits_between:5,15",
     //         "quantity" => "nullable|numeric|min:0", // Allow quantity to be nullable
@@ -1549,13 +1446,13 @@ class AdminController extends Controller
     //     $supplier->company_name = $request->company_name;
     //     $supplier->contact_name = $request->contact_name;
     //     $supplier->address = $request->address;
-    //     $supplier->product_name = $request->product_name;
+    //     $supplier->product_name_id = $request->product_name_id;
     //     $supplier->contact_num = $request->contact_num;
     //     $supplier->quantity = $request->quantity === null ? null : $request->quantity;
     //     $supplier->save();
 
     //     // Find the matching product by name and update its quantity
-    //     $product = Product::where('name', $request->product_name)->first();
+    //     $product = Product::where('name', $request->product_name_id)->first();
     //     if ($product) {
     //         // Ensure that we only update the quantity if a value was provided
     //         if ($request->quantity !== null) {
@@ -1578,25 +1475,25 @@ class AdminController extends Controller
         $request->validate([
             "company_name" => "required",
             "contact_name" => "required|min:1",
-            // "product_name" => "required",
+            // "product_name_id" => "required",
             "address" => "required",
             // "contact_num" => "required|numeric|digits_between:5,15",
             "quantity" => "nullable|numeric|min:0", // Allow quantity to be nullable
         ]);
 
         // Check if the selected product exists
-        $productExists = Product::where('name', $request->product_name)->exists();
+        $productExists = Product::where('name', $request->product_name_id)->exists();
 
         if (!$productExists) {
             // If the product does not exist, redirect back with an error message
-            return back()->withErrors(['product_name' => 'The selected product does not exist.'])->withInput();
+            return back()->withErrors(['product_name_id' => 'The selected product does not exist.'])->withInput();
         }
 
         $supplier = Supplier::findOrFail($id);
         $supplier->company_name = $request->company_name;
         $supplier->contact_name = $request->contact_name;
         $supplier->address = $request->address;
-        // $supplier->product_name = $request->product_name;
+        // $supplier->product_name_id = $request->product_name_id;
         $supplier->contact_num = $request->contact_num;
 
         // Assuming you want to keep track of which products a supplier has in a different way,
@@ -1607,7 +1504,7 @@ class AdminController extends Controller
         $supplier->save();
 
         // Update the product's quantity
-        $product = Product::where('name', $request->product_name)->first();
+        $product = Product::where('name', $request->product_name_id)->first();
         if ($request->quantity !== null) {
             $product->quantity += $request->quantity;
             $product->save();
@@ -1666,12 +1563,37 @@ class AdminController extends Controller
         return response()->json($delivery);
     }
 
+    // public function getDeliveryDetails($id)
+    // {
+    //     $delivery = Delivery::with(['products'])->find($id); // Assuming a 'products' relationship exists on your Delivery model
+
+    //     if (!$delivery) {
+    //         return response()->json(['error' => 'Delivery not found'], 404);
+    //     }
+
+    //     // Modify the structure of your $delivery object here to include selling_price for each product
+    //     // This is just an example and might need to be adjusted based on your actual database and model structure
+    //     $deliveryDetails = $delivery->toArray();
+    //     foreach ($delivery->products as $product) {
+    //         // Assuming you have access to selling_price in your product model
+    //         $deliveryDetails['products_with_prices'][] = [
+    //             'product_id' => $product->id,
+    //             'name' => $product->name,
+    //             'selling_price' => $product->selling_price, // Or however you access the selling price
+    //             'quantity' => $product->pivot->quantity, // Assuming there's a pivot table for many-to-many relationship
+    //         ];
+    //     }
+
+    //     return response()->json($deliveryDetails);
+    // }
+
+
 
     public function deliveryStore(Request $request)
     {
         $request->validate([
             'delivery_id' => ['required', 'unique:' . Delivery::class],
-            'name' => ['required'],
+            'customer_name_id' => ['required'],
             'product' => ['required'],
             'quantity' => ['required'],
             'mode_of_payment' => ['required'],
@@ -1680,7 +1602,7 @@ class AdminController extends Controller
 
         $deliveries = new Delivery;
         $deliveries->delivery_id = $request->input('delivery_id');
-        $deliveries->name = $request->input('name');
+        $deliveries->customer_name_id = $request->input('customer_name_id');
 
         // Remove null values from the quantity array
         $filteredQuantity = array_filter($request->input('quantity'), function ($value) {

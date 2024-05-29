@@ -568,7 +568,9 @@ i.fa-plus, i.edt-taas  {
     background-color: #f9f9f9;
     min-width: 160px;
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-    z-index: 1;
+    z-index: 1000;
+    right: -10px;
+    width: 150px;
 }
 
 .user-photo-dropdown .dropdown-content a {
@@ -580,8 +582,8 @@ i.fa-plus, i.edt-taas  {
     background-color: white;
     border: 1px solid #006181;
     /* top: 81px; */
-    right: 110px;
-    width: 150px;
+    /* right: 110px;
+    width: 150px; */
     color: #006181;
 }
 

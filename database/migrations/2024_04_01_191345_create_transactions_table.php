@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('customer_name');
+            // $table->string('customer_name');
+            $table->string('customer_name_id');
             $table->string('product_name');
             $table->integer('qty');
             $table->integer('transacted_qty')->default(0);

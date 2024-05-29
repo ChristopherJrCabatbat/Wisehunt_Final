@@ -39,9 +39,9 @@
                 @endif
 
                 <label class="modal-tops" for="">Name:</label>
-                <input required type="text" name="name" id="" value="{{ old('name') }}" />
-                @if ($errors->has('name'))
-                    <div class="text-danger">{{ $errors->first('name') }}</div>
+                <input required type="text" name="customer_name_id" id="" value="{{ old('customer_name_id') }}" />
+                @if ($errors->has('customer_name_id'))
+                    <div class="text-danger">{{ $errors->first('customer_name_id') }}</div>
                 @endif
 
                 <label for="">Mode of Payment:</label>
@@ -254,7 +254,7 @@
                                 <td>{{ $delivery->delivery_id }}</td>
                                 {{-- <td class="delivery-name">{{ $delivery->name }}</td> --}}
                                 <td class="delivery-name" data-delivery-id="{{ $delivery->id }}"
-                                    title="Click to view more delivery details.">{{ $delivery->name }}
+                                    title="Click to view more delivery details.">{{ $delivery->customer_name_id }}
                                 </td>
 
                                 <td>{{ $delivery->mode_of_payment }}</td>
@@ -555,7 +555,6 @@
                 return;
             }
 
-            // Close modal event
             closeModal.addEventListener('click', function() {
                 modal.style.display = 'none';
             });
@@ -567,12 +566,10 @@
 
             deliveryNames.forEach(name => {
                 name.addEventListener('click', function() {
-                    const deliveryId = this.getAttribute(
-                        'data-delivery-id'
-                    ); // Ensure each delivery name element has a data-delivery-id attribute
+                    const deliveryId = this.getAttribute('data-delivery-id');
                     console.log(`Delivery name clicked: ${deliveryId}`);
 
-                    fetch(`/staff/delivery/details/${deliveryId}`)
+                    fetch(`/admin/delivery/details/${deliveryId}`)
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -582,45 +579,45 @@
                         .then(data => {
                             console.log('Data received:', data);
 
-                            // Parse product and quantity JSON strings into arrays
+                            // Assuming we have a way to get prices. For example:
+                            // const prices = { "Product1": 10, "Product2": 20, ... };
                             const products = JSON.parse(data.product);
                             const quantities = JSON.parse(data.quantity);
 
-                            // Start building the table content with customer and delivery ID
                             let tableContent = `
-        <tr>
-            <th class="id-customer" colspan="2">Delivery ID: ${data.delivery_id}</th>
-        </tr>
-        <tr>
-            <th class="id-customer" colspan="2">Customer: ${data.name}</th>
-        </tr>
-        <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-        </tr>
-    `;
+                                <tr>
+                                    <th class="id-customer" colspan="3">Delivery ID: ${data.delivery_id}</th>
+                                </tr>
+                                <tr>
+                                    <th class="id-customer" colspan="3">Customer: ${data.customer_name_id}</th>
+                                </tr>
+                                <tr>
+                                    <th class="th-blue first">Product</th>
+                                    <th class="th-blue">Quantity</th>
+                                </tr>
+                                `;
 
-                            // Add a row for each product-quantity pair
                             products.forEach((product, index) => {
-                                const quantity = quantities[
-                                    index]; // Match product with its quantity
+                                const quantity = quantities[index];
+                                // Placeholder for price calculation, adjust as needed
+                                const price =
+                                10; // Assuming a fixed price for simplicity; replace with actual price lookup
+                                const totalPrice = quantity * price;
+
                                 tableContent += `
-            <tr>
-                <td>${product}</td>
-                <td>${quantity}</td>
-            </tr>
-        `;
+                                <tr>
+                                    <td>${product}</td>
+                                    <td>${quantity}</td>
+                                </tr>
+                                `;
                             });
 
-                            // Update modalTable's innerHTML with the built table content
                             modalTable.innerHTML = tableContent;
                             modal.style.display = 'block';
                         })
-
                         .catch(error => {
                             console.error('Error loading delivery details:', error);
                         });
-
                 });
             });
         });

@@ -45,7 +45,7 @@
                         </select> --}}
 
                         <input class="form-control" id="product_name" name="name" type="text"
-                            placeholder="Type to search..." autocomplete="off">
+                            placeholder="Type to search..." autocomplete="off" value="{{ old('code', $productss->name) }}">
 
                         <div id="productSuggestions" class="suggestions-dropdown">
                             <!-- Search suggestions will be appended here -->

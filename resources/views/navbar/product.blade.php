@@ -36,7 +36,7 @@
                     <div class="column">
 
                         {{-- <label for="">Product Name:</label>
-                        <select required class="select_product" name="name" id="product_name">
+                        <select required class="select_product" name="product_name_id" id="product_name">
                             <option value="" disabled selected>-- Select a Product --</option>
                             @foreach ($suppliers as $supplier)
                                 <option value="{{ $supplier->product_name }}"
@@ -46,16 +46,16 @@
                             @endforeach
                         </select> --}}
 
-                        <label for="product_name">Product Name:</label>
-                        <input class="form-control" id="product_name" name="name" type="text" placeholder="Type to search..."
+                        <label for="product_name_id">Product Name:</label>
+                        <input class="form-control" id="product_name" name="product_name_id" type="text" placeholder="Type to search..."
                             autocomplete="off">
 
                         <div id="productSuggestions" class="suggestions-dropdown">
                             <!-- Search suggestions will be appended here -->
                         </div>
 
-                        {{-- <label for="name">Product Name:</label>
-                        <input class="form-control product_name" id="name" name="name" type="text"
+                        {{-- <label for="product_name_id">Product Name:</label>
+                        <input class="form-control product_name" id="product_name_id" name="product_name_id" type="text"
                             placeholder="Type to search..." autocomplete="off">
 
                         <div id="loadingIndicator" style="display: none;">Loading...</div>
@@ -63,8 +63,8 @@
                             style="position: absolute; z-index: 1000; background: white; border: 1px solid #ccc;">
                         </div> --}}
 
-                        {{-- <label for="name">Product Name:</label>
-                        <input class="form-control product_name" id="name" name="name" type="text"
+                        {{-- <label for="product_name_id">Product Name:</label>
+                        <input class="form-control product_name" id="product_name_id" name="product_name_id" type="text"
                             placeholder="Type to search..." autocomplete="off">
                         <div id="loadingIndicator" style="display: none;">Loading...</div>
                         <div id="productSuggestions"
@@ -72,8 +72,8 @@
                         </div> --}}
 
 
-                        @if ($errors->has('name'))
-                            <div class="text-danger">{{ $errors->first('name') }}</div>
+                        @if ($errors->has('product_name_id'))
+                            <div class="text-danger">{{ $errors->first('product_name_id') }}</div>
                         @endif
 
                     </div>
@@ -304,7 +304,7 @@
                         <option selected value="">-- Click to sort --</option>
                         <option value="default_asc" {{ request('sort') === 'default_asc' ? 'selected' : '' }}>Default
                             Sorting</option>
-                        <option value="name_asc" {{ request('sort') === 'name_asc' ? 'selected' : '' }}>Product Name
+                        <option value="product_name_id_asc" {{ request('sort') === 'product_name_id_asc' ? 'selected' : '' }}>Product Name
                         </option>
                         <option value="category_asc" data-toggle="modal" data-target="#categoryModal"
                             {{ request('sort') === 'category_asc' ? 'selected' : '' }}>Category</option>
@@ -361,13 +361,13 @@
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
                                 <td>{{ $product->code }}</td>
-                                <td>{{ $product->name }}</td>
+                                <td>{{ $product->product_name_id }}</td>
                                 <td>{{ $product->brand_name }}</td>
                                 <td>{{ $product->description }}</td>
                                 <td>{{ $product->unit }}</td>
                                 <td>{{ $product->category }}</td>
                                 <td>
-                                    <img src="{{ asset($product->photo) }}" alt="{{ $product->name }}" width="auto"
+                                    <img src="{{ asset($product->photo) }}" alt="{{ $product->product_name_id }}" width="auto"
                                         height="50px" style="background-color: transparent">
                                 </td>
                                 <td>{{ $product->quantity }}</td>
@@ -375,14 +375,14 @@
                                 <td>₱ {{ number_format($product->selling_price) }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form action="{{ route('admin.productEdit', $product->id) }}" method="POST">
+                                        {{-- <form action="{{ route('admin.productEdit', $product->id) }}" method="POST">
                                             @csrf
                                             @method('GET')
 
                                             <button type="submit" class="edit" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
-                                        </form>
+                                        </form> --}}
                                         <form action="{{ route('admin.productDestroy', $product->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')

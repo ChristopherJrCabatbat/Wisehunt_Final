@@ -28,12 +28,12 @@
                 </center>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                <select required name="customer_name" id="autofocus" class="select customer">
+                <select required name="customer_name_id" id="autofocus" class="select customer">
                     <option value="" disabled selected>-- Select a Customer --</option>
                     @foreach ($customers as $customer)
-                        <option value="{{ $customer->name }}" data-contact="{{ $customer->contact_num }}"
-                            {{ old('customer_name') === $customer->name ? 'selected' : '' }}>
-                            {{ $customer->name }}
+                        <option value="{{ $customer->customer_name_id }}" data-contact="{{ $customer->contact_num }}"
+                            {{ old('customer_name_id') === $customer->customer_name_id ? 'selected' : '' }}>
+                            {{ $customer->customer_name_id }}
                         </option>
                     @endforeach
                 </select>
@@ -121,11 +121,11 @@
                 </div>
 
                 <label class="baba-h2 taas-select" for="customer">Customer:</label>
-                <select required name="customer_name" class="select customer report">
+                <select required name="customer_name_id" class="select customer report">
                     <option value="" disabled selected>-- Select a Customer --</option>
                     @foreach ($customers as $customer)
                         <option value="{{ $customer->name }}"
-                            {{ old('customer_name') === $customer->name ? 'selected' : '' }}>
+                            {{ old('customer_name_id') === $customer->name ? 'selected' : '' }}>
                             {{ $customer->name }}
                         </option>
                     @endforeach
@@ -203,7 +203,7 @@
                     <select name="sort" id="sortSelect">
                         <option selected value="" {{ request('sort') === '' ? 'selected' : '' }}>--
                             Default Sorting --</option>
-                        <option value="customer_name_asc" {{ request('sort') === 'customer_name_asc' ? 'selected' : '' }}>
+                        <option value="customer_name_id_asc" {{ request('sort') === 'customer_name_id_asc' ? 'selected' : '' }}>
                             Customer</option>
                         <option value="product_name_asc" {{ request('sort') === 'product_name_asc' ? 'selected' : '' }}>
                             Product</option>
@@ -268,7 +268,7 @@
                         @foreach ($transactions as $transaction)
                             <tr>
                                 <td class="transcact-td">{{ $rowNumber++ }}</td>
-                                <td class="transcact-td">{{ $transaction->customer_name }}</td>
+                                <td class="transcact-td">{{ $transaction->customer_name_id }}</td>
                                 <td class="transcact-td">{{ $transaction->product_name }}</td>
                                 <td class="transcact-td">{{ $transaction->qty }}</td>
                                 <td class="nowrap transcact-td">₱ {{ number_format($transaction->selling_price) }}</td>
