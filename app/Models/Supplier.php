@@ -19,5 +19,6 @@ class Supplier extends Model
 
     protected $casts = [
         'product_name_id' => 'array',
+        'unit' => 'array',
     ];
 }
