@@ -147,3 +147,17 @@ input[type="submit"], input[type="button"] {
 .modal-content-view h2 {
     text-align: center;
 }
+
+.view-button {
+    background-color: #06c1ff;
+    min-height: 35%;
+    padding: 0px 6px;
+}
+
+.view-button:hover {
+    background-color: #0092c3;
+}
+
+.product-unit-group {
+    display: flex;
+}

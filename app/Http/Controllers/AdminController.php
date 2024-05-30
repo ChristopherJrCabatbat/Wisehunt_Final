@@ -481,7 +481,6 @@ class AdminController extends Controller
     }
 
 
-
     public function productStore(Request $request)
     {
         // Your validation logic here
@@ -499,6 +498,24 @@ class AdminController extends Controller
         ], [
             'product_name_id.unique' => 'You already have :input in your table.',
         ]);
+
+        // Fetch all suppliers and their product names
+        $suppliers = Supplier::all();
+        $allProductNames = [];
+
+        foreach ($suppliers as $supplier) {
+            $productNames = json_decode($supplier->product_name_id, true);
+            if (is_array($productNames)) {
+                $allProductNames = array_merge($allProductNames, $productNames);
+            }
+        }
+
+        $allProductNames = array_unique($allProductNames);
+
+        // Validate if the product name is within the supplier's products
+        if (!in_array($request->input('product_name_id'), $allProductNames)) {
+            return redirect()->route('admin.product')->withErrors(['product_name_id' => 'Invalid product name selected.'])->withInput();
+        }
 
         if ($validator->fails()) {
             return redirect()->route('admin.product')->withErrors($validator)->withInput();
@@ -525,6 +542,8 @@ class AdminController extends Controller
         $products->save();
         return redirect()->route('admin.product')->with('success', 'Product added successfully.');
     }
+
+
 
     // public function searchSupplierProduct(Request $request)
     // {
@@ -1302,7 +1321,7 @@ class AdminController extends Controller
     //     $request->validate([
     //         "company_name" => "required",
     //         "contact_name" => "required|min:1",
-    //         "product_name_id" => "required",
+    //         "product_name_id.*" => "required", // Validate each product name in the array
     //         "address" => "required",
     //         // "contact_num" => "required|digits_between:5,11",
     //     ]);
@@ -1311,10 +1330,16 @@ class AdminController extends Controller
     //     $suppliers->company_name = $request->input('company_name');
     //     $suppliers->contact_name = $request->input('contact_name');
     //     $suppliers->address = $request->input('address');
-    //     $suppliers->product_name_id = $request->input('product_name_id');
+
+    //     // Convert the product_name_id array to JSON before saving
+    //     $suppliers->product_name_id = json_encode($request->input('product_name_id'));
+
+    //     // Convert the unit array to JSON before saving
+    //     $suppliers->unit = json_encode($request->input('unit'));
+
     //     $suppliers->contact_num = $request->input('contact_num');
     //     $suppliers->save();
-    //     // return redirect()->route('admin.supplier');
+
     //     return back()->with("message", "Supplier added successfully!");
     // }
 
@@ -1325,150 +1350,28 @@ class AdminController extends Controller
             "contact_name" => "required|min:1",
             "product_name_id.*" => "required", // Validate each product name in the array
             "address" => "required",
-            // "contact_num" => "required|digits_between:5,11",
+            "date_received" => "required|date", // Validate date_received field
+            // "contact_num" => "required|digits_between:5,11", // Un-comment and adjust validation for contact_num if needed
         ]);
 
         $suppliers = new Supplier;
         $suppliers->company_name = $request->input('company_name');
         $suppliers->contact_name = $request->input('contact_name');
         $suppliers->address = $request->input('address');
+        $suppliers->date_received = $request->input('date_received'); // Save date_received field
+
         // Convert the product_name_id array to JSON before saving
         $suppliers->product_name_id = json_encode($request->input('product_name_id'));
+
+        // Convert the unit array to JSON before saving
+        $suppliers->unit = json_encode($request->input('unit'));
+
         $suppliers->contact_num = $request->input('contact_num');
         $suppliers->save();
 
         return back()->with("message", "Supplier added successfully!");
     }
 
-    // public function supplierStore(Request $request)
-    // {
-    //     $request->validate([
-    //         "company_name" => "required",
-    //         "contact_name" => "required|min:1",
-    //         "address" => "required",
-    //         "products.*" => "required", // Validates that each product name in the array is required
-    //     ]);
-
-    //     $supplier = new Supplier;
-    //     $supplier->company_name = $request->input('company_name');
-    //     $supplier->contact_name = $request->input('contact_name');
-    //     $supplier->address = $request->input('address');
-    //     $supplier->contact_num = $request->input('contact_num');
-    //     $supplier->save();
-
-    //     foreach ($request->products as $productName) {
-    //         // Assuming a Product model exists and is related to Supplier
-    //         $product = new Product(); // Create a new Product instance
-    //         $product->name = $productName;
-    //         // Assuming there's a relationship set up in your Supplier model
-    //         $supplier->products()->save($product);
-    //     }
-
-    //     return back()->with("message", "Supplier added successfully!");
-    // }
-
-
-    // public function supplierStoreProduct(Request $request)
-    // {
-    //     // Your validation and storage logic here
-
-    //     $request->validate([
-    //         "company_name" => "required",
-    //         "contact_name" => "required|min:1",
-    //         "product_name_id" => "required",
-    //         "address" => "required",
-    //         "contact_num" => "required|digits_between:5,11",
-    //     ]);
-
-    //     if ($request->has('keepModalOpen')) {
-    //         return redirect()->back()->withInput($request->except(['keepModalOpen', 'product_name_id']))->with('reopenModal', true);
-    //     }
-
-    //     $suppliers = new Supplier;
-    //     $suppliers->company_name = $request->input('company_name');
-    //     $suppliers->contact_name = $request->input('contact_name');
-    //     $suppliers->address = $request->input('address');
-    //     $suppliers->product_name_id = $request->input('product_name_id');
-    //     $suppliers->contact_num = $request->input('contact_num');
-    //     $suppliers->save();
-    //     // return redirect()->route('admin.supplier');
-    //     return back();
-    // }
-
-
-    // public function supplierStoreQty(Request $request)
-    // {
-    //     $request->validate([
-    //         "company_name" => "required",
-    //         "contact_name" => "required|min:1",
-    //         "address" => "required",
-    //         "contact_num" => "required|numeric|digits_between:5,11",
-    //         "product_name_id" => "required",
-    //         "quantity" => "required",
-    //     ]);
-
-    //     // Save supplier information
-    //     $supplier = new Supplier;
-    //     $supplier->company_name = $request->input('company_name');
-    //     $supplier->contact_name = $request->input('contact_name');
-    //     $supplier->address = $request->input('address');
-    //     $supplier->product_name_id = $request->input('product_name_id');
-    //     $supplier->contact_num = $request->input('contact_num');
-    //     $supplier->quantity = $request->input('quantity');
-    //     $supplier->save();
-
-    //     // Find the matching product by name and update its quantity
-    //     $product = Product::where('name', $request->input('product_name_id'))->first();
-    //     if ($product) {
-    //         $product->quantity += $request->input('quantity');
-    //         $product->save();
-    //     }
-
-    //     // Optionally, you might want to handle the case where no matching product is found
-    //     // This could involve logging a warning, creating a new product, or informing the user
-
-    //     return back();
-    // }
-
-
-    // public function supplierUpdate(Request $request, $id)
-    // {
-    //     $request->validate([
-    //         "company_name" => "required",
-    //         "contact_name" => "required|min:1",
-    //         "product_name_id" => "required",
-    //         "address" => "required",
-    //         // "contact_num" => "required|numeric|digits_between:5,15",
-    //         "quantity" => "nullable|numeric|min:0", // Allow quantity to be nullable
-    //     ]);
-
-    //     $supplier = Supplier::findOrFail($id);
-    //     $supplier->company_name = $request->company_name;
-    //     $supplier->contact_name = $request->contact_name;
-    //     $supplier->address = $request->address;
-    //     $supplier->product_name_id = $request->product_name_id;
-    //     $supplier->contact_num = $request->contact_num;
-    //     $supplier->quantity = $request->quantity === null ? null : $request->quantity;
-    //     $supplier->save();
-
-    //     // Find the matching product by name and update its quantity
-    //     $product = Product::where('name', $request->product_name_id)->first();
-    //     if ($product) {
-    //         // Ensure that we only update the quantity if a value was provided
-    //         if ($request->quantity !== null) {
-    //             // Decide whether to add or set the new quantity based on your application's logic
-    //             $newQuantity = $request->quantity; // Use the provided quantity
-    //             // Assuming you want to add the quantity. Adjust if you're setting it instead.
-    //             $product->quantity += $newQuantity;
-    //             $product->save();
-    //         }
-    //         // If quantity is null, you might choose to not update the product's quantity
-    //     } else {
-    //         // Handle case where product doesn't exist. Options: create new, log, or inform user.
-    //     }
-
-    //     return redirect()->route('admin.supplier')->with("message", "Supplier updated successfully!");
-    // }
 
     public function supplierUpdate(Request $request, $id)
     {

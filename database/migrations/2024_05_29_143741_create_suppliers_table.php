@@ -18,9 +18,13 @@ return new class extends Migration
             $table->string('contact_name');
             $table->char('contact_num');
             $table->string('address');
-
+            $table->date('date_received');
+            
             // $table->text('product_name');
             $table->text('product_name_id');
+
+            // $table->string('unit');
+            $table->text('unit');
 
             $table->string('quantity')->nullable();
             $table->timestamps();

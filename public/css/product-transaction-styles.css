@@ -67,7 +67,8 @@ table {
 }
 .form-control {
     width: 100%;
-    margin-top: 6px;
+    margin-top: 11px;
+    margin-left: 15px;
 }
 
 h3 {
@@ -138,6 +139,14 @@ select.select_product {
     /* margin-top: 0; */
     position: relative;
     bottom: 8px;
+}
+.text-dangers {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    z-index: 0;
+    position: relative;
+    /* bottom: 8px; */
 }
 
 select.select_categ {
@@ -437,6 +446,8 @@ select.unit {
     /* padding: 5px; */
     text-decoration: none;
     background-color: white;
+    z-index: 1;
+
 }
 
 #productSuggestions:hover {
@@ -452,8 +463,21 @@ div#productSuggestions a:hover{
 
 div.suggestion-item {
     padding: 5px;
+    z-index: 1;
+    position: relative;
 }
 
 div.suggestion-item:hover {
     background-color: rgb(225, 225, 225);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: row;
+}
+
+.btn-outline-secondary {
+    margin: 0;
+    bottom: -11px;
+    position: relative;
 }

@@ -51,20 +51,39 @@
                     <div class="text-danger">{{ $errors->first('address') }}</div>
                 @endif
 
-                {{-- <label for="">Product:</label>
-                <input required type="text" name="product_name_id" id="product-supp" /> --}}
+                <label for="">Date Received:</label>
+            <input value="{{ old('date_received') }}" required type="date" name="date_received" id="" />
+            @if ($errors->has('date_received'))
+                <div class="text-danger">{{ $errors->first('date_received') }}</div>
+            @endif
 
                 <label for="">Product/s:</label>
                 <div id="product-input-container">
-                    <!-- Initial product input -->
-                    <input required type="text" name="product_name_id[]" class="product-input" />
+                    <!-- Initial product input and unit dropdown -->
+                    <div class="product-unit-group">
+                        <input required type="text" name="product_name_id[]" class="product-input" />
+                        <select required name="unit[]" class="unit-select">
+                            <option value="" disabled selected>Select Unit</option>
+                            <option value="Per item" {{ old('unit') === 'Per item' ? 'selected' : '' }}>Per item
+                            </option>
+                            <option value="Per box" {{ old('unit') === 'Per box' ? 'selected' : '' }}>Per box
+                            </option>
+                            <option value="Per case" {{ old('unit') === 'Per case' ? 'selected' : '' }}>Per case
+                            </option>
+                            <option value="Per pack" {{ old('unit') === 'Per pack' ? 'selected' : '' }}>Per pack
+                            </option>
+                            <option value="Per set" {{ old('unit') === 'Per set' ? 'selected' : '' }}>
+                                Per set</option>
+                            <option value="Per ream" {{ old('unit') === 'Per ream' ? 'selected' : '' }}>Per ream
+                            </option>
+                        </select>
+                    </div>
                 </div>
+
 
                 @if ($errors->has('product_name_id'))
                     <div class="text-danger">{{ $errors->first('product_name_id') }}</div>
                 @endif
-
-
 
                 <div class="add-save">
                     <button type="button" id="add-more-products" title="Click to add more product.">Add More
@@ -74,6 +93,7 @@
             </form>
         </div>
     </div>
+
 
     <!-- The Modal -->
     <div id="viewProductsModal" class="modal-view">
@@ -87,45 +107,19 @@
         </div>
     </div>
 
-
-    {{-- Add Existing Quantity
-    <div id="newModalQty" class="modal">
-        <div class="modal-content">
-            <span class="close closeModal">&times;</span>
-
-            <form class="modal-form" action="{{ route('admin.supplierStoreQty') }}" method="POST">
-                @csrf
-                <center>
-                    <h2 style="margin: 0%; color:#333;"><i class="fa-regular fa-plus"></i>Add Supplier</h2>
-                </center>
-                <label class="modal-tops" for="">Company Name:</label>
-                <input required autofocus type="text" name="company_name" id="autofocus" />
-                <label for="">Contact Name:</label>
-                <input required type="text" name="contact_name" id="" />
-                <label for="">Contact Number:</label>
-                <input required type="text" pattern="{5,15}" title="Enter a valid contact number" name="contact_num"
-                    id="" value="">
-                <label for="">Address:</label>
-                <input required type="text" name="address" id="" />
-
-                <label for="">Product:</label>
-                <select required class="select_product" name="product_name_id" id="product_name_id">
-                    <option value="" disabled selected>-- Select a Product --</option>
-                    @foreach ($products as $product)
-                        <option value="{{ $product->name }}" {{ old('product_name_id') === $product->name ? 'selected' : '' }}>
-                            {{ $product->name }}
-                        </option>
-                    @endforeach
-                </select>
-
-                <label for="">Quantity:</label>
-                <input required type="number" name="quantity" />
-
-
-                <input class="add" type="submit" value="Add" />
-            </form>
+    <!-- The Modal -->
+    {{-- <div id="viewProductsModal" class="modal-view">
+        <!-- Modal content -->
+        <div class="modal-content-view">
+            <span class="close-view">&times;</span>
+            <h2>Supplier Products</h2>
+            <div id="productsList">
+                <!-- Products will be dynamically inserted here -->
+            </div>
         </div>
     </div> --}}
+
+
 
 @endsection
 
@@ -211,7 +205,8 @@
                             Contact Name</option>
                         <option value="address_asc" {{ request('sort') === 'address_asc' ? 'selected' : '' }}>Address
                         </option> --}}
-                        <option value="product_name_id_asc" {{ request('sort') === 'product_name_id_asc' ? 'selected' : '' }}>
+                        <option value="product_name_id_asc"
+                            {{ request('sort') === 'product_name_id_asc' ? 'selected' : '' }}>
                             Product
                         </option>
 
@@ -294,23 +289,31 @@
                                     Products</button>
                                 </td> --}}
                                 {{-- <td><button type="button" onclick="showProducts('{{ $supplier->product_name_id }}')">View Products</button></td> --}}
-                                <td>{{ implode(', ', json_decode($supplier->product_name_id, true)) }}... <button type="button"
+                                <td>{{ implode(', ', json_decode($supplier->product_name_id, true)) }}...
+                                    {{-- <button type="button"
                                         onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}')">View
-                                        All</button>
+                                        All</button> --}}
                                 </td>
                                 {{-- <td><button type="button" onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}')">View Products</button></td> --}}
 
 
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form action="{{ route('admin.supplierEdit', $supplier->id) }}" method="POST">
+                                        {{-- <form action="{{ route('admin.supplierEdit', $supplier->id) }}" method="POST">
                                             @csrf
                                             @method('GET')
                                             <button type="submit" class="edit editButton" id="edit"
                                                 title="Click this button to increase the product's quantity..">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
-                                        </form>
+                                        </form> --}}
+
+                                        <button type="button" class="view-button"
+                                            onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}', '{{ $supplier->unit }}')"><img
+                                                src="{{ asset('images/visible.png') }}" class="" alt=""
+                                                style="height: auto; width: 23px;"></button>
+
+
 
                                         <form action="{{ route('admin.supplierDestroy', $supplier->id) }}"
                                             method="POST">
@@ -359,6 +362,7 @@
         });
     </script>
 
+
     {{-- Live Search --}}
     <script type="text/javascript">
         $('#search').on('input', function() {
@@ -398,6 +402,7 @@
         });
     </script>
 
+
     {{-- Plus product  --}}
     <script>
         function submitFormAndReopenModal() {
@@ -414,18 +419,6 @@
     </script>
 
     {{-- <script>
-        document.getElementById('add-more-products').addEventListener('click', function() {
-            var newInput = document.createElement('input');
-            newInput.setAttribute('type', 'text');
-            newInput.setAttribute('name', 'product_name_id[]'); // Important: Use array notation for the name attribute
-            newInput.setAttribute('required', 'true');
-            newInput.classList.add('product-input');
-
-            document.getElementById('product-input-container').appendChild(newInput);
-        });
-    </script> --}}
-
-    <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Listener for adding more product inputs
             document.getElementById('add-more-products').addEventListener('click', function() {
@@ -453,18 +446,72 @@
                 inputs[0].value = '';
             });
         });
+    </script> --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Listener for adding more product inputs
+            document.getElementById('add-more-products').addEventListener('click', function() {
+                // Create a container div for the new input and dropdown
+                var productUnitGroup = document.createElement('div');
+                productUnitGroup.classList.add('product-unit-group');
+
+                // Create the new input element
+                var newInput = document.createElement('input');
+                newInput.setAttribute('type', 'text');
+                newInput.setAttribute('name', 'product_name_id[]');
+                newInput.setAttribute('required', 'true');
+                newInput.classList.add('product-input');
+
+                // Create the new dropdown element
+                var newSelect = document.createElement('select');
+                newSelect.setAttribute('name', 'unit[]');
+                newSelect.classList.add('unit-select');
+
+                // Add options to the dropdown
+                var units = ["Per item", "Per box", "Per case", "Per pack", "Per set", "Per ream"];
+                units.forEach(function(unit) {
+                    var option = document.createElement('option');
+                    option.value = unit;
+                    option.text = unit;
+                    newSelect.appendChild(option);
+                });
+
+                // Append the input and dropdown to the container div
+                productUnitGroup.appendChild(newInput);
+                productUnitGroup.appendChild(newSelect);
+
+                // Append the container div to the product input container
+                document.getElementById('product-input-container').appendChild(productUnitGroup);
+            });
+
+            // Listener for the close button of the modal
+            document.querySelector('.closeModal').addEventListener('click', function() {
+                // Select all product input elements
+                var inputs = document.querySelectorAll('#product-input-container .product-unit-group');
+                // Keep only the first input, remove the rest
+                if (inputs.length > 1) {
+                    for (var i = 1; i < inputs.length; i++) {
+                        inputs[i].parentNode.removeChild(inputs[i]);
+                    }
+                }
+
+                // Optionally reset the value of the first input if needed
+                inputs[0].querySelector('.product-input').value = '';
+            });
+        });
     </script>
 
-
     {{-- View Product Script --}}
-   
     <script>
-        function showProducts(companyName, productNamesJson) {
+        function showProducts(companyName, productNamesJson, unitsJson) {
             const productNames = JSON.parse(productNamesJson);
-            let tableContent = `<table><tr><th>${companyName} product/s</th></tr>`; // Use companyName for the table header
-            productNames.forEach(function(name) {
-                tableContent += `<tr><td>${name}</td></tr>`;
-            });
+            const units = JSON.parse(unitsJson);
+            let tableContent = `<table><tr><th colspan="2">${companyName} product/s and unit:</th></tr>`; // Use companyName for the table header
+            for (let i = 0; i < productNames.length; i++) {
+                tableContent += `<tr><td>${productNames[i]}</td><td>${units[i]}</td></tr>`;
+            }
+
             tableContent += '</table>';
 
             // Set the content in the modal's body

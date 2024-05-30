@@ -59,8 +59,8 @@
                     <div class="text-danger">{{ $errors->first('address') }}</div>
                 @endif --}}
 
-                <label for="">Pending Status:</label>
                 {{-- <input type="text" value="Not Delivered" name="status" readonly> --}}
+                <label for="">Pending Status:</label>
                 <select required name="status" id="" class="" title="You can change the default after finishing adding a delivery.">
                     <option value="Not Delivered" {{ old('status') === 'Not Delivered' ? 'selected' : '' }}>Not Delivered
                     </option>
