@@ -183,6 +183,13 @@
         </li>
         <li>
             <div class="baba-container">
+                <a class="sidebar" href="{{ route('admin.return') }}">
+                    <i class="fa-solid fa-arrow-rotate-left return-i" style="color: #ffffff;"></i>
+                    RETURN</a>
+            </div>
+        </li>
+        <li>
+            <div class="baba-container">
                 <a class="sidebar" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
                     USER</a>

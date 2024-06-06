@@ -17,15 +17,18 @@
             <header>Login Form</header>
             <form method="POST" action="{{ route('login') }}">
                 @csrf
+                @if ($errors->has('email'))
+                    <div class="text-danger">{{ $errors->first('email') }}</div>
+                @endif
                 <div class="field">
                     <span class="fa fa-user"></span>
                     {{-- <input type="text" autofocus required placeholder="Email"> --}}
                     <input type="email" autofocus name="email" id="email" value="{{ old('email') }}"
                         placeholder="Email" required>
                 </div>
-                @if ($errors->has('email'))
+                {{-- @if ($errors->has('email'))
                     <div class="text-danger">{{ $errors->first('email') }}</div>
-                @endif
+                @endif --}}
 
                 <div class="field space">
                     <span class="fa fa-lock"></span>
@@ -47,7 +50,7 @@
                     @endif
                     {{-- <a href="#">Forgot Password?</a> --}}
                 </div>
-               
+
             </form>
             {{-- <div class="login">
                Or login with

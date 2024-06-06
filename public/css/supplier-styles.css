@@ -161,3 +161,7 @@ input[type="submit"], input[type="button"] {
 .product-unit-group {
     display: flex;
 }
+
+input[type="date"] {
+    width: 100%;
+}

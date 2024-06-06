@@ -1196,14 +1196,18 @@ class AdminController extends Controller
             "customer_name_id" => "required",
             "contact_name" => "required",
             // "contact_num" => "required|between:5,11",
-            "address" => "required",
+            "barangay" => "required",
+            "municipality" => "required",
+            "province" => "required",
         ]);
 
         $customers = new Customer;
         $customers->customer_name_id = $request->input('customer_name_id');
         $customers->contact_name = $request->input('contact_name');
-        $customers->address = $request->input('address');
         $customers->contact_num = $request->input('contact_num');
+        $customers->barangay = $request->input('barangay');
+        $customers->municipality = $request->input('municipality');
+        $customers->province = $request->input('province');
         // $customers->item_sold = $request->input('item_sold');
         $customers->save();
         return redirect()->route('admin.customer')->with("message", "Customer added successfully!");
@@ -1218,14 +1222,15 @@ class AdminController extends Controller
             "customer_name_id" => "required",
             "contact_name" => "required",
             // "contact_num" => "required|between:5,11",
-            "address" => "required",
         ]);
 
         $customers = Customer::find($id);
         $customers->customer_name_id = $request->customer_name_id;
         $customers->contact_name = $request->contact_name;
-        $customers->address = $request->address;
         $customers->contact_num = $request->contact_num;
+        $customers->barangay = $request->barangay;
+        $customers->municipality = $request->municipality;
+        $customers->province = $request->province;
         // $customers->item_sold = $request->item_sold;
         $customers->save();
         return redirect()->route('admin.customer')->with("message", "Customer updated successfully!");
@@ -1357,6 +1362,7 @@ class AdminController extends Controller
         $suppliers = new Supplier;
         $suppliers->company_name = $request->input('company_name');
         $suppliers->contact_name = $request->input('contact_name');
+        $suppliers->contact_num = $request->input('contact_num');
         $suppliers->address = $request->input('address');
         $suppliers->date_received = $request->input('date_received'); // Save date_received field
 
@@ -1366,7 +1372,6 @@ class AdminController extends Controller
         // Convert the unit array to JSON before saving
         $suppliers->unit = json_encode($request->input('unit'));
 
-        $suppliers->contact_num = $request->input('contact_num');
         $suppliers->save();
 
         return back()->with("message", "Supplier added successfully!");
@@ -1617,6 +1622,39 @@ class AdminController extends Controller
         return back();
     }
 
+
+
+    // User Controllers
+
+    public function return()
+    {
+        $nm = Session::get('name');
+
+        // Assuming you retrieve $productsss and $forecasts here or from another method
+        $productsss = Product::all();
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Call the method to generate notifications
+        $notifications = $this->generateNotifications($productsss, $forecasts);
+
+        // Extract total counts from the generated notifications
+        $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+        $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+        $totalForecastMessages = $notifications['totalForecastMessages'];
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+        $users = User::paginate(8);
+        // $usersss = User::find($id);
+
+        return view('navbar.return', [
+            'users' => $users,
+            // 'usersss' => $usersss,
+            'totalNotifications' => $totalNotifications,
+            'username' => $nm,
+        ] + $notifications);
+    }
 
     // User Controllers
 

@@ -38,8 +38,12 @@
                         name="contact_num" id="" value="{{ old('contact_num', $customerss->contact_num) }}">
 
                     <label for="">Address:</label>
-                    <input required type="text" name="address" id=""
-                        value="{{ old('address', $customerss->address) }}">
+                    <input required type="text" name="barangay" id=""
+                        value="{{ old('barangay', $customerss->barangay) }}">
+                    <input required type="text" name="municipality" id=""
+                        value="{{ old('municipality', $customerss->municipality) }}">
+                    <input required type="text" name="province" id=""
+                        value="{{ old('province', $customerss->province) }}">
 
                     <input class="add" type="submit" value="Update">
                 </form>
@@ -147,8 +151,7 @@
                                 <td>{{ $customer->customer_name_id }}</td>
                                 <td>{{ $customer->contact_name }}</td>
                                 <td>{{ $customer->contact_num }}</td>
-                                <td>{{ $customer->address }}</td>
-                                {{-- <td>{{ $customer->item_sold }}</td> --}}
+                                <td>{{ $customer->barangay }} {{ $customer->municipality }}, {{ $customer->province }}</td>                                {{-- <td>{{ $customer->item_sold }}</td> --}}
                                 <td class="actions">
                                     <div class="actions-container">
                                         <form>

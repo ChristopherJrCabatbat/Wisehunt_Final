@@ -20,7 +20,10 @@ return new class extends Migration
             // $table->string('contact_person');
             $table->string('contact_name');
             $table->char('contact_num');
-            $table->string('address');
+            // $table->string('address');
+            $table->string('barangay');
+            $table->string('municipality');
+            $table->string('province');
             $table->timestamps();
         });
 

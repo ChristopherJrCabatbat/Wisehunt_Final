@@ -45,10 +45,17 @@
                 @endif
 
                 <label for="">Address:</label>
+                {{-- <div class="adress-divided"> --}}
+                    <input required type="text" name="barangay" value="{{ old('barangay') }}" id="" placeholder="Barangay"/>
+                    <input required type="text" name="municipality" value="{{ old('municipality') }}" id="" placeholder="Municipality"/>
+                    <input required type="text" name="province" value="{{ old('province') }}" id="" placeholder="Province"/>
+                {{-- </div> --}}
+
+                {{-- <label for="">Address:</label>
                 <input required type="text" name="address" value="{{ old('address') }}" id="" />
                 @if ($errors->has('address'))
                     <div class="text-danger">{{ $errors->first('address') }}</div>
-                @endif
+                @endif --}}
 
                 <input class="add" type="submit" value="Add" />
             </form>
@@ -105,6 +112,13 @@
         </li>
         <li>
             <div class="baba-container">
+                <a class="sidebar" href="{{ route('admin.return') }}">
+                    <i class="fa-solid fa-arrow-rotate-left return-i" style="color: #ffffff;"></i>
+                    RETURN</a>
+            </div>
+        </li>
+        <li>
+            <div class="baba-container">
                 <a class="sidebar" href="{{ route('admin.user') }}">
                     <i class="fa-solid fa-circle-user user-i" style="color: #ffffff;"></i>
                     {{-- <img src="{{ asset('images/supplier.png') }}" class="user-i" alt=""> --}}
@@ -155,7 +169,7 @@
                                 <td>{{ $customer->customer_name_id }}</td>
                                 <td>{{ $customer->contact_name }}</td>
                                 <td>{{ $customer->contact_num }}</td>
-                                <td>{{ $customer->address }}</td>
+                                <td>{{ $customer->barangay }} {{ $customer->municipality }}, {{ $customer->province }}</td>
                                 <td class="actions">
                                     <div class="actions-container">
                                         <form action="{{ route('admin.customerEdit', $customer->id) }}" method="POST">

@@ -481,3 +481,20 @@ div.suggestion-item:hover {
     bottom: -11px;
     position: relative;
 }
+
+.return-i {
+    font-size: 25px;
+    left: 25px;
+    top: 418px;
+    /* top: 418px; */
+    position: absolute;
+}
+
+.user-i {
+    /* width: 100px; */
+    font-size: 25px;
+    left: 26px;
+    margin-top: -5px;
+    /* top: 418px; */
+    position: absolute;
+}

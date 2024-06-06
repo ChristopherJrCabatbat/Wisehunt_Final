@@ -97,6 +97,10 @@ Route::group([
 
     
     // User Routes
+    Route::get('/return', [AdminController::class, 'return'])->name('return');
+    
+
+    // User Routes
     Route::get('/user', [AdminController::class, 'user'])->name('user');
     // Route::get('/user/{id}', [AdminController::class, 'user'])->name('user');
 

@@ -92,6 +92,7 @@
                 </div>
             </form>
         </div>
+        
     </div>
 
 
@@ -166,6 +167,13 @@
                 <a class="sidebar" href="{{ route('admin.delivery') }}">
                     <img src="{{ asset('images/delivery.png') }}" class="delivery-i" alt="">
                     DELIVERY</a>
+            </div>
+        </li>
+        <li>
+            <div class="baba-container">
+                <a class="sidebar" href="{{ route('admin.return') }}">
+                    <i class="fa-solid fa-arrow-rotate-left return-i" style="color: #ffffff;"></i>
+                    RETURN</a>
             </div>
         </li>
         <li>
@@ -266,13 +274,14 @@
                     <th>Contact Number</th>
                     <th>Address</th>
                     <th>Product/s</th>
+                    <th>Date Received</th>
                     <th>Actions</th>
                 </tr>
 
                 <tbody class="all-data">
                     @if ($suppliers->isEmpty())
                         <tr>
-                            <td colspan="7">No data found.</td>
+                            <td colspan="10">No data found.</td>
                         </tr>
                     @else
                         @foreach ($suppliers as $supplier)
@@ -294,6 +303,7 @@
                                         onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}')">View
                                         All</button> --}}
                                 </td>
+                                <td>{{ \Carbon\Carbon::parse($supplier->date_received)->format('M. d, Y') }}</td>
                                 {{-- <td><button type="button" onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}')">View Products</button></td> --}}
 
 

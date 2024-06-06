@@ -128,13 +128,23 @@ a:hover {
     position: absolute;
 }
 
+.return-i {
+    font-size: 25px;
+    left: 25px;
+    top: 398px;
+    /* top: 418px; */
+    position: absolute;
+}
+
 .user-i {
     /* width: 100px; */
     font-size: 25px;
     left: 26px;
-    top: 418px;
+    margin-top: 53px;
+    /* top: 418px; */
     position: absolute;
 }
+
 
 /* Top Navbar */
 .top-navbar {
