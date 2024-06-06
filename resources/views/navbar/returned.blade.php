@@ -149,8 +149,10 @@
 
                 <tr>
                     <th>No.</th>
+                    <th>Company Name</th>
+                    <th>Contact Name</th>
+                    <th>Contact Number</th>
                     <th>Returned Product/s</th>
-                    <th>Customer Information</th>
                     <th>Reason for Returning</th>
                     <th>Date Returned</th>
                     <th>Actions</th>
@@ -166,12 +168,13 @@
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
 
-                                {{-- <td>{{ implode(', ', json_decode($returned->returned_product, true)) }}... --}}
-                                <td>{{ $returned->returned_product }}</td>
-
-                                <td>{{ $returned->customer_information }}</td>
+                                
+                                <td>{{ $returned->company_name }}</td>
+                                <td>{{ $returned->contact_name }}</td>
+                                <td>{{ $returned->contact_number }}</td>
+                                    <td>{{ implode(', ', json_decode($returned->returned_product, true)) }}...
                                 <td>{{ $returned->reason }}</td>
-                                <td>{{ $returned->date }}</td>
+                                <td>{{ \Carbon\Carbon::parse($returned->date_returned)->format('M. d, Y') }}</td>
 
                                 <td class="actions">
                                     <div class="actions-container">

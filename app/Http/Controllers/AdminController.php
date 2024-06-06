@@ -1667,6 +1667,10 @@ class AdminController extends Controller
         $returneds->company_name = $request->input('company_name');
         $returneds->contact_name = $request->input('contact_name');
         $returneds->contact_number = $request->input('contact_number');
+        $returneds->reason = $request->input('reason');
+        $returneds->date_returned = $request->input('date_returned'); // Save date_received field
+
+        $returneds->returned_product = json_encode($request->input('returned_product'));
 
         $returneds->save();
 
