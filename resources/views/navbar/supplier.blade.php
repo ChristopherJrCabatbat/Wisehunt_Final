@@ -52,10 +52,10 @@
                 @endif
 
                 <label for="">Date Received:</label>
-            <input value="{{ old('date_received') }}" required type="date" name="date_received" id="" />
-            @if ($errors->has('date_received'))
-                <div class="text-danger">{{ $errors->first('date_received') }}</div>
-            @endif
+                <input value="{{ old('date_received') }}" required type="date" name="date_received" id="" />
+                @if ($errors->has('date_received'))
+                    <div class="text-danger">{{ $errors->first('date_received') }}</div>
+                @endif
 
                 <label for="">Product/s:</label>
                 <div id="product-input-container">
@@ -92,7 +92,7 @@
                 </div>
             </form>
         </div>
-        
+
     </div>
 
 
@@ -171,7 +171,7 @@
         </li>
         <li>
             <div class="baba-container">
-                <a class="sidebar" href="{{ route('admin.return') }}">
+                <a class="sidebar" href="{{ route('admin.returned') }}">
                     <i class="fa-solid fa-arrow-rotate-left return-i" style="color: #ffffff;"></i>
                     RETURN</a>
             </div>
@@ -195,9 +195,6 @@
                 <button class="add" type="button" id="newButton">Add Supplier</button>
                 {{-- <button class="add" type="button" id="newButtonQty">Add Quantity of an Existing Product</button> --}}
             </div>
-
-
-
 
             <div class="sort-by">
                 <form id="sortForm" action="#" method="GET">
@@ -291,20 +288,11 @@
                                 <td>{{ $supplier->contact_name }}</td>
                                 <td>{{ $supplier->contact_num }}</td>
                                 <td>{{ $supplier->address }}</td>
-                                {{-- <td>{{ $supplier->product_name_id }}</td> --}}
-                                {{-- <td>{{ implode(', ', json_decode($supplier->product_name_id, true)) }}</td> --}}
-                                {{-- <td><button type="button"
-                                    onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ json_encode($supplier->product_name_ids) }}')">View
-                                    Products</button>
-                                </td> --}}
-                                {{-- <td><button type="button" onclick="showProducts('{{ $supplier->product_name_id }}')">View Products</button></td> --}}
+
                                 <td>{{ implode(', ', json_decode($supplier->product_name_id, true)) }}...
-                                    {{-- <button type="button"
-                                        onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}')">View
-                                        All</button> --}}
+
                                 </td>
                                 <td>{{ \Carbon\Carbon::parse($supplier->date_received)->format('M. d, Y') }}</td>
-                                {{-- <td><button type="button" onclick="showProducts('{{ addslashes($supplier->company_name) }}', '{{ $supplier->product_name_id }}')">View Products</button></td> --}}
 
 
                                 <td class="actions">
@@ -428,36 +416,6 @@
         }
     </script>
 
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Listener for adding more product inputs
-            document.getElementById('add-more-products').addEventListener('click', function() {
-                var newInput = document.createElement('input');
-                newInput.setAttribute('type', 'text');
-                newInput.setAttribute('name', 'product_name_id[]');
-                newInput.setAttribute('required', 'true');
-                newInput.classList.add('product-input');
-
-                document.getElementById('product-input-container').appendChild(newInput);
-            });
-
-            // Listener for the close button of the modal
-            document.querySelector('.closeModal').addEventListener('click', function() {
-                // Select all product input elements
-                var inputs = document.querySelectorAll('#product-input-container .product-input');
-                // Keep only the first input, remove the rest
-                if (inputs.length > 1) {
-                    for (var i = 1; i < inputs.length; i++) {
-                        inputs[i].parentNode.removeChild(inputs[i]);
-                    }
-                }
-
-                // Optionally reset the value of the first input if needed
-                inputs[0].value = '';
-            });
-        });
-    </script> --}}
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Listener for adding more product inputs
@@ -517,7 +475,8 @@
         function showProducts(companyName, productNamesJson, unitsJson) {
             const productNames = JSON.parse(productNamesJson);
             const units = JSON.parse(unitsJson);
-            let tableContent = `<table><tr><th colspan="2">${companyName} product/s and unit:</th></tr>`; // Use companyName for the table header
+            let tableContent =
+            `<table><tr><th colspan="2">${companyName} product/s and unit:</th></tr>`; // Use companyName for the table header
             for (let i = 0; i < productNames.length; i++) {
                 tableContent += `<tr><td>${productNames[i]}</td><td>${units[i]}</td></tr>`;
             }

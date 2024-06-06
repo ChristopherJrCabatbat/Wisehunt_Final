@@ -249,7 +249,7 @@
         </li>
         <li>
             <div class="baba-container">
-                <a class="sidebar" href="{{ route('admin.return') }}">
+                <a class="sidebar" href="{{ route('admin.returned') }}">
                     <i class="fa-solid fa-arrow-rotate-left return-i" style="color: #ffffff;"></i>
                     RETURN</a>
             </div>

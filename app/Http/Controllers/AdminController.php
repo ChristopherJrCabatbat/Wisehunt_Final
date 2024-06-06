@@ -24,6 +24,7 @@ use App\Models\Transaction;
 use App\Models\Supplier;
 use App\Models\User;
 use App\Models\Delivery;
+use App\Models\Returned;
 use App\Models\UserAccount;
 
 use App\Notifications\SMSNotification;
@@ -1624,9 +1625,9 @@ class AdminController extends Controller
 
 
 
-    // User Controllers
+    // Returned Controllers
 
-    public function return()
+    public function returned()
     {
         $nm = Session::get('name');
 
@@ -1645,16 +1646,85 @@ class AdminController extends Controller
         // Calculate the total number of notifications
         $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
 
-        $users = User::paginate(8);
+        $returneds = Returned::paginate(8);
         // $usersss = User::find($id);
 
-        return view('navbar.return', [
-            'users' => $users,
+        return view('navbar.returned', [
+            'returneds' => $returneds,
             // 'usersss' => $usersss,
             'totalNotifications' => $totalNotifications,
             'username' => $nm,
         ] + $notifications);
     }
+
+    public function returnedStore(Request $request)
+    {
+        $request->validate([
+            // 'name' => ['required', 'string', 'max:255'],
+        ]);
+
+        $returneds = new Returned;
+        $returneds->company_name = $request->input('company_name');
+        $returneds->contact_name = $request->input('contact_name');
+        $returneds->contact_number = $request->input('contact_number');
+
+        $returneds->save();
+
+        // return redirect()->route('admin.user');
+        return back()->with('success', 'Product returned successfully');
+    }
+
+      public function returnedEdit(Request $request, $id)
+    {
+        $nm = Session::get('name');
+
+        // Assuming you retrieve $productsss and $forecasts here or from another method
+        $productsss = Product::all();
+        $forecasts = $this->forecastSalesForAllCustomers();
+
+        // Call the method to generate notifications
+        $notifications = $this->generateNotifications($productsss, $forecasts);
+
+        // Extract total counts from the generated notifications
+        $totalLowQuantityNotifications = count($notifications['lowQuantityNotifications']);
+        $totalBestSellerNotifications = count($notifications['bestSellerNotifications']);
+        $totalForecastMessages = $notifications['totalForecastMessages'];
+
+        // Calculate the total number of notifications
+        $totalNotifications = $totalLowQuantityNotifications + $totalBestSellerNotifications + $totalForecastMessages;
+
+        $returnedss = Returned::find($id);
+        $returneds = Returned::paginate(8);
+
+        return view('navbar.returned-edit', [
+            'returneds' => $returneds,
+            'returnedss' => $returnedss,
+            'totalNotifications' => $totalNotifications,
+            'username' => $nm,
+        ] + $notifications);
+    }
+
+    public function returnedUpdate(Request $request, string $id)
+    {
+        $request->validate([
+        ]);
+
+        $returneds = Returned::find($id);
+        $returneds->name = $request->name;
+   
+        $returneds->save();
+
+        return redirect()->route('admin.returned')->with('success', 'Returned product updated successfully');
+    }
+
+    public function returnedDestroy(string $id)
+    {
+        $returneds = Returned::findOrFail($id);
+        $returneds->delete();
+        return back();
+    }
+
+
 
     // User Controllers
 
@@ -1689,6 +1759,33 @@ class AdminController extends Controller
         ] + $notifications);
     }
 
+    public function userStore(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'unique:' . User::class],
+            // 'password' => ['required'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required'],
+        ]);
+
+        $users = new User;
+        $users->name = $request->input('name');
+        $users->email = $request->input('email');
+        $users->role = $request->input('role');
+        $users->password = Hash::make($request->input('password'));
+
+        if ($request->hasFile('photo')) {
+            $fileName = time() . $request->file('photo')->getClientOriginalName();
+            $path = $request->file('photo')->storeAs('images', $fileName, 'public');
+            $users->photo = '/storage/' . $path;
+        }
+
+        $users->save();
+
+        // return redirect()->route('admin.user');
+        return back()->with('success', 'User added successfully');
+    }
     public function userEdit(Request $request, $id)
     {
         $nm = Session::get('name');
@@ -1718,59 +1815,6 @@ class AdminController extends Controller
             'username' => $nm,
         ] + $notifications);
     }
-
-
-    public function userStore(Request $request)
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'unique:' . User::class],
-            // 'password' => ['required'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required'],
-        ]);
-
-        $users = new User;
-        $users->name = $request->input('name');
-        $users->email = $request->input('email');
-        $users->role = $request->input('role');
-        $users->password = Hash::make($request->input('password'));
-
-        if ($request->hasFile('photo')) {
-            $fileName = time() . $request->file('photo')->getClientOriginalName();
-            $path = $request->file('photo')->storeAs('images', $fileName, 'public');
-            $users->photo = '/storage/' . $path;
-        }
-
-        $users->save();
-
-        // return redirect()->route('admin.user');
-        return back()->with('success', 'User added successfully');
-    }
-
-    // public function userStore(Request $request): RedirectResponse
-    // {
-    //     $request->validate([
-    //         'name' => ['required', 'string', 'max:255'],
-    //         'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-    //         'password' => ['required', 'confirmed', Rules\Password::defaults()],
-    //     ]);
-
-    //     $user = User::create([
-    //         'name' => $request->name,
-    //         'email' => $request->email,
-    //         'password' => Hash::make($request->password),
-    //         'role' => $request->role,
-    //     ]);
-
-    //     event(new Registered($user));
-
-    //     Auth::login($user);
-
-    //     return redirect()->route('admin.user');
-    //     // return redirect(RouteServiceProvider::HOME);
-    // }
-
     public function userUpdate(Request $request, string $id)
     {
         $request->validate([
@@ -1797,30 +1841,6 @@ class AdminController extends Controller
 
         return redirect()->route('admin.user')->with('success', 'User updated successfully');
     }
-
-    // public function userUpdate(Request $request, string $id)
-    // {
-    //     $user = User::find($id);
-
-    //     $request->validate([
-    //         'name' => ['required', 'string', 'max:255'],
-    //         'email' => ['required', 'unique:' . User::class . ',email,' . $id],
-    //         'old_password' => ['required', new MatchOldPassword],
-    //         'new_password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-    //         'role' => ['required'],
-    //     ]);
-
-    //     $user->update([
-    //         'name' => $request->name,
-    //         'email' => $request->email,
-    //         'role' => $request->role,
-    //         'password' => $request->filled('new_password') ? Hash::make($request->new_password) : $user->password,
-    //     ]);
-
-    //     return redirect()->route('admin.user');
-    // }
-
-
 
     public function userDestroy(string $id)
     {

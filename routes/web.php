@@ -96,9 +96,12 @@ Route::group([
     // Route::post('admin/update-delivery-status', 'DeliveryController@updateStatus')->name('admin.updateDeliveryStatus');
 
     
-    // User Routes
-    Route::get('/return', [AdminController::class, 'return'])->name('return');
-    
+    // Returned Routes
+    Route::get('/return', [AdminController::class, 'returned'])->name('returned');
+    Route::post('/returnedStore', [AdminController::class, 'returnedStore'])->name('returnedStore');
+    Route::get('/returnedEdit/{id}', [AdminController::class, 'returnedEdit'])->name('returnedEdit');
+    Route::put('/returnedUpdate/{id}', [AdminController::class, 'returnedUpdate'])->name('returnedUpdate');
+    Route::delete('/returnedDestroy/{id}', [AdminController::class, 'returnedDestroy'])->name('returnedDestroy');
 
     // User Routes
     Route::get('/user', [AdminController::class, 'user'])->name('user');
