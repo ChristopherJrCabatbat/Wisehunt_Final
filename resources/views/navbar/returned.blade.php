@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ asset('css/transaction-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/customer-supplier-styles.css') }}">
     <link rel="stylesheet" href="{{ asset('css/user-styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/returned-styles.css') }}">
 @endsection
 
 @section('modals')
@@ -27,12 +28,11 @@
 
                 <label class="modal-tops" for="">Customer Information:</label>
                 <input required autofocus type="text" name="company_name" id="autofocus"
-                    value="{{ old('company_name') }}" placeholder="Company Name"/>
+                    value="{{ old('company_name') }}" placeholder="Company Name" />
                 <input required autofocus type="text" name="contact_name" id="autofocus"
-                    value="{{ old('contact_name') }}" placeholder="Contact Name"/>
-                <input required autofocus  type="tel" pattern="^\+?\d{4,14}$"
-                title="Enter a valid contact number" name="contact_number" id="autofocus"
-                    value="{{ old('contact_number') }}" placeholder="Contact Number"/>
+                    value="{{ old('contact_name') }}" placeholder="Contact Name" />
+                <input required autofocus type="tel" pattern="^\+?\d{4,14}$" title="Enter a valid contact number"
+                    name="contact_number" id="autofocus" value="{{ old('contact_number') }}" placeholder="Contact Number" />
 
                 <label for="">Reason for Returning:</label>
                 <textarea required name="reason" rows="3" placeholder="Eg. defective..." cols="5" class=""
@@ -58,6 +58,18 @@
                     <input class="add" type="submit" value="Return Product/s" />
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Returned Products Modal -->
+    <div id="viewProductsModal" class="modal-view">
+        <!-- Modal content -->
+        <div class="modal-content-view">
+            <span class="close-view">&times;</span>
+            <h2>Returned Product/s</h2>
+            <div id="productsList">
+                <!-- Products will be dynamically inserted here -->
+            </div>
         </div>
     </div>
 
@@ -168,23 +180,31 @@
                             <tr>
                                 <td>{{ $rowNumber++ }}</td>
 
-                                
+
                                 <td>{{ $returned->company_name }}</td>
                                 <td>{{ $returned->contact_name }}</td>
                                 <td>{{ $returned->contact_number }}</td>
-                                    <td>{{ implode(', ', json_decode($returned->returned_product, true)) }}...
+                                <td>{{ implode(', ', json_decode($returned->returned_product, true)) }}...
                                 <td>{{ $returned->reason }}</td>
                                 <td>{{ \Carbon\Carbon::parse($returned->date_returned)->format('M. d, Y') }}</td>
 
                                 <td class="actions">
                                     <div class="actions-container">
-                                        <form action="{{ route('admin.returnedEdit', $returned->id) }}" method="POST">
+
+                                        {{-- <form action="{{ route('admin.returnedEdit', $returned->id) }}" method="POST">
                                             @csrf
                                             @method('GET')
                                             <button type="submit" class="edit editButton" id="edit">
                                                 <i class="fa-solid fa-pen-to-square" style="color: #ffffff;"></i>
                                             </button>
-                                        </form>
+                                        </form> --}}
+
+                                        {{-- onclick="showProducts('{{ addslashes($returned->company_name) }}', '{{ $returned->product_name_id }}', '{{ $returned->unit }}')"><img
+                                                src="{{ asset('images/visible.png') }}" --}}
+                                        <button type="button" class="view-button"
+                                            onclick="showProducts('{{ addslashes($returned->company_name) }}', '{{ $returned->returned_product }}')"><img
+                                                src="{{ asset('images/visible.png') }}" class="" alt=""
+                                                style="height: auto; width: 23px;"></button>
 
                                         <form action="{{ route('admin.returnedDestroy', $returned->id) }}"
                                             method="POST">
@@ -195,6 +215,7 @@
                                                 <i class="fa-solid fa-trash" style="color: #ffffff;"></i>
                                             </button>
                                         </form>
+
                                     </div>
                                 </td>
 
@@ -278,6 +299,43 @@
                 inputs[0].querySelector('.product-input').value = '';
             });
         });
+    </script>
+
+    {{-- View Product Script --}}
+    <script>
+        function showProducts(companyName, returnedProductJson) {
+            const returnedProduct = JSON.parse(returnedProductJson);
+            let tableContent =
+                `<table><tr><th colspan="2">Returned product/s of ${companyName}:</th></tr>`; // Use companyName for the table header
+            for (let i = 0; i < returnedProduct.length; i++) {
+                tableContent += `<tr><td>${returnedProduct[i]}</td></tr>`;
+            }
+
+            tableContent += '</table>';
+
+            // Set the content in the modal's body
+            document.getElementById('productsList').innerHTML = tableContent;
+
+            // Show the modal
+            document.getElementById('viewProductsModal').style.display = 'block';
+        }
+
+        // Initialization logic to hide the modal on page load, if not already done
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('viewProductsModal').style.display = 'none';
+        });
+
+        // Close modal logic
+        var span = document.getElementsByClassName("close-view")[0];
+        span.onclick = function() {
+            document.getElementById('viewProductsModal').style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('viewProductsModal')) {
+                document.getElementById('viewProductsModal').style.display = "none";
+            }
+        }
     </script>
 
 @endsection
