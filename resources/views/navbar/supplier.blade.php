@@ -64,17 +64,17 @@
                         <input required type="text" name="product_name_id[]" class="product-input" />
                         <select required name="unit[]" class="unit-select">
                             <option value="" disabled selected>Select Unit</option>
-                            <option value="Per item" {{ old('unit') === 'Per item' ? 'selected' : '' }}>Per item
+                            <option value="Per item" {{ old('unit') === 'Per item' ? 'selected' : '' }}> Item
                             </option>
-                            <option value="Per box" {{ old('unit') === 'Per box' ? 'selected' : '' }}>Per box
+                            <option value="Per box" {{ old('unit') === 'Per box' ? 'selected' : '' }}>Box
                             </option>
-                            <option value="Per case" {{ old('unit') === 'Per case' ? 'selected' : '' }}>Per case
+                            <option value="Per case" {{ old('unit') === 'Per case' ? 'selected' : '' }}>Case
                             </option>
-                            <option value="Per pack" {{ old('unit') === 'Per pack' ? 'selected' : '' }}>Per pack
+                            <option value="Per pack" {{ old('unit') === 'Per pack' ? 'selected' : '' }}>Pack
                             </option>
                             <option value="Per set" {{ old('unit') === 'Per set' ? 'selected' : '' }}>
-                                Per set</option>
-                            <option value="Per ream" {{ old('unit') === 'Per ream' ? 'selected' : '' }}>Per ream
+                                 Set</option>
+                            <option value="Per ream" {{ old('unit') === 'Per ream' ? 'selected' : '' }}> Ream
                             </option>
                         </select>
                     </div>
@@ -437,7 +437,7 @@
                 newSelect.classList.add('unit-select');
 
                 // Add options to the dropdown
-                var units = ["Per item", "Per box", "Per case", "Per pack", "Per set", "Per ream"];
+                var units = ["Item", "Box", "Case", "Pack", "Set", "Ream"];
                 units.forEach(function(unit) {
                     var option = document.createElement('option');
                     option.value = unit;

@@ -25,159 +25,115 @@
 
             <form class="modal-form" action="{{ route('admin.productStore') }}" enctype="multipart/form-data" method="POST">
                 @csrf
-
+            
                 <div class="row1">
                     <div class="column">
                         <label class="modal-top" for="">Product code:</label>
-                        <input required autofocus type="text" name="code" pattern="{3,11}" class="row1-input"
-                            id="autofocus" value="{{ old('code') }}" />
+                        <input required autofocus type="text" name="code" pattern="{3,11}" class="row1-input" id="autofocus" value="{{ old('code') }}" />
                     </div>
-
+            
                     <div class="column">
-                        
                         <label for="product_name_id">Product Name:</label>
                         <div class="input-group">
-                            <input class="form-control" id="product_name" name="product_name" type="text"
-                                placeholder="Type to search..." autocomplete="off">
+                            <input class="form-control" id="product_name" name="product_name" type="text" placeholder="Type to search..." autocomplete="off">
                             <div class="input-group-append">
-                                <button id="clear_product_name" class="btn btn-outline-secondary" type="button"
-                                    style="display: none;">Clear</button>
+                                <button id="clear_product_name" class="btn btn-outline-secondary" type="button" style="display: none;">Clear</button>
                             </div>
                         </div>
                         <input type="hidden" id="validated_product_name" name="product_name_id">
-
                         <div id="productSuggestions" class="suggestions-dropdown">
                             <!-- Search suggestions will be appended here -->
                         </div>
-
-
                         @if ($errors->has('product_name_id'))
                             <div class="text-dangers">{{ $errors->first('product_name_id') }}</div>
                         @endif
-
                     </div>
-
-
+            
                     <div class="column">
                         <label for="">Brand Name:</label>
-                        <input required type="text" name="brand_name" id="" value="{{ old('brand_name') }}"
-                            class="row1-input" />
+                        <input required type="text" name="brand_name" id="" value="{{ old('brand_name') }}" class="row1-input" />
                     </div>
-
-                    {{-- <div class="column">
-                        <label for="">Stock Quantity:</label>
-                        <input required type="number" name="quantity" id="" value="{{ old('quantity') }}"
-                            class="row2-input" />
-                        @if ($errors->has('quantity'))
-                            <div class="text-danger">{{ $errors->first('quantity') }}</div>
-                        @endif
-                    </div> --}}
-
                 </div>
-
+            
                 <div class="row2">
-
                     <div class="column">
                         <label for="">Stock Quantity:</label>
-                        <input required type="number" name="quantity" id="" value="{{ old('quantity') }}"
-                            class="row2-input" />
+                        <input required type="number" name="quantity" id="" value="{{ old('quantity') }}" class="row2-input" />
                         @if ($errors->has('quantity'))
                             <div class="text-danger">{{ $errors->first('quantity') }}</div>
                         @endif
                     </div>
-
+            
                     <div class="column">
                         <label for="">Unit:</label>
                         <select required name="unit" id="" class="row1-input unit">
                             <option value="" disabled selected>Select Unit</option>
-                            <option value="Per item" {{ old('unit') === 'Per item' ? 'selected' : '' }}>Per item
-                            </option>
-                            <option value="Per box" {{ old('unit') === 'Per box' ? 'selected' : '' }}>Per box
-                            </option>
-                            <option value="Per case" {{ old('unit') === 'Per case' ? 'selected' : '' }}>Per case
-                            </option>
-                            <option value="Per pack" {{ old('unit') === 'Per pack' ? 'selected' : '' }}>Per pack
-                            </option>
-                            <option value="Per set" {{ old('unit') === 'Per set' ? 'selected' : '' }}>
-                                Per set</option>
-                            <option value="Per ream" {{ old('unit') === 'Per ream' ? 'selected' : '' }}>Per ream
-                            </option>
+                            <option value="Per item" {{ old('unit') === 'Per item' ? 'selected' : '' }}>Per item</option>
+                            <option value="Per box" {{ old('unit') === 'Per box' ? 'selected' : '' }}>Per box</option>
+                            <option value="Per case" {{ old('unit') === 'Per case' ? 'selected' : '' }}>Per case</option>
+                            <option value="Per pack" {{ old('unit') === 'Per pack' ? 'selected' : '' }}>Per pack</option>
+                            <option value="Per set" {{ old('unit') === 'Per set' ? 'selected' : '' }}>Per set</option>
+                            <option value="Per ream" {{ old('unit') === 'Per ream' ? 'selected' : '' }}>Per ream</option>
                         </select>
+                        @if ($errors->has('unit'))
+                            <div class="text-danger">{{ $errors->first('unit') }}</div>
+                        @endif
                     </div>
-                    @if ($errors->has('unit'))
-                        <div class="text-danger">{{ $errors->first('unit') }}</div>
-                    @endif
-
+            
                     <div class="column">
                         <label for="">Purchase Price:</label>
-                        <input required type="number" name="purchase_price" id=""
-                            value="{{ old('purchase_price') }}" class="row2-input" />
+                        <input required type="number" name="purchase_price" id="" value="{{ old('purchase_price') }}" class="row2-input" />
                         @if ($errors->has('purchase_price'))
                             <div class="text-danger">{{ $errors->first('purchase_price') }}</div>
                         @endif
                     </div>
+                    
                     <div class="column">
                         <label for="">Selling Price:</label>
-                        <input required type="number" name="selling_price" id=""
-                            value="{{ old('selling_price') }}" class="row2-input" />
+                        <input required type="number" name="selling_price" id="" value="{{ old('selling_price') }}" class="row2-input" />
                         @if ($errors->has('selling_price'))
                             <div class="text-danger">{{ $errors->first('selling_price') }}</div>
                         @endif
                     </div>
-
+                </div>
+            
+                <div class="row3">
+                    <div class="column" style="margin-left:19%">
+                        <label for="">Receive Notification when Quantity is:</label>
+                        <div class="input_container_ginaya">
+                            <input type="number" name="low_quantity_threshold" placeholder="Enter threshold" title="Receive notification when the stock quantity reaches or falls below this value." value="{{ old('low_quantity_threshold') }}" required />
+                        </div>
+                    </div>
                     <div class="column">
                         <label for="">Category:</label>
                         <select required name="category" id="" class="row1-input select_categ">
                             <option value="" disabled selected>-- Select Category --</option>
-                            <option value="Paper" {{ old('category') === 'Paper' ? 'selected' : '' }}>Paper
-                            </option>
-                            <option value="Tape" {{ old('category') === 'Tape' ? 'selected' : '' }}>Tape
-                            </option>
-                            <option value="Plastic" {{ old('category') === 'Plastic' ? 'selected' : '' }}>Plastic
-                            </option>
-                            <option value="Gloves" {{ old('category') === 'Gloves' ? 'selected' : '' }}>Gloves
-                            </option>
-                            <option value="Machine" {{ old('category') === 'Machine' ? 'selected' : '' }}>
-                                Machine</option>
-                            <option value="Food Material" {{ old('category') === 'Food Material' ? 'selected' : '' }}>Food
-                                Material
-                            </option>
+                            <option value="Paper Products" {{ old('category') === 'Paper Products' ? 'selected' : '' }}>Paper Products</option>
+                            <option value="Tape" {{ old('category') === 'Tape' ? 'selected' : '' }}>Tape</option>
+                            <option value="Office Furnitures" {{ old('category') === 'Office Furnitures' ? 'selected' : '' }}>Office Furnitures</option>
+                            <option value="Computer Accessories" {{ old('category') === 'Computer Accessories' ? 'selected' : '' }}>Computer Accessories</option>
+                            <option value="Machine" {{ old('category') === 'Machine' ? 'selected' : '' }}>Machine</option>
+                            <option value="Board" {{ old('category') === 'Board' ? 'selected' : '' }}>Board</option>
+                            <option value="Janitorial Supplies" {{ old('category') === 'Janitorial Supplies' ? 'selected' : '' }}>Janitorial Supplies</option>
+                            <option value="Writing Supplies" {{ old('category') === 'Writing Supplies' ? 'selected' : '' }}>Writing Supplies</option>
+                            <option value="Office Supplies" {{ old('category') === 'Office Supplies' ? 'selected' : '' }}>Office Supplies</option>
+                            <option value="Ink/Toner" {{ old('category') === 'Ink/Toner' ? 'selected' : '' }}>Ink/Toner</option>
                         </select>
                     </div>
-
                 </div>
-
-                <div class="row3">
-                    <div class="column">
-                        <label for="">Image:</label>
-                        <div class="input_container">
-                            <input type="file" name="photo" id="fileUpload">
-                        </div>
-                    </div>
-
-                    <div class="column">
-                        <label for="">Receive Notification when Quantity is:</label>
-                        <div class="input_container_ginaya">
-                            <input type="number" name="low_quantity_threshold" placeholder="Enter threshold"
-                                title="Receive notification when the stock quantity reaches or falls below this value."
-                                value="{{ old('low_quantity_threshold') }}" required />
-                        </div>
-                    </div>
-
-                </div>
+            
                 <div class="row4">
                     <label for="">Product Description:</label>
-                    <textarea required name="description" rows="3" placeholder="Eg. size..." cols="5" class=""
-                        value="{{ old('description') }}">{{ old('description') }}</textarea>
+                    <textarea required name="description" rows="3" placeholder="Eg. size..." cols="5" class="" value="{{ old('description') }}">{{ old('description') }}</textarea>
                 </div>
-
+            
                 <hr>
                 <div class="buttons">
-                    <input type="submit" id="saveButton" class="add-green save"
-                        style="font-family: Arial, Helvetica, sans-serif; font-size: 1rem;" value="Add" />
+                    <input type="submit" id="saveButton" class="add-green save" style="font-family: Arial, Helvetica, sans-serif; font-size: 1rem;" value="Add" />
                     <button type="button" class="closeModal">Cancel</button>
                 </div>
             </form>
+            
 
         </div>
     </div>
